@@ -1,0 +1,87 @@
+// 기본 버튼 스타일
+.button {
+  display: inline;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  border-radius: 8px;
+
+  &.disabled {
+    background-color: #f6f6f6;
+    color: #aaaaaa;
+    cursor: not-allowed;
+    border: 1px solid #dddddd;
+  }
+
+  &.blueTheme {
+    background-color: #007AFF;
+    color: #FFFFFF;
+    border: transparent;
+
+    &:hover:not(.disabled) {
+      background-color: #2563eb;
+    }
+
+    &.disabled {
+      background-color: #f6f6f6;
+      color: #aaaaaa;
+      cursor: not-allowed;
+      border: 1px solid #dddddd;
+    }
+  }
+
+  &.whiteTheme {
+    background-color: #FFFFFF;
+    color: #007AFF;
+    border: 1px solid #007AFF;
+
+    &:hover:not(.disabled) {
+      background-color: #f3f4f6;
+    }
+
+    &.disabled {
+      background-color: #f6f6f6;
+      color: #aaaaaa;
+      cursor: not-allowed;
+      border: 1px solid #dddddd;
+    }
+  }
+
+  // blackTheme 스타일
+  &.blackTheme {
+    background-color: #000000;
+    color: #F5F5F5;
+    border: 1px solid #333333;
+
+    &:hover:not(.disabled) {
+      background-color: #444444;
+    }
+
+    &.disabled {
+      background-color: #f6f6f6;
+      color: #aaaaaa;
+      cursor: not-allowed;
+      border: 1px solid #dddddd;
+    }
+  }
+}
+
+// 공통 : 폰트 사이즈별
+.small {
+  font-size: 14px;
+}
+.medium {
+  font-size: 16px;
+}
+.large {
+  font-size: 18px;
+}
+
+.hidden {
+  display: none;
+}
