@@ -1,6 +1,7 @@
 import React from 'react';
-import styles from './Card.module.scss'
-import logo from '../../assets/logo.svg'
+import styles from './Card.module.scss';
+import lessonPhoto from '../../assets/guitar.jpg';
+import profile from '../../assets/profile.png';
 import Button from "./Button.jsx";
 
 const Card = () => {
@@ -8,13 +9,13 @@ const Card = () => {
     <>
       <div className={styles.fullContainer}>
         <div className={styles.imgContainer}>
-          <img src={logo} alt="logo사진" />
+          <img className={styles.lessonImage} src={lessonPhoto} alt="logo사진" />
         </div>
         <div className={styles.titleContainer}>
           <h2>파이썬 프로그래밍</h2>
         </div>
         <div className={styles.profileContainer}>
-          <img src ={logo} alt="logo사진" />
+          <img src ={profile} alt="logo사진" />
           <p>김지민</p>
 
         </div>
