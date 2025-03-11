@@ -1,6 +1,13 @@
 import React from 'react';
 import styles from './AlertModal.module.scss'
 
+/* 확인버튼 모달
+* @param title: 모달제목
+* @param message: 모달내용
+* @param onClose: 모달이 닫힐때 실행될 함수
+
+*/
+
 const AlertModal = ({title,message,onClose}) => {
     return (
         <>

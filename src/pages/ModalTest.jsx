@@ -1,3 +1,4 @@
+// 이 페이지는 프로젝트 완성시 삭제해야 할 페이지 입니다. 단순 모달 사용시 참고용 페이지입니다.
 import React, { useState } from 'react';
 import ConfirmModal from '../components/common/ConfirmModal.jsx';
 import styles from './ModalTest.module.scss';
@@ -6,24 +7,14 @@ import AlertModal from "../components/common/AlertModal.jsx";
 const ModalTest = () => {
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-    const [customModal, setCustomModal] = useState({
-        show: false,
-        title: '',
-        message: ''
-    });
+
 
     const handleConfirm = () => {
         alert('확인 작업이 진행되었습니다!');
         // 여기에 확인 시 실행할 로직 추가
     };
 
-    const showCustomAlert = (title, message) => {
-        setCustomModal({
-            show: true,
-            title,
-            message
-        });
-    };
+
 
     return (
         <div className={styles.container}>
@@ -39,12 +30,6 @@ const ModalTest = () => {
                         알림 모달 열기
                     </button>
 
-                    <button
-                        className={styles.testButton}
-                        onClick={() => showCustomAlert("커스텀 알림", "이것은 동적으로 생성된 알림 메시지입니다.")}
-                    >
-                        커스텀 알림 모달
-                    </button>
                 </div>
             </div>
 
@@ -69,13 +54,6 @@ const ModalTest = () => {
                 />
             )}
 
-            {customModal.show && (
-                <AlertModal
-                    title={customModal.title}
-                    message={customModal.message}
-                    onClose={() => setCustomModal({...customModal, show: false})}
-                />
-            )}
 
             {showConfirmModal && (
                 <ConfirmModal
