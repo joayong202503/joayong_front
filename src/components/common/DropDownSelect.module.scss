@@ -5,14 +5,14 @@ button {
   background: transparent;
 }
 
-.SelectRoot {
+.selectRoot {
   padding: 0;
   margin: 0;
   position: relative; // 드롭박스 위치 설정용
 }
 
 // 눈에 보이는 부분 div
-.SelectTrigger {
+.selectTrigger {
   width: fit-content;
   display: inline-flex;
   align-items: center;
@@ -26,17 +26,17 @@ button {
 }
 
 // place holder글씨
-.SelectTrigger[data-placeholder] {
+.selectTrigger[data-placeholder] {
   color: #b2b2b2;
 }
 
 // 드롭다운 버튼
-.SelectIcon {
+.selectIcon {
   color: black;
 }
 
 // 스크롤 다운, 내용 등 드롭다운 해야 보이는 부분 전체를 감싸는 wrapper
-.SelectContent {
+.selectContent {
   position: absolute;
   top: 100%;
   left: 0;
@@ -50,22 +50,22 @@ button {
 }
 
 // 드롭다운 메뉴에서 스크롤 버튼 빼고
-.SelectViewport {
+.selectViewport {
   padding: 10px 0px 10px 0px;
 }
 
 // sELECTiTEMtEXT를 감싸는 wrapper
-.SelectItem {
+.selectItem {
   padding: 5px 5px 5px 5px;
 }
 
-.SelectItem:hover {
+.selectItem:hover {
   background-color: rgba(243, 243, 243, 0.5);
   outline: none;
 }
 
 // 각 선택 옵션
-.SelectItemText {
+.selectItemText {
   color: #000000;
   display: flex;
   //padding: 3px 5px 5px 3px;
@@ -75,18 +75,18 @@ button {
 }
 
 // disable 일 때
-.SelectItemText[data-disabled] {
+.selectItemText[data-disabled] {
   color: gray;
   pointer-events: none;
 }
 
 // hover 되었을 때
-.SelectItemText:hover {
+.selectItemText:hover {
   font-weight: 600;
 }
 
 /* 스크롤 버튼 */
-.SelectScrollButton {
+.selectScrollButton {
   display: flex;
   align-items: center;
   justify-content: center;
