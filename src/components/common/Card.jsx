@@ -1,35 +1,54 @@
 import React from 'react';
 import styles from './Card.module.scss';
-import lessonPhoto from '../../assets/guitar.jpg';
-import profile from '../../assets/profile.png';
+import lessonPhoto from '../../assets/images/guitar.jpg';
 import Button from "./Button.jsx";
+import ProfileCircle from "./ProfileCircle.jsx";
+import { MapPin } from "lucide-react";
 
-const Card = () => {
+/*
+* @param lessonImageSrc :레슨 이미지 src
+* @param title: 레슨제목
+* @param profileName: 프로필이름
+* @param lessonLocation: 레슨희망지역
+* @param
+* */
+
+const Card = ({lessonImageSrc =lessonPhoto,
+                title ='기타레슨 초급',
+                profileName='김지민',
+                lessonLocation='강원도 속초시',
+                onDetailClick = () => {}
+              }) => {
   return (
     <>
       <div className={styles.fullContainer}>
         <div className={styles.imgContainer}>
-          <img className={styles.lessonImage} src={lessonPhoto} alt="logo사진" />
+          <img className={styles.lessonImage} src={lessonImageSrc} alt="레슨이미지" />
         </div>
+        <div className={styles.contentContainer}>
+
+
         <div className={styles.titleContainer}>
-          <h2>파이썬 프로그래밍</h2>
+          <span className={styles.title}>{title}</span>
         </div>
         <div className={styles.profileContainer}>
-          <img src ={profile} alt="logo사진" />
-          <p>김지민</p>
+          <ProfileCircle/>
+          <span className={styles.profileName}>{profileName}</span>
 
         </div>
         <div className={styles.locationContainer}>
-          <p> 위치: 강원도 속초시</p>
+          <MapPin size={16}/>
+          <p> {lessonLocation}</p>
 
         </div>
         <div className={styles.buttonContainer}>
-          <Button>상세보기</Button>
+          <Button theme ='blueTheme' className={styles.detailButton} onClick ={onDetailClick}>상세보기</Button>
         </div>
 
       </div>
+        </div>
 
-      
+
     </>
   );
 };
