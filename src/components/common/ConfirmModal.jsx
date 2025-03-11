@@ -8,6 +8,7 @@ import styles from './ConfirmModal.module.scss';
 * @param onClose: cancel 버튼 클릭시 또는 모달이 닫힐때 실행될 함수
 * @param confirmText: confirm 버튼에 원하는 문구 - default: 확인
 * @param cancelText: cancel 버튼에 원하는 문구 - default: 취소
+* pages-ModalTest 페이지 참고해주세요
 */
 
 const ConfirmModal = ({title,message, onConfirm, onClose, confirmText = "확인", cancelText = "취소"}) => {

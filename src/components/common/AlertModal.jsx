@@ -5,7 +5,7 @@ import styles from './AlertModal.module.scss'
 * @param title: 모달제목
 * @param message: 모달내용
 * @param onClose: 모달이 닫힐때 실행될 함수
-
+* pages-ModalTest 페이지 참고해주세요
 */
 
 const AlertModal = ({title,message,onClose}) => {
