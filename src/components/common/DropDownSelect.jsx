@@ -32,13 +32,13 @@ const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValu
         <Select.Root
             onValueChange={onValueChange}
             // open={true}
-            className={styles.SelectRoot}>
+            className={styles.selectRoot}>
 
         {/* 눈에 보이는 부분 div. place holder 글씨 색 : .SelectTrigger[data-placeholder]. width는 prop으로 받아옴 */}
-        <Select.Trigger className={styles.SelectTrigger} style={{ width: `${width}px` }}>
+        <Select.Trigger className={styles.selectTrigger} style={{ width: `${width}px` }}>
             <Select.Value placeholder={placeHolder} />
             {/* 드롭다운 버튼 누르는 아이콘의 wrapper */}
-            <Select.Icon className={styles.SelectIcon}>
+            <Select.Icon className={styles.selectIcon}>
                 {/* 드롭다운 버튼 */}
                 <ChevronDownIcon />
             </Select.Icon>
@@ -49,14 +49,14 @@ const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValu
             {/*    popper : 위치 조정용*/}
             <Select.Content
                 position="popper"
-                className={styles.SelectContent}
+                className={styles.selectContent}
                 style={{ width: `${width}px`}}
             >
-                <Select.ScrollUpButton className={styles.SelectScrollButton}>
+                <Select.ScrollUpButton className={styles.selectScrollButton}>
                     <ChevronUpIcon />
                 </Select.ScrollUpButton>
                 {/* 드롭다운 메뉴에서 스크롤 버튼 빼고 */}
-                <Select.Viewport className={styles.SelectViewport}>
+                <Select.Viewport className={styles.selectViewport}>
                     {/* 항목들만 나열 : 스타일은 아래 SelectItem 컴포넌트에서 지정 */}
                     {items.map(item => (
                         // key는 selectItem component에서 쓸 값. keyField는 selecitem의 자식에게 전달할 값
@@ -72,7 +72,7 @@ const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValu
 
 
                 </Select.Viewport>
-                <Select.ScrollDownButton className={styles.SelectScrollButton}>
+                <Select.ScrollDownButton className={styles.selectScrollButton}>
                     <ChevronDownIcon />
                 </Select.ScrollDownButton>
             </Select.Content>
@@ -88,7 +88,7 @@ const SelectItem = React.forwardRef(
         return (
             // 감싸는 div
             <Select.Item
-                className={styles.SelectItem}
+                className={styles.selectItem}
                 {...props}
                 ref={forwardedRef}
             >
@@ -98,7 +98,7 @@ const SelectItem = React.forwardRef(
                     key={items[keyField]}
                 >
                     {/* asChild로 감싸진 요소는 여기에서 자유롭게 설정 */}
-                    <span className={styles.SelectItemText}>{children}</span>
+                    <span className={styles.selectItemText}>{children}</span>
                 </Select.ItemText>    {/* 선택된 항목에 체크 아이콘 표시 */}
             </Select.Item>
         );
