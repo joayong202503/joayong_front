@@ -17,7 +17,7 @@ const Header = () => {
         </ul>
       </div>
       <div className={styles.rightContainer}>
-        <ProfileCircle/>
+        <ProfileCircle size="sm" />
 
       </div>
 

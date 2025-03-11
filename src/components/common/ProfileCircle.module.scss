@@ -1,6 +1,36 @@
-.profileImage{
-  width: 18%;
-  height: 18%;
+.profileContainer {
+  display: inline-block;
+}
+
+.profileImage {
   border-radius: 50%;
-  border: 1px solid violet;
+  border: 1px solid lightgray;
+  object-fit: cover;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+// 5단계 크기 정의
+.size-xs {
+  width: 30px;
+  height: 30px;
+}
+
+.size-sm {
+  width: 45px;
+  height: 45px;
+}
+
+.size-md {
+  width: 60px;
+  height: 60px;
+}
+
+.size-lg {
+  width: 100px;
+  height: 100px;
+}
+
+.size-xl {
+  width: 200px;
+  height: 200px;
 }
