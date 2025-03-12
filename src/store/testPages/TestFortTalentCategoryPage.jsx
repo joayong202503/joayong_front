@@ -1,6 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import useInitializeTalentCategoryData from "../slices/talentCategoryHook.js";
+import {talentCategoryAction} from "../slices/talentCategorySlice.js";
 
 const TestTalentCategoryPage = () => {
 
@@ -10,6 +11,9 @@ const TestTalentCategoryPage = () => {
     // 처음에 무조건 한 번 fetch를 해 줘야 함
     // 이 파일은 fetch를 하고 redux에 저장하는 것을 저장해 놓은 hook입니다.
     useInitializeTalentCategoryData();
+
+    const dispatch = useDispatch();
+    // dispatch(talentCategoryAction.setCategory('변해줄값'));
 
     return (
         <div>

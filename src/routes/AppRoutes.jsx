@@ -1,11 +1,12 @@
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import TestFortTalentCategoryPage from "../store/testPages/TestFortTalentCategoryPage.jsx";
 import TestForRegionCategoryPage from "../store/testPages/TestForRegionCategoryPage.jsx";
+import TestForAuthSlicePage from "../store/testPages/TestForAuthSlicePage.jsx";
 
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <TestForRegionCategoryPage />,
+        element: <TestForAuthSlicePage />,
         // errorElement:
         // children:
     }
