@@ -23,32 +23,25 @@ const Card = ({lessonImageSrc =lessonPhoto,
     <>
       <div className={styles.fullContainer}>
         <div className={styles.imgContainer}>
-          <img className={styles.lessonImage} src={lessonImageSrc} alt="레슨이미지" />
+          <img className={styles.lessonImage} src={lessonImageSrc} alt="레슨이미지"/>
         </div>
         <div className={styles.contentContainer}>
-
-
-        <div className={styles.titleContainer}>
-          <span className={styles.title}>{title}</span>
+          <div className={styles.titleContainer}>
+            <span className={styles.title}>{title}</span>
+          </div>
+          <div className={styles.profileContainer}>
+            <ProfileCircle/>
+            <span className={styles.profileName}>{profileName}</span>
+          </div>
+          <div className={styles.locationContainer}>
+            <MapPin size={16}/>
+            <p> {lessonLocation}</p>
+          </div>
+          <div className={styles.buttonContainer}>
+            <Button theme='blueTheme' className={styles.detailButton} onClick={onDetailClick}>상세보기</Button>
+          </div>
         </div>
-        <div className={styles.profileContainer}>
-          <ProfileCircle/>
-          <span className={styles.profileName}>{profileName}</span>
-
-        </div>
-        <div className={styles.locationContainer}>
-          <MapPin size={16}/>
-          <p> {lessonLocation}</p>
-
-        </div>
-        <div className={styles.buttonContainer}>
-          <Button theme ='blueTheme' className={styles.detailButton} onClick ={onDetailClick}>상세보기</Button>
-        </div>
-
       </div>
-        </div>
-
-
     </>
   );
 };

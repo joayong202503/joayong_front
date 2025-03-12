@@ -1,16 +1,22 @@
 .fullContainer{
-  width:20%;
-  height:20%;
+  width:300px;
+  height:380px;
   box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
+.imgContainer{
+ height: 50%;
+  width: 100%
+}
 .lessonImage{
   width: 100%;
-  height: 50%;
+  height: 100%;
   border-radius: 10px 10px 0 0;
+  object-fit: cover;
 
 }
 .contentContainer{
+  height: 50%;
   padding: 20px;
 }
 .titleContainer{
