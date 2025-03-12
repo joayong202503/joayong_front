@@ -3,14 +3,16 @@
 import './styles/global.module.scss';
 import AppContent from "./AppContent.jsx";
 import {Provider} from "react-redux";
+import { store } from "./store/index.js";
 
 const App = () => {
 
     return (
         <>
-            {/*<Provider store={store}>*/}
+            {/* Redux */}
+            <Provider store={store}>
                 <AppContent />
-            {/*</Provider>*/}
+            </Provider>
         </>
     );
 }
