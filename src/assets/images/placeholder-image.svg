@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#e0e0e0"/>
+  
+  <!-- Image icon -->
+  <rect x="150" y="100" width="100" height="80" fill="#a0a0a0" rx="5" ry="5"/>
+  <circle cx="175" cy="125" r="10" fill="#707070"/>
+  <polyline points="150,160 180,140 220,150 250,130" stroke="#707070" stroke-width="4" fill="none"/>
+  
+  <!-- No text -->
+</svg>
