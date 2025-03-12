@@ -18,6 +18,7 @@ const TestPage = () => {
                 <span> ✅ width : default는 fit-content이며, 부모의 ##% 로 조정하려면, width=40% 이런 식으로 적어주시면 됩니다. px은 설정 불가합니다. </span><br/>
                 <span> ✅ fontSize : small(14px), medium(16px), large(18px). Default는 14px </span><br/>
                 <span> ✅ type : default는 text입니다. 패스워드로 바꿔보았습니다.  </span><br/>
+                <span> ✅ name : formdata 제출 시 inputbox의 고유 식별자 값  </span><br/>
                 <span> ✅ ref: input 요소의 값을 부모에서 가져오기 위해, ref를 내려줍니다.  </span><br/>
                 <span> ✅ 이벤트 : onFocus, onBlur, onHandleEnterKey(엔터 키 눌렀을 때 이벤트), onClick, onChange </span><br/>
 
@@ -26,6 +27,7 @@ const TestPage = () => {
                         searchIcon={true}
                         placeHolder={'이것은 플레이스 홀더'}
                         width={'20%'}
+                        name={name}
                         fontSize={'medium'}
                         onHandleEnterKey={() => {
                             alert('엔터키를 눌렀습니다.')
