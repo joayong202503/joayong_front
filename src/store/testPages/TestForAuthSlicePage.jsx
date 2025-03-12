@@ -20,7 +20,7 @@ const TestForAuthSlicePage = () => {
 
     return (
         <div>
-            <h1>로그인 여부 : { userInfo ? '비로그인' : '로그인'}</h1>
+            <h1>로그인 여부 : { userInfo ? '로그인되었음. /login과 /me에서 가져온 값을 아래에 표시' : '비로그인'}</h1>
             <p>아래에는 useSelector((state) => state.auth.user)에서 가져오는 모든 값입니다</p>
             {userInfo && (
                 <div>

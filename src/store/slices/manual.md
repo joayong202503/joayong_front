@@ -33,14 +33,14 @@
 ### 2.slices > testPages에 예시 파일 있습니다.
 
 
-## 3. 로그인 여부(isLoggedIn) 가져오기
+## 3. 로그인 사용자 정보 가져오기
 >    // 로그인인 된 사용자 정보를 가져오는 함수. 로그인 되지 않았으면 null 반환<br>
 >    const userInfo = useSelector((state) => state.auth.user); <br>
 >    <br>
 >   <p style="color: red"> !! 로그인 시에는, 반드시 아래 함수를 호출하여 redux에서 유저의 정보를 업데이트 해줘야 합니다. (+localstorage에 token 저장)</p><br>
 >   const disPatch = useDispatch();<br>
 >   dispatch(authActions.login(/login api로 해서 반환된 값));<br>
->   await dispatch(fetchMe());<br>
+>   await dispatch(fetchMe()); // api중 /me를 호출한 후, 반환된 값을 redux에 저장하는 함수<br>
 > <br>
 >    <p style="color: red"> !! 로그인 후에는, 반드시 아래 함수를 호출하여 redux에서 유저 정보를 없애줘야 합니다. (+localstorage에 토큰 삭제)</p><br>
 > <br>
