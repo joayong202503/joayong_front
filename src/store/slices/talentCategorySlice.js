@@ -1,6 +1,8 @@
+
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {categoryApi} from "../../services/api.js";
-import fetchWithUs from "../../services/fetchWithUs.js";
+import fetchWithUs from "../../services/fetchWithAuth.js";
+import {regionCategoryAction} from "./regionCategorySlice.js";
 
 // - initialState를 category에 바로 fetch 해서 가져오면 안됨(비동기 작업으로 값을 못 가져올 수 있음)
 //    -> "createAsyncThunk + extraRducers"를 사용하면, createAsyncThunk 내용을 비동기 작업으로 진행화되 fetch가 fulfuill 되면 extrareducers를 통해 값이 업데이트 됨
@@ -13,6 +15,7 @@ const fetchTalentCategoryData = createAsyncThunk(
         const data = await response.json();
         return data.mainTalentList;
     }
+
 );
 
 const talentCategoryInitialState = {
@@ -60,7 +63,3 @@ const talentCategorySlice = createSlice({
 const talentCategoryAction = talentCategorySlice.actions;
 
 export {talentCategorySlice, talentCategoryAction, fetchTalentCategoryData};
-
-
-
-

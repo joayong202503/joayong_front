@@ -15,3 +15,9 @@ const AUTH_REQUIRED = '/api/joayong';
 export const categoryApi = {
   getRegionAndTalentCategory : `${API_URL}${AUTH_REQUIRED}/category`
 };
+
+// 로그인, 로그아웃 관련 API
+export const authApi = {
+  login : `${API_URL}${AUTH_NOT_REQUIRED}/login`, // 로그인(유저 + 로그인 여부 반환)
+  me : `${API_URL}${AUTH_REQUIRED}/user/me` // 유저 정보 반환(자동 로그인인 경우 이 api로 user정보 조회함)
+};
