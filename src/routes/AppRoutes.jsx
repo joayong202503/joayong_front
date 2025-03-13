@@ -1,119 +1,127 @@
 import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
-import TestFortTalentCategoryPage from "../store/testPages/TestFortTalentCategoryPage.jsx";
-import TestForRegionCategoryPage from "../store/testPages/TestForRegionCategoryPage.jsx";
 import AuthRequired from "./AuthRequired.jsx";
 
 const router = createBrowserRouter([
-    // 로그인 관련 경로
-    {
-        path: '/signup',
-        element: <AuthLayout isLoginPage ={false}/>,
+  // 회원가입 페이지
+  {
+    path: '/signup',
+    element: <AuthLayout isLoginPage={false}/>,
+    children: [
+      {
+        index: true,
+        element: <SignupPage/>
+      }
+    ]
+  },
+  // 로그인페이지
+  {
+    path: '/login',
+    element: <AuthLayout isLoginPage={true}/>,
+    children: [
+      {
+        index: true,
+        element: <LoginPage/>
+      }
+    ]
+
+  },
+  // 메인페이지
+  {
+    path: '/',
+    element: <MainLayout/>,
+    children: [
+      // 메인페이지
+      {
+        index: true,
+        element: <MainPage/>,
+      },
+      {
+        path: 'exchanges',
         children: [
-            {
-                index: true,
-                element: <SignupPage />
-            }
-        ]
-    },
-    {
-      path: '/login',
-      element: <AuthLayout isLoginPage={true}/>,
-      children: [
+          // 전체 재능교환조회 페이지
           {
-              index: true,
-              element: <LoginPage/>
+            index: true,
+            element: <ExchangeListPage/>
+          },
+          // 새 재능교환 추가 페이지
+          {
+            path: 'new',
+            element: <AuthRequired>
+              <ExchangeCreatePage/>
+            </AuthRequired>
+          },
+          {
+            path: ':exchangeId',
+            element: <ExchangeDetailPage/>
+          },
+          // 게시글 수정 페이지
+          {
+            path: ':exchangeId/edit',
+            element: <AuthRequired>
+              <ExchangeEditPage/>
+            </AuthRequired>
+          },
+          // 재능매칭 요청 페이지
+          {
+            path: ':exchangeId/request',
+            element: <AuthRequired>
+              <ExchangeRequestPage/>
+            </AuthRequired>
           }
-      ]
 
-    },
-    // 메인페이지
-    {
-        path: '/',
-        element: <MainPage />,
-    },
-
-    {
-        path:'/exchanges',
-        element: <ExchangesLayout/>,
-        children: [
-            {
-                index: true,
-                // 전체 게시글
-                element: <ExchangeListPage/>
-            },
-            {
-               path: 'new',
-               element: <AuthRequired>
-                            <ExchangeCreatePage/>
-                        </AuthRequired>
-            },
-            {
-                path: ':exchangeId',
-                element: <ExchangeDetailPage/>
-            },
-            {
-                path:':exchangeId/edit',
-                element: <AuthRequired>
-                            <ExchangeEditPage />
-                         </AuthRequired>
-            },
-            {
-                path: ':exchangeId/request',
-                element: <AuthRequired>
-                            <ExchangeRequestPage />
-                         </AuthRequired>
-            }
         ]
-    },
-    // 매칭관리
-    {
-        path: '/matches',
+      },
+
+      // 매칭 관리 페이지
+      {
+        path: 'matches',
         element: <AuthRequired>
-                    <MatchesPage/>
-                 </AuthRequired>
-    },
-    {
-        path: '/chat',
-        element: <ChatLayout/>,
-        children: [
-            {
-                path: ':matchId',
-                element: <AuthRequired>
-                            <ChatPage/>
-                         </AuthRequired>
-            }
-        ]
-    },
-    // 프로필 페이지
-    {
-        path: '/profile/:username',
+          <MatchesPage/>
+        </AuthRequired>
+      },
+      // WRTC & 채팅 페이지
+      {
+        path: 'chat/:matchId',
+        element: <AuthRequired>
+          <ChatPage/>
+        </AuthRequired>
+
+      },
+      // 프로필 페이지
+      {
+        path: 'profile/:username',
         element: <ProfilePage/>
-    },
-    {
-        path: '/settings/profile',
+      },
+      // 프로필 수정 페이지
+      {
+        path: 'settings/profile',
         element: <AuthRequired>
-                    <ProfileSettingPage/>
-                </AuthRequired>
-    },
-    {
-        path: '/about',
-        element: <AboutPage />
-    },
-    // 잘못된 경로로 접근 시 홈으로 리다이렉트
-    {
-        path: '*',
-        element: <Navigate to="/" replace/>
+          <ProfileSettingPage/>
+        </AuthRequired>
+      },
+      // 어바웃 페이지
+      {
+        path: 'about',
+        element: <AboutPage/>
+      },
+    ]
+  },
 
-    }
+  // 잘못된 경로로 접근 시 홈으로 리다이렉트
+  {
+    path: '*',
+    element: <Navigate to="/" replace/>
+
+  }
 
 ]);
 
 
 const AppRoutes = () => {
 
-    return (
-        <RouterProvider router={router}/>
-    );
+  return (
+    <RouterProvider router={router}/>
+  );
 };
 
 export default AppRoutes;
