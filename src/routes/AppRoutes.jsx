@@ -2,26 +2,27 @@ import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
 import TestFortTalentCategoryPage from "../store/testPages/TestFortTalentCategoryPage.jsx";
 import TestForRegionCategoryPage from "../store/testPages/TestForRegionCategoryPage.jsx";
 import AuthRequired from "./AuthRequired.jsx";
+import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
 
 const router = createBrowserRouter([
     // 로그인 관련 경로
     {
         path: '/signup',
-        element: <AuthLayout isLoginPage ={false}/>,
+        // element: <AuthLayout isLoginPage ={false}/>,
         children: [
             {
                 index: true,
-                element: <SignupPage />
+                // element: <SignupPage />
             }
         ]
     },
     {
       path: '/login',
-      element: <AuthLayout isLoginPage={true}/>,
+      // element: <AuthLayout isLoginPage={true}/>,
       children: [
           {
               index: true,
-              element: <LoginPage/>
+              // element: <LoginPage/>
           }
       ]
 
@@ -29,38 +30,39 @@ const router = createBrowserRouter([
     // 메인페이지
     {
         path: '/',
-        element: <MainPage />,
+        // element: <MainPage />,
     },
 
     {
         path:'/exchanges',
-        element: <ExchangesLayout/>,
+        // element: <ExchangesLayout/>,
         children: [
             {
                 index: true,
                 // 전체 게시글
-                element: <ExchangeListPage/>
+                // element: <ExchangeListPage/>
             },
             {
                path: 'new',
-               element: <AuthRequired>
+               element:
+                   <AuthRequired>
                             <ExchangeCreatePage/>
-                        </AuthRequired>
+                   </AuthRequired>
             },
             {
                 path: ':exchangeId',
-                element: <ExchangeDetailPage/>
+                // element: <ExchangeDetailPage/>
             },
             {
                 path:':exchangeId/edit',
                 element: <AuthRequired>
-                            <ExchangeEditPage />
+                            {/*<ExchangeEditPage />*/}
                          </AuthRequired>
             },
             {
                 path: ':exchangeId/request',
                 element: <AuthRequired>
-                            <ExchangeRequestPage />
+                            {/*<ExchangeRequestPage />*/}
                          </AuthRequired>
             }
         ]
@@ -69,17 +71,17 @@ const router = createBrowserRouter([
     {
         path: '/matches',
         element: <AuthRequired>
-                    <MatchesPage/>
+                    {/*<MatchesPage/>*/}
                  </AuthRequired>
     },
     {
         path: '/chat',
-        element: <ChatLayout/>,
+        // element: <ChatLayout/>,
         children: [
             {
                 path: ':matchId',
                 element: <AuthRequired>
-                            <ChatPage/>
+                            {/*<ChatPage/>*/}
                          </AuthRequired>
             }
         ]
@@ -87,17 +89,17 @@ const router = createBrowserRouter([
     // 프로필 페이지
     {
         path: '/profile/:username',
-        element: <ProfilePage/>
+        // element: <ProfilePage/>
     },
     {
         path: '/settings/profile',
         element: <AuthRequired>
-                    <ProfileSettingPage/>
+                    {/*<ProfileSettingPage/>*/}
                 </AuthRequired>
     },
     {
         path: '/about',
-        element: <AboutPage />
+        // element: <AboutPage />
     },
     // 잘못된 경로로 접근 시 홈으로 리다이렉트
     {

@@ -30,6 +30,11 @@ const ReduxFetcher = ({children}) => {
     const region = useSelector((state) => state.talentCategory.talentCategories);
     const talent = useSelector((state) => state.regionCategory.regionCategories);
 
+    // // 재능 카테고리, 지역 카테고리, 유저 정보를 fetch후 redux에 저장하는 커스텀 훅
+    // const initializeTalentCategory = useInitializeTalentCategoryRedux();
+    // const initializeRegionCategory = useInitializeRegionCategoryRedux();
+    // const initializeUser = useInitializeUserRedux();
+
     // console.log('app을 감싸는 fetcher component에서 저장된 user redux', userInfo);
     // console.log('app을 감싸는 fetcher component에서 저장된 재능 redux', region);
     // console.log('app을 감싸는 fetcher component에서 저장된 지역 redux', talent);
