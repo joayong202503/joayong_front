@@ -11,6 +11,7 @@ import styles from './Button.module.scss';
  * @param className
  * @param onClick
  * @param props - 기타 props
+ * @param height - 높이 지정할 때 (default는 글자높이)
  */
 
 const Button = ({

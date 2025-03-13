@@ -8,6 +8,10 @@ import Button from "../components/common/Button.jsx";
 
 const ExchangeCreatePage = () => {
 
+    // ============ 사진 첨부 관련 ====
+    const fileInputRef = useRef();
+    const contentInputRef = useRef();
+
     // ============= 재능 관련 ==================
     // 선택된 재능 대분류 카테고리 ID를 상태 관리(소분류 필터링용)
     const [selectedTalentToGiveMainCategoryId, setSelectedTalentToGiveMainCategoryId] = useState(null);
@@ -76,22 +80,32 @@ const ExchangeCreatePage = () => {
     }
 
 
-    console.log('regionCategories', sortedRegionCategories);
-
-    console.log(regionLastCategories);
-
-
-
+    // ============ 사진 첨부 관련 ====
+    // 드롭박스로 만든 div를 클릭해도 input type file 박스가 클릭되도록 함
+    const triggerFileInput = () => {
+        fileInputRef.current.click();
+    }
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.subWrapper}>
+
+                <div className={styles.imageDropArea} id='imageDropArea' onClick={triggerFileInput}>
+                    <span className={styles.inputLabel}>능력을 한 눈에 보여줄 수 있는 사진을 첨부해보는 건 어떤가요?<span><br/>
+                    </span> 매칭 확률을 높일 수 있어요.</span><br/>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        id="fileInputBox"
+                        accept="image/*"
+                        onChange={() => {}}/>
+                </div>
+
                 {/* 타이틀 박스 */}
                 <div className={`${styles.inputWrapper} ${styles.title}`}>
                     <label htmlFor={'title'}><span className={styles.inputLabel}>제목</span></label>
                     <InputBox
                         placeHolder={'제목을 입력하세요'}
-                        theme={'gray'}
                         width={'100%'}
                         ref={titleInputRef}
                         name={'title'}
@@ -196,24 +210,25 @@ const ExchangeCreatePage = () => {
                 {/* 내용 적는 박스 */}
                 <div className={`${styles.inputWrapper} ${styles.content}`}>
                     <label htmlFor={'content'}><span className={styles.inputLabel}>설명</span></label>
-                    <InputBox
+                    <textArea
                         placeHolder={'가르칠 내용과 이 재능에 대한 경험을 설명해주세요'}
-                        theme={'gray'}
-                        width={'100%'}
-                        ref={titleInputRef}
+                        ref={contentInputRef}
                         name={'title'}
                         id={'title'}
                     />
                 </div>
 
-                <Button
-                    theme={'blackTheme'}
-                    fontSize={'medium'}
-                    width={'100%'}
-                    className={'fill'}
-                >
-                    재능교환 등록하기
-                </Button>
+                <div className={styles.submitButtonWrapper}>
+                    <Button
+                        theme={'blackTheme'}
+                        fontSize={'medium'}
+                        width={'100%'}
+                        className={'fill'}
+                    >
+                        재능교환 등록하기
+                    </Button>
+                </div>
+
 
             </div>
 

@@ -1,26 +1,27 @@
 import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
 import AuthRequired from "./AuthRequired.jsx";
+import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
 
 const router = createBrowserRouter([
   // 회원가입 페이지
   {
     path: '/signup',
-    element: <AuthLayout isLoginPage={false}/>,
+    // element: <AuthLayout isLoginPage={false}/>,
     children: [
       {
         index: true,
-        element: <SignupPage/>
+        // element: <SignupPage/>
       }
     ]
   },
   // 로그인페이지
   {
     path: '/login',
-    element: <AuthLayout isLoginPage={true}/>,
+    // element: <AuthLayout isLoginPage={true}/>,
     children: [
       {
         index: true,
-        element: <LoginPage/>
+        // element: <LoginPage/>
       }
     ]
 
@@ -28,12 +29,12 @@ const router = createBrowserRouter([
   // 메인페이지
   {
     path: '/',
-    element: <MainLayout/>,
+    // element: <MainLayout/>,
     children: [
       // 메인페이지
       {
         index: true,
-        element: <MainPage/>,
+        // element: <MainPage/>,
       },
       {
         path: 'exchanges',
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
           // 전체 재능교환조회 페이지
           {
             index: true,
-            element: <ExchangeListPage/>
+            // element: <ExchangeListPage/>
           },
           // 새 재능교환 추가 페이지
           {
@@ -52,20 +53,20 @@ const router = createBrowserRouter([
           },
           {
             path: ':exchangeId',
-            element: <ExchangeDetailPage/>
+            // element: <ExchangeDetailPage/>
           },
           // 게시글 수정 페이지
           {
             path: ':exchangeId/edit',
             element: <AuthRequired>
-              <ExchangeEditPage/>
+              {/*<ExchangeEditPage/>*/}
             </AuthRequired>
           },
           // 재능매칭 요청 페이지
           {
             path: ':exchangeId/request',
             element: <AuthRequired>
-              <ExchangeRequestPage/>
+              {/*<ExchangeRequestPage/>*/}
             </AuthRequired>
           }
 
@@ -76,33 +77,33 @@ const router = createBrowserRouter([
       {
         path: 'matches',
         element: <AuthRequired>
-          <MatchesPage/>
+          {/*<MatchesPage/>*/}
         </AuthRequired>
       },
       // WRTC & 채팅 페이지
       {
         path: 'chat/:matchId',
         element: <AuthRequired>
-          <ChatPage/>
+          {/*<ChatPage/>*/}
         </AuthRequired>
 
       },
       // 프로필 페이지
       {
         path: 'profile/:username',
-        element: <ProfilePage/>
+        // element: <ProfilePage/>
       },
       // 프로필 수정 페이지
       {
         path: 'settings/profile',
         element: <AuthRequired>
-          <ProfileSettingPage/>
+          {/*<ProfileSettingPage/>*/}
         </AuthRequired>
       },
       // 어바웃 페이지
       {
         path: 'about',
-        element: <AboutPage/>
+        // element: <AboutPage/>
       },
     ]
   },

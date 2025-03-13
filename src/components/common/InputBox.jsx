@@ -20,7 +20,7 @@ import {Search} from 'lucide-react';
 const InputBox
     = forwardRef(
     ({
-         searchIcon, type = 'text', placeHolder, fontSize, width, theme,
+         searchIcon, type = 'text', placeHolder, fontSize, width, theme, height,
          onClick, onHandleEnterKey, onFocus, onBlur, onChange, ...props
      }
         , ref
@@ -48,7 +48,10 @@ const InputBox
                     onFocus={onFocus}
                     onBlur={onBlur}
                     onChange={onChange}
-                    style={{width: width?.includes('%') && width}}
+                    style={{
+                        height: height ? `${height}px` : undefined,
+                        width: width?.includes('%') ? width : undefined
+                    }}
                     {...props}
                 />
                 <div className={styles.searchIconContainer}>
