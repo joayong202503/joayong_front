@@ -9,7 +9,7 @@ import {authActions} from "../store/slices/authSlice.js";
 
 const Header = () => {
   // 스토어에서 사용자 정보 가져오기
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector(state => state.auth.user.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -35,7 +35,7 @@ const Header = () => {
   //프로필을 클릭했을때 해당 프로필 페이지로 이동할 수 있도록
   const handleProfileClick =() =>{
     if(user){
-      navigate(`/profile/${user.username}`)
+      navigate(`/profile/${user.id}`)
     }else{
       navigate('/login')
     }
