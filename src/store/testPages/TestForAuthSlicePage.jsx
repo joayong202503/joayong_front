@@ -1,9 +1,7 @@
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {authActions, fetchMe} from "../slices/authSlice.js";
-import fetchWithUs from "../../services/fetchWithUs.js";
-import {authApi} from "../../services/api.js";
 
 const TestForAuthSlicePage = () => {
 
@@ -12,16 +10,11 @@ const TestForAuthSlicePage = () => {
 
     const dispatch = useDispatch();
 
-    // 테스트용 가짜 아이디 로그인 정보(db에 저장해 놓은 로그인 정보)
-    const fakeUser = {
-        username: 'testUser',
-        email: 'abcd@naver.com'
-    }
-
     return (
         <div>
-            <h1>로그인 여부 : { userInfo ? '로그인되었음. /login과 /me에서 가져온 값을 아래에 표시' : '비로그인'}</h1>
-            <p>아래에는 useSelector((state) => state.auth.user)에서 가져오는 모든 값입니다</p>
+            <h1>로그인 여부 : { userInfo ? '로그인되었음. /me에서 가져온 값을 아래에 표시' : '비로그인'}</h1>
+            <p>가상 로그인 테스트를 위해, postman에서 회원가입+로그인 후, 로그인 시 responsebody로 주는 accessToken redux에 저장하였음</p>
+            <p>아래에는 useSelector((state) 화살표 state.auth.user)에서 가져오는 모든 값입니다</p>
             {userInfo && (
                 <div>
                     {Object.entries(userInfo).map(([key, value]) => (
@@ -33,11 +26,10 @@ const TestForAuthSlicePage = () => {
             )
             }
             <button onClick={async () => {
-                dispatch(authActions.login(fakeUser));
                 await dispatch(fetchMe());
             }}>로그인 버튼</button>
             <button onClick={() => {
-                dispatch(authActions.logout());
+                dispatch(authActions.deleteUserInfo());
             }}>로그아웃 버튼</button>
         </div>
     );

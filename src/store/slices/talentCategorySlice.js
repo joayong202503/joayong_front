@@ -1,7 +1,7 @@
 
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {categoryApi} from "../../services/api.js";
-import fetchWithUs from "../../services/fetchWithUs.js";
+import fetchWithUs from "../../services/fetchWithAuth.js";
 import {regionCategoryAction} from "./regionCategorySlice.js";
 
 // - initialState를 category에 바로 fetch 해서 가져오면 안됨(비동기 작업으로 값을 못 가져올 수 있음)
