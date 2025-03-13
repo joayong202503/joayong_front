@@ -25,7 +25,7 @@
 
 ## 3. 로그인 사용자 정보 가져오기
 >    // 로그인인 된 사용자 정보를 가져오는 함수. 로그인 되지 않았으면 null 반환<br>
->    const userInfo = useSelector((state) => state.auth.user); <br>
+>    const userInfo = useSelector((state) => state.auth.user.user); <br>
 >    <br>
 >   <p style="color: red"> !! 로그인 시에는, 반드시 아래 함수를 호출하여 redux에서 유저의 정보를 업데이트 해줘야 합니다.</p>
 >   const disPatch = useDispatch();<br>

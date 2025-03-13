@@ -21,6 +21,7 @@ const TestPage = () => {
                 <span> ✅ name : formdata 제출 시 inputbox의 고유 식별자 값  </span><br/>
                 <span> ✅ ref: input 요소의 값을 부모에서 가져오기 위해, ref를 내려줍니다.  </span><br/>
                 <span> ✅ 이벤트 : onFocus, onBlur, onHandleEnterKey(엔터 키 눌렀을 때 이벤트), onClick, onChange </span><br/>
+                <span> ✅ theme : gray 하면 회색 </span><br/>
 
                 <div className={styles.test}>
                     <InputBox
@@ -32,6 +33,7 @@ const TestPage = () => {
                         onHandleEnterKey={() => {
                             alert('엔터키를 눌렀습니다.')
                         }}
+                        theme={'gray'}
                         onClick={() =>  alert('검색 아이콘 클릭 이벤트')}
                         ref={inputBoxRef}
                         onChange={() => {alert('value :'+ inputBoxRef.current.value)}}

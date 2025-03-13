@@ -1,41 +1,53 @@
+
 .inputBoxWrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: fit-content;
-  border-radius: 10px;
-  border: 1px solid rgba(115, 115, 122, 0.15);
-  padding: 5px 15px 5px 8px;
-  gap: 7px;
-}
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: fit-content;
+    background: green;
+    border-radius: 10px;
+    border: 1px solid rgba(115, 115, 122, 0.15);
+    padding: 5px 15px 5px 8px;
+    box-sizing: border-box;
+    gap: 7px;
+    //border: 5px solid red;
 
-.searchIconContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.searchIcon {
-  width: 18px;
-  height: 18px;
-  color: rgba(1, 1, 197, 0.15);
-}
-
-.inputBox {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #000000;
-  line-height: 1.1;
-  font-size: 14px;
-
-  &::placeholder {
-    //color: map-get($description, color);
+    &.gray {
+      background: #F2F2F2;
+      border: none;
+    }
   }
 
-  &.large {
-    font-size: 18px;
+  .searchIconContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-}
+
+  .searchIcon {
+    width: 18px;
+    height: 18px;
+    color: rgba(1, 1, 197, 0.15);
+  }
+
+  .inputBox {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #000000;
+    line-height: 1.1;
+    font-size: 14px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    &::placeholder {
+    }
+
+    &.large {
+      font-size: 18px;
+    }
+
+  }
 

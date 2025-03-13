@@ -17,7 +17,7 @@ import React, {useEffect} from "react";
  * @param valueField - 각 옵션 컴포넌트에서 value 값으로 사용할 값을 정의합니다. 예를들어 items[cityName]를 각 옵션 박스의 value로 설정하려면, 'cityName'를 적어주시면 됩니다.
  * @returns {JSX.Element}
  */
-const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValueChange}) => {
+const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValueChange, disabled}) => {
 
     // ! Select Component가 기본적으로 body에 pointEvents를 0으로 설정하게 하는 것을 방지하는 커스텀 훅!
     useEffect(() => {
@@ -32,7 +32,9 @@ const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValu
         <Select.Root
             onValueChange={onValueChange}
             // open={true}
-            className={styles.selectRoot}>
+            className={styles.selectRoot}
+            disabled={disabled}
+        >
 
         {/* 눈에 보이는 부분 div. place holder 글씨 색 : .SelectTrigger[data-placeholder]. width는 prop으로 받아옴 */}
         <Select.Trigger className={styles.selectTrigger} style={{ width: `${width}px` }}>
