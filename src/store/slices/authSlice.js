@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import fetchWithUs from "../../services/fetchWithUs.js";
+import fetchWithUs from "../../services/fetchWithAuth.js";
 import {authApi} from "../../services/api.js";
 
 const initialState = {
@@ -10,24 +10,14 @@ const authSlice = createSlice({
     name: "auth",
     initialState: initialState,
     reducers: {
-        // 로그인을 하면,
-        // 1) redux에 /login으로 받은 정보 + /me로 받은 정보 userBasicInfo에 저장
-        // 2) localStorage에 accessToken 저장
-        // 3) fetchDetailedUserInfo 함수로 user에 세부 정보까지 담아야 함
-        login(state, action) {
-            state.user = action.payload;
-            localStorage.setItem("accessToken", action.payload.accessToken);
-        },
-        logout(state) {
+        // 로그아웃 후 redux에서 user 정보를 지우는 함수
+        deleteUserInfo(state) {
             state.user = null;
-            localStorage.removeItem("accessToken");
         },
-        // 로그인 후 /me에서 추가 정보를 받아서 저장하는 액션
-        setUserDetailedInfo(state, action) {
-            if (state.user) {
-                // 기존 user에 세부 정보 추가
-                state.user = { ...state.user, ...action.payload };
-            }
+        // 로그인 후 /me에서 정보를 받아서 저장하는 액션. fetchMe을 통해서 호출
+        setUser(state, action) {
+            // 기존 user에 세부 정보 추가
+            state.user = { ...action.payload };
         },
     },
 });
@@ -43,13 +33,11 @@ const fetchMe = () => async (dispatch) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // 로그인 구현 전 테스트용으로 email 수기 입력
-                // body: JSON.stringify({email: 'abcd@naver.com'})
             });
             if (!response.ok) return;
             const userData = await response.json();
             // 세부 정보를 redux에 저장
-            dispatch(authActions.setUserDetailedInfo(userData));
+            dispatch(authActions.setUser(userData));
         } catch (error) {
             console.error("사용자 정보를 가져오는 데 실패했습니다.", error);
         }

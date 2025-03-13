@@ -17,7 +17,6 @@ const fetchWithAuth = async (url, options = {}) => {
             ...options,
             headers,
         });
-        console.log(JSON.stringify(response))
         return response;
     } catch (error) {
         console.error("fetchWithAuth 요청 실패:", error);
