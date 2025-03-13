@@ -17,7 +17,6 @@ const authSlice = createSlice({
         // 로그인 후 /me에서 정보를 받아서 저장하는 액션. fetchMe을 통해서 호출
         setUser(state, action) {
             // 기존 user에 세부 정보 추가
-            console.log('setUser에서 받은 응답', action.payload);
             state.user = { ...action.payload };
         },
     },
@@ -37,7 +36,6 @@ const fetchMe = () => async (dispatch) => {
             });
             if (!response.ok) return;
             const userData = await response.json();
-            console.log('fetchMe에서 받은 응답', userData);
             // 세부 정보를 redux에 저장
             dispatch(authActions.setUser(userData));
         } catch (error) {

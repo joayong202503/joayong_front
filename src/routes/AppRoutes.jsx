@@ -7,7 +7,7 @@ import TestForAutoLoginAuthSlicePage from "../store/testPages/TestForAutoLoginAu
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <TestForAuthSlicePage />,
+        element: <TestFortTalentCategoryPage/>,
         // errorElement:
         // children:
     }
