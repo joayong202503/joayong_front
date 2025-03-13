@@ -23,6 +23,20 @@
 .aItem:hover{
   color: gray;
 }
+.activeLink{
+  color: #0066cc;
+  position: relative;
+}
+.activeLink::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #0066cc;
+}
+
 .rightContainer{
   display: flex;
 }
