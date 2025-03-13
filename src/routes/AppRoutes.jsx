@@ -1,6 +1,7 @@
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
 import TestFortTalentCategoryPage from "../store/testPages/TestFortTalentCategoryPage.jsx";
 import TestForRegionCategoryPage from "../store/testPages/TestForRegionCategoryPage.jsx";
+import AuthRequired from "./AuthRequired.jsx";
 
 const router = createBrowserRouter([
     // 로그인 관련 경로
@@ -90,7 +91,9 @@ const router = createBrowserRouter([
     },
     {
         path: '/settings/profile',
-        element: <AuthRequired><ProfileSettingPage /></AuthRequired>
+        element: <AuthRequired>
+                    <ProfileSettingPage/>
+                </AuthRequired>
     },
     {
         path: '/about',
