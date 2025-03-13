@@ -1,0 +1,40 @@
+/* 파일 이름 목록 스타일 */
+.fileNamesList {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.fileNamesList h3 {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.fileNamesList ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.fileNamesList li {
+  font-size: 13px;
+  color: #555;
+  margin: 5px 0;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between; /* 왼쪽: 파일명, 오른쪽: 휴지통 */
+  align-items: center;
+}
+
+.fileNamesList li:last-child {
+  border-bottom: none;
+}
+
+.deleteIcon {
+  width: 15px;
+  height: 15px;
+  color: gray;
+  cursor: pointer;
+}
