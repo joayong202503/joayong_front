@@ -37,8 +37,13 @@ export const useFileUpload = () => {
         const newFiles = Array.from(e.target.files); // 배열이 아닌 FileList이므로 배열로 변환하여 전달
         const allFiles = [...uploadedFile, ...newFiles];
 
+        // 파일 중복 체크: name을 기준으로 중복되는 파일을 제외
+        const uniqueFiles = allFiles.filter((file, index, self) =>
+            index === self.findIndex((f) => f.name === file.name && f.lastModified === file.lastModified)
+        );
+
         // 파일 검사 : {valid: true/false, (에러시) errorMessage : 에러메시지} 반환함
-        const validateFilesResult = validateFiles(allFiles); // 수정된 부분: allFiles 전달
+        const validateFilesResult = validateFiles(uniqueFiles); // 수정된 부분: allFiles 전달
 
         // 에러가 있었을 시, 에러 메시지 모달을 CreateNewPost 모달에서 띄어주기 위해, usestate로 관리하는 에러 값을 수정해줌
         if (!validateFilesResult.valid) {
@@ -48,7 +53,7 @@ export const useFileUpload = () => {
         }
 
         // 모든 검사 통과하면 파일 상태 업데이트
-        setUploadedFile(allFiles);
+        setUploadedFile(uniqueFiles);
         setFileUploadErrorMessage(null); // 에러 메시지 초기화
     };
 
@@ -81,10 +86,17 @@ export const useTalentCategories = (talentCategories) => {
     const talentToGiveSubCategories = sortedTalentCategories.find(category => category.id === selectedTalentToGiveMainCategoryId)?.subTalentList;
     const talentToReceiveSubCategories = sortedTalentCategories.find(category => category.id === selectedTalentToReceiveMainCategoryId)?.subTalentList;
 
+    const a = selectedTalentToReceiveMainCategoryId;
+    console.log(selectedTalentToReceiveMainCategoryId);
+    const selectedItem = sortedTalentCategories.find(category => category.id === a);
+    console.log(selectedItem);
+    console.log(2222);
+
     // 대분류 선택하면 상태값 업데이트(소분류 선택박스에서 보이는 부분 변경용)
     const handleTalentToGiveMainCategoryChange = (value) => {
         const selectedItem = sortedTalentCategories.find(category => category.name === value);
         if (selectedItem) {
+            console.log('give');
             setSelectedTalentToGiveMainCategoryId(selectedItem.id);
         }
     };
@@ -92,9 +104,11 @@ export const useTalentCategories = (talentCategories) => {
     const handleTalentToReceiveMainCategoryChange = (value) => {
         const selectedItem = sortedTalentCategories.find(category => category.name === value);
         if (selectedItem) {
+            console.log('receive');
             setSelectedTalentToReceiveMainCategoryId(selectedItem.id);
         }
     };
+
 
     return {
         sortedTalentCategories,

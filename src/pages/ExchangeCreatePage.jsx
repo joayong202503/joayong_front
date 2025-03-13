@@ -6,6 +6,11 @@ import {Form} from "react-router-dom";
 import ImageUploadSection from "../components/ExchangeCreatePage/ImageUploadSection.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import FileListDisplay from "../components/ExchangeCreatePage/FileListDisplay.jsx";
+import TitleInputSection from "../components/ExchangeCreatePage/TitleInputSection.jsx";
+import RegionSelectSection from "../components/ExchangeCreatePage/RegionSelectSection.jsx";
+import TalentSelectSection from "../components/ExchangeCreatePage/TalentSelectSection.jsx";
+import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSecition.jsx";
+import SubmitButton from "../components/ExchangeCreatePage/SubmitButton.jsx";
 
 const ExchangeCreatePage = () => {
 
@@ -64,45 +69,46 @@ const ExchangeCreatePage = () => {
                         onDelete={handleFileDelete}
                     />
 
-                    {/* 제목 입력 */}
-                    {/* <TitleInputSection label="제목" placeholder="제목을 입력하세요" ref={titleInputRef} id="title" /> */}
-                    {/* 지역 선택 */}
-                    {/* <RegionSelectSection */}
-                    {/*   sortedRegionCategories={sortedRegionCategories} */}
-                    {/*   regionMiddleCategories={regionMiddleCategories} */}
-                    {/*   regionLastCategories={regionLastCategories} */}
-                    {/*   handleRegionMainCategoryChange={handleRegionMainCategoryChange} */}
-                    {/*   handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange} */}
-                    {/* /> */}
+                     {/*제목 입력 */}
+                     <TitleInputSection
+                         label="제목"
+                         placeholder="제목을 입력하세요"
+                         ref={titleInputRef}
+                         id="title"
+                     />
+                     {/*지역 선택*/}
+                     <RegionSelectSection
+                       sortedRegionCategories={sortedRegionCategories}
+                       regionMiddleCategories={regionMiddleCategories}
+                       regionLastCategories={regionLastCategories}
+                       handleRegionMainCategoryChange={handleRegionMainCategoryChange}
+                       handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange}
+                     />
                     {/* 재능 선택 */}
-                    {/* <TalentSelectSection */}
-                    {/*   label="내가 줄 재능" */}
-                    {/*   sortedTalentCategories={sortedTalentCategories} */}
-                    {/*   talentSubCategories={talentToGiveSubCategories} */}
-                    {/*   handleTalentCategoryChange={handleTalentToGiveMainCategoryChange} */}
-                    {/* /> */}
-                    {/* 받을 재능 */}
-                    {/* <TalentSelectSection */}
-                    {/*   label="내가 받을 재능" */}
-                    {/*   sortedTalentCategories={sortedTalentCategories} */}
-                    {/*   talentSubCategories={talentToReceiveSubCategories} */}
-                    {/*   handleTalentCategoryChange={handleTalentToReceiveMainCategoryChange} */}
-                    {/* /> */}
+                     <TalentSelectSection
+                       label='talentToGive'
+                       sortedTalentCategories={sortedTalentCategories}
+                       talentToGiveSubCategories={talentToGiveSubCategories}
+                       talentToReceiveSubCategories={talentToReceiveSubCategories}
+                       handleTalentToGiveMainCategoryChange={handleTalentToGiveMainCategoryChange}
+                       handleTalentToReceiveMainCategoryChange={handleTalentToReceiveMainCategoryChange}
+                     />
                     {/* 내용 입력 */}
-                    {/* <ContentInputSection */}
-                    {/*   placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요" */}
-                    {/*   ref={contentInputRef} */}
-                    {/*   name="content" */}
-                    {/*   id="content" */}
-                    {/* /> */}
-                    {/* 제출 버튼 */}
-                    {/* <SubmitButton */}
-                    {/*   text="재능교환 등록하기" */}
-                    {/*   theme="blackTheme" */}
-                    {/*   fontSize="medium" */}
-                    {/*   width="100%" */}
-                    {/*   className="fill" */}
-                    {/* /> */}
+                     <ContentInputSection
+                       placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
+                       ref={contentInputRef}
+                       name="content"
+                       id="content"
+                     />
+
+                     {/*제출 버튼*/}
+                     <SubmitButton
+                       text="재능교환 등록하기"
+                       theme="blackTheme"
+                       fontSize="medium"
+                       width="100%"
+                       className="fill"
+                     />
                 </Form>
             </div>
         </div>
