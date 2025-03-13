@@ -1,0 +1,29 @@
+.mainContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.topContainer{
+  height: 20%;
+  padding: 100px;
+}
+.bottomContainer{
+  height: 50%;
+}
+.cardContainer{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.arrows{
+  font-weight: bold;
+  margin: 0 10px;
+  background: none;
+  border-radius: 20px;
+  box-shadow: 0.5px 0.5px 1px 1px #bdbdbd;
+  border: 1px solid gray;
+  height: 30px;
+}
+
