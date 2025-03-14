@@ -8,7 +8,8 @@ const RegionSelectSection = ({
                                  regionMiddleCategories,
                                  regionLastCategories,
                                  handleRegionMainCategoryChange,
-                                 handleRegionMiddleCategoryChange
+                                 handleRegionMiddleCategoryChange,
+                                 handleRegionLastCategoryChange
                              }) => {
 
     return (
@@ -44,6 +45,7 @@ const RegionSelectSection = ({
                     valueField={'name'}
                     width={130}
                     disabled={!regionLastCategories}
+                    onValueChange={handleRegionLastCategoryChange}
                 />
             </div>
         </div>

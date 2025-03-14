@@ -1,6 +1,8 @@
-import React from "react";
+import React, {useRef} from "react";
 import styles from "./TalentSelectSection.module.scss";
 import DropDownSelect from "../common/DropDownSelect.jsx";
+import {useTalentCategories} from "../../hooks/exchangesCreatePageHook/talentHooks.js";
+import {useSelector} from "react-redux";
 
 const TalentSelectSection = ({
                                  sortedTalentCategories,
@@ -8,9 +10,9 @@ const TalentSelectSection = ({
                                  talentToReceiveSubCategories,
                                  handleTalentToGiveMainCategoryChange,
                                  handleTalentToReceiveMainCategoryChange,
+                                 handleTalentToReceiveSubCategoryChange,
+                                 handleTalentToGiveSubCategoryChange
                              }) => {
-
-    console.log(talentToReceiveSubCategories);
 
     return (
 
@@ -27,6 +29,7 @@ const TalentSelectSection = ({
                         valueField={"name"}
                         width={130}
                         onValueChange={handleTalentToGiveMainCategoryChange}
+
                     />
                     {/* 재능 소분류 */}
                     <DropDownSelect
@@ -35,6 +38,7 @@ const TalentSelectSection = ({
                         keyField={"id"}
                         valueField={"name"}
                         width={130}
+                        onValueChange={handleTalentToGiveSubCategoryChange}
                         disabled={!talentToGiveSubCategories}
                     />
                 </div>
@@ -61,6 +65,7 @@ const TalentSelectSection = ({
                         valueField={"name"}
                         width={130}
                         disabled={!talentToReceiveSubCategories}
+                        onValueChange={handleTalentToReceiveSubCategoryChange}
                     />
                 </div>
             </div>

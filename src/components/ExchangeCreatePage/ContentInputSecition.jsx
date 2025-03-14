@@ -1,7 +1,10 @@
-import React, {useState} from 'react';
+import React, {forwardRef, useState} from 'react';
 import styles from './ContentInputSection.module.scss';
 
-const ContentInputSection = ({ contentInputRef }) => {
+const ContentInputSection
+    = forwardRef(({ onKeyDown }, ref) => {
+
+    const handleTabButton = onKeyDown;
 
     // 글자 수 관리
     const [charCount, setCharCount] = useState(0);
@@ -18,11 +21,12 @@ const ContentInputSection = ({ contentInputRef }) => {
             </label>
             <textarea
                 placeholder={'가르칠 내용과 이 재능에 대한 경험을 설명해주세요'}
-                ref={contentInputRef}
+                ref={ref}
                 name={'content'}
                 id={'content'}
                 maxLength={2200}
                 onChange={handleCharCountChange}
+                onKeyDown={handleTabButton}
             >
             </textarea>
 
@@ -30,9 +34,8 @@ const ContentInputSection = ({ contentInputRef }) => {
                 {charCount} / 2200
             </div>
 
-
         </div>
     );
-};
+});
 
 export default ContentInputSection;

@@ -21,3 +21,8 @@ export const authApi = {
   login : `${API_URL}${AUTH_NOT_REQUIRED}/login`, // 로그인(유저 + 로그인 여부 반환)
   me : `${API_URL}${AUTH_REQUIRED}/user/me` // 유저 정보 반환(자동 로그인인 경우 이 api로 user정보 조회함)
 };
+
+// 게시글 등록 관련 API
+export const postApi = {
+  newPost : `${API_URL}${AUTH_REQUIRED}/post`, // 게시글 등록
+}
