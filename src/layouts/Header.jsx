@@ -9,7 +9,7 @@ import {authActions} from "../store/slices/authSlice.js";
 
 const Header = () => {
   // 스토어에서 사용자 정보 가져오기
-  const user = useSelector(state => state.auth.user);
+  const user = useSelector(state => state.auth.user.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

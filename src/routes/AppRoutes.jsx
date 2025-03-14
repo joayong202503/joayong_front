@@ -78,12 +78,25 @@ const router = createBrowserRouter([
         ]
       },
 
-      // 매칭 관리 페이지
       {
         path: 'matches',
-        element: <AuthRequired>
-          {/*<MatchesPage/>*/}
-        </AuthRequired>
+        // 매칭 관리 페이지
+        children: [
+          {
+            index: true,
+            element: <AuthRequired>
+              <MatchesPage/>
+            </AuthRequired>
+          },
+          // 매칭 후 리뷰작성 사이트
+          {
+            path: ':matchId/rating',
+            element: <AuthRequired>
+                      <MatchRatingPage/>
+                  </AuthRequired>
+          }
+        ]
+
       },
       // WRTC & 채팅 페이지
       {
