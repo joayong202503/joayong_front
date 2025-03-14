@@ -1,7 +1,7 @@
-import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
+import {createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import AuthRequired from "./AuthRequired.jsx";
 import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
-import getUserLocationLoader, {LocationProvider} from "../loader/getUserLocationLoader.js";
+import {LocationProvider} from "../context/LocationContext.jsx";
 
 const router = createBrowserRouter([
   // 회원가입 페이지

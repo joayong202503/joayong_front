@@ -13,6 +13,16 @@ button {
 
 // 눈에 보이는 부분 div
 .selectTrigger {
+
+  &:focus {
+    outline: none;
+    border: 2px solid rgb(17, 124, 233);
+  }
+
+  &:hover {
+    border: 1px solid #222;
+  }
+
   width: fit-content;
   display: inline-flex;
   align-items: center;

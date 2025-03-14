@@ -14,6 +14,15 @@
     box-sizing: border-box;
     gap: 7px;
 
+  &:hover {
+    border: 1px solid #222;
+  }
+
+  &:focus-within {
+    border: 2px solid rgb(17, 124, 233);
+  }
+
+
   &.gray {
       background: #F2F2F2;
       border: none;

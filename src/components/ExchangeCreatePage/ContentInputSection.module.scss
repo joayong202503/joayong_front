@@ -27,9 +27,15 @@ textarea {
   border-radius: 10px;
   border: 1px solid rgba(115, 115, 122, 0.15);
 
+  &:hover {
+    border: 1px solid #222;
+  }
+
   &:focus {
     outline: none;
+    border: 2px solid rgb(17, 124, 233);
   }
+
 }
 
 .charCount {

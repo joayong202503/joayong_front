@@ -1,8 +1,8 @@
 import {useSelector} from "react-redux";
 import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.js";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import styles from "./ExchangeCreatePage.module.scss";
-import {Form, useNavigate} from "react-router-dom";
+import {Form, UNSAFE_LocationContext, useNavigate} from "react-router-dom";
 import ImageUploadSection from "../components/ExchangeCreatePage/ImageUploadSection.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import FileListDisplay from "../components/ExchangeCreatePage/FileListDisplay.jsx";
@@ -16,8 +16,12 @@ import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js
 import {authApi, postApi} from "../services/api.js";
 import fetchWithAuth from "../services/fetchWithAuth.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
+import {useLocation} from "../context/LocationContext.jsx";
 
 const ExchangeCreatePage = () => {
+
+    // LocationContext 가져오기
+    const { latitude, longitude, message,loading }  = useLocation();
 
     const navigate = useNavigate();
 
