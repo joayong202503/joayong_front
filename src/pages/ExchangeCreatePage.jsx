@@ -25,6 +25,9 @@ const ExchangeCreatePage = () => {
 
     const navigate = useNavigate();
 
+    // 제출 버튼 누른 후 서버 응답 올때까지 다시 제출 못하도록
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     // 모달 상태관리
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [alertMessage, setAlertMessage] = useState({ title: '', message: '' });
@@ -164,19 +167,25 @@ const ExchangeCreatePage = () => {
 
     // 제출할 때 로직
     const handleSubmit = async (e) => {
-
         e.preventDefault();
+
+        // 버튼 클릭 후 다시 제출 못하도록 비활성화
+        setIsSubmitting(true);
+
         const post = preparePostFormOfFormData();
 
         // 데이터 검증
         const isValidateData = validateFormData(post);
-        if (!isValidateData) return;
+        if (!isValidateData) {
+            // 검증 실패 시 다시 버튼 활성화
+            setIsSubmitting(false);
+            return;
+        }
 
-        // 데이터 성공 성공 시 formdata 준비하여 fetch
+        // 데이터 성공 시 formdata 준비하여 fetch
         const payload = getFormData(post, uploadedFile);
         const response = await fetchWithUs(postApi.newPost, {
             method: 'POST',
-            // headers의 content-type은 알아서 multipart file로 전송됨
             body: payload
         });
 
@@ -186,16 +195,13 @@ const ExchangeCreatePage = () => {
         } else {
             // 400대, 500대 에러 처리
             if (response.status >= 500) {
-                // 서버 내부 오류
                 setShowAlertModal(true);
                 setAlertMessage({
                     title: "서버 내부 문제",
                     message: "서버에서 문제가 발생했습니다. 잠시 후 다시 시도해주세요."
                 });
             } else if (response.status >= 400 && response.status < 500) {
-                // 클라이언트 오류 (400번대)
-                const errorData = await response.json(); // 응답으로 받은 에러 메시지를 뿌림
-                // 서버에서 message가 없다면 기본 메시지 사용
+                const errorData = await response.json();
                 const errorMessage = errorData.message || "요청에 문제가 있습니다. 다시 시도해주세요.";
 
                 setShowAlertModal(true);
@@ -205,6 +211,9 @@ const ExchangeCreatePage = () => {
                 });
             }
         }
+
+        // 버튼 상태 업데이트
+        setIsSubmitting(false);
     }
 
     return (
@@ -297,6 +306,7 @@ const ExchangeCreatePage = () => {
                        className="fill"
                        ref={submitButtonRef}
                        onSubmit={handleSubmit}
+                       disabled={isSubmitting}
                      />
                 </Form>
             </div>
