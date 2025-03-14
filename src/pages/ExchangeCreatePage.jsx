@@ -13,15 +13,24 @@ import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSe
 import SubmitButton from "../components/ExchangeCreatePage/SubmitButton.jsx";
 import {useTalentCategories} from "../hooks/exchangesCreatePageHook/talentHooks.js";
 import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js";
-import {authApi, postApi} from "../services/api.js";
-import fetchWithAuth from "../services/fetchWithAuth.js";
+import { postApi } from "../services/api.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
+import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
 
 const ExchangeCreatePage = () => {
 
-    // LocationContext 가져오기
-    const { latitude, longitude, message,loading }  = useLocation();
+    // LocationContext 가져온 후, 주소를 위도+경도에서 도로명 주소로 변환해주기
+    const { latitude, longitude }  = useLocation();
+    const [ userAddress, setUserAddress ] = useState();
+
+    useEffect(() => {
+        const getAddressByApi = async () => {
+            const fetchAddress = await getAddressByCoords(latitude, longitude);
+            setUserAddress(fetchAddress);
+        };
+        getAddressByApi();
+    }, [latitude,longitude]);
 
     const navigate = useNavigate();
 
@@ -270,12 +279,13 @@ const ExchangeCreatePage = () => {
                      />
                      {/*지역 선택*/}
                      <RegionSelectSection
-                       sortedRegionCategories={sortedRegionCategories}
-                       regionMiddleCategories={regionMiddleCategories}
-                       regionLastCategories={regionLastCategories}
-                       handleRegionMainCategoryChange={handleRegionMainCategoryChange}
-                       handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange}
-                       handleRegionLastCategoryChange={handleRegionLastCategoryChange}
+                           userAddress={userAddress}
+                           sortedRegionCategories={sortedRegionCategories}
+                           regionMiddleCategories={regionMiddleCategories}
+                           regionLastCategories={regionLastCategories}
+                           handleRegionMainCategoryChange={handleRegionMainCategoryChange}
+                           handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange}
+                           handleRegionLastCategoryChange={handleRegionLastCategoryChange}
                      />
                     {/* 재능 선택 */}
                      <TalentSelectSection

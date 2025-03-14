@@ -49,7 +49,8 @@ const router = createBrowserRouter([
           {
             path: 'new',
             element:
-                <LocationProvider> // 유저 실시간 위치 파악
+                // 유저 실시간 위치 파악 : LocationProvider로 감싼후(geolocation으로 경도위도 파악), reverGeoCoding의 getAddressByCoords로 주소로 변환
+                <LocationProvider>
                   <AuthRequired>
                     <ExchangeCreatePage />
                   </AuthRequired>
