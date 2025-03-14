@@ -105,7 +105,6 @@ const ExchangeCreatePage = () => {
 
         // 1) 타이틀 공백 체크
         const title = post.title;
-        console.log(title);
         if (!title || !title.trim()) {
             setShowAlertModal(true);
             setAlertMessage({message: "데이터를 확인해주세요", title: "제목을 입력해 주세요."});
@@ -130,7 +129,6 @@ const ExchangeCreatePage = () => {
 
         // 4) 줄 재능 null 체크
         const talentToGiveId = post["talent-g-id"];
-        console.log(talentToGiveId, 'aa');
         if (!talentToGiveId || isNaN(talentToGiveId)) {
             setShowAlertModal(true);
             setAlertMessage({message: "데이터를 확인해주세요", title: "줄 수 있는 재능을 입력해 주세요."});

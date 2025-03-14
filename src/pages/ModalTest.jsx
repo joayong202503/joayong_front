@@ -14,8 +14,6 @@ const ModalTest = () => {
         // 여기에 확인 시 실행할 로직 추가
     };
 
-
-
     return (
         <div className={styles.container}>
             <h1 className={styles.title}>이중 모달 테스트 페이지</h1>

@@ -1,6 +1,7 @@
 import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
 import AuthRequired from "./AuthRequired.jsx";
 import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
+import getUserLocationLoader, {LocationProvider} from "../loader/getUserLocationLoader.js";
 
 const router = createBrowserRouter([
   // 회원가입 페이지
@@ -47,9 +48,12 @@ const router = createBrowserRouter([
           // 새 재능교환 추가 페이지
           {
             path: 'new',
-            element: <AuthRequired>
-              <ExchangeCreatePage/>
-            </AuthRequired>
+            element:
+                <LocationProvider> // 유저 실시간 위치 파악
+                  <AuthRequired>
+                    <ExchangeCreatePage />
+                  </AuthRequired>
+                </LocationProvider>
           },
           {
             path: ':exchangeId',
