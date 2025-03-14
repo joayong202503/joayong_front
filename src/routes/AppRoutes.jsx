@@ -85,14 +85,14 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AuthRequired>
-              <MatchesPage/>
+              {/*<MatchesPage/>*/}
             </AuthRequired>
           },
           // 매칭 후 리뷰작성 사이트
           {
             path: ':matchId/rating',
             element: <AuthRequired>
-                      <MatchRatingPage/>
+                      {/*<MatchRatingPage/>*/}
                   </AuthRequired>
           }
         ]
