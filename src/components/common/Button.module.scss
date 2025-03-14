@@ -3,7 +3,7 @@
   display: inline;
   align-items: center;
   justify-content: center;
-  padding: 8px;
+  padding: 5px 8px 5px 8px;
   font-family: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -11,6 +11,10 @@
   outline: none;
   border-radius: 8px;
   border: 1px solid #000000;
+
+  &.fill {
+    width: 100%;
+  }
 
   &.disabled {
     background-color: #f6f6f6;
@@ -60,7 +64,8 @@
     border: 1px solid #333333;
 
     &:hover:not(.disabled) {
-      background-color: #444444;
+      //background-color: #000000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
     &.disabled {

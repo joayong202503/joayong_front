@@ -5,7 +5,7 @@
 //  -> 이 hook은, createAsyncThunk로 정의된 함수를 호출하는 훅입니다.
 import {useDispatch, useSelector} from "react-redux";
 import {fetchRegionCategoryData} from "../../store/slices/regionCategorySlice.js";
-import {useEffect} from "react";
+import {useCallback, useEffect} from "react";
 
 const useInitializeRegionCategoryRedux = () => {
 
@@ -14,15 +14,17 @@ const useInitializeRegionCategoryRedux = () => {
     // fetch가 완료된 상태인지 확인하는 값
     const initialized = useSelector((state) => state.regionCategory.initialized);
 
-    const loadRegionCategoryData = () => {
+    const loadRegionCategoryData = useCallback(async () => {
         if (!initialized) {
-            dispatch(fetchRegionCategoryData());
+            await dispatch(fetchRegionCategoryData());
         }
-    };
+    }, [dispatch, initialized]);
 
     useEffect(() => {
         loadRegionCategoryData();
-    }, [dispatch, initialized]);
+    }, [loadRegionCategoryData]);
+
+    return loadRegionCategoryData;
 };
 
 export default useInitializeRegionCategoryRedux;

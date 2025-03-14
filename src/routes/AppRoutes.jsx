@@ -1,26 +1,28 @@
-import {createBrowserRouter, RouterProvider, Navigate} from "react-router-dom";
+import {createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import AuthRequired from "./AuthRequired.jsx";
+import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
+import {LocationProvider} from "../context/LocationContext.jsx";
 
 const router = createBrowserRouter([
   // 회원가입 페이지
   {
     path: '/signup',
-    element: <AuthLayout isLoginPage={false}/>,
+    // element: <AuthLayout isLoginPage={false}/>,
     children: [
       {
         index: true,
-        element: <SignupPage/>
+        // element: <SignupPage/>
       }
     ]
   },
   // 로그인페이지
   {
     path: '/login',
-    element: <AuthLayout isLoginPage={true}/>,
+    // element: <AuthLayout isLoginPage={true}/>,
     children: [
       {
         index: true,
-        element: <LoginPage/>
+        // element: <LoginPage/>
       }
     ]
 
@@ -28,12 +30,12 @@ const router = createBrowserRouter([
   // 메인페이지
   {
     path: '/',
-    element: <MainLayout/>,
+    // element: <MainLayout/>,
     children: [
       // 메인페이지
       {
         index: true,
-        element: <MainPage/>,
+        // element: <MainPage/>,
       },
       {
         path: 'exchanges',
@@ -41,31 +43,35 @@ const router = createBrowserRouter([
           // 전체 재능교환조회 페이지
           {
             index: true,
-            element: <ExchangeListPage/>
+            // element: <ExchangeListPage/>
           },
           // 새 재능교환 추가 페이지
           {
             path: 'new',
-            element: <AuthRequired>
-              <ExchangeCreatePage/>
-            </AuthRequired>
+            element:
+                // 유저 실시간 위치 파악 : LocationProvider로 감싼후(geolocation으로 경도위도 파악), reverGeoCoding의 getAddressByCoords로 주소로 변환
+                <LocationProvider>
+                  <AuthRequired>
+                    <ExchangeCreatePage />
+                  </AuthRequired>
+                </LocationProvider>
           },
           {
             path: ':exchangeId',
-            element: <ExchangeDetailPage/>
+            // element: <ExchangeDetailPage/>
           },
           // 게시글 수정 페이지
           {
             path: ':exchangeId/edit',
             element: <AuthRequired>
-              <ExchangeEditPage/>
+              {/*<ExchangeEditPage/>*/}
             </AuthRequired>
           },
           // 재능매칭 요청 페이지
           {
             path: ':exchangeId/request',
             element: <AuthRequired>
-              <ExchangeRequestPage/>
+              {/*<ExchangeRequestPage/>*/}
             </AuthRequired>
           }
 
@@ -96,26 +102,26 @@ const router = createBrowserRouter([
       {
         path: 'chat/:matchId',
         element: <AuthRequired>
-          <ChatPage/>
+          {/*<ChatPage/>*/}
         </AuthRequired>
 
       },
       // 프로필 페이지
       {
-        path: 'profile/:userId',
-        element: <ProfilePage/>
+        path: 'profile/:username',
+        // element: <ProfilePage/>
       },
       // 프로필 수정 페이지
       {
         path: 'settings/profile',
         element: <AuthRequired>
-          <ProfileSettingPage/>
+          {/*<ProfileSettingPage/>*/}
         </AuthRequired>
       },
       // 어바웃 페이지
       {
         path: 'about',
-        element: <AboutPage/>
+        // element: <AboutPage/>
       },
     ]
   },
