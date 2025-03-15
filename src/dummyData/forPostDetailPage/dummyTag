@@ -1,0 +1,65 @@
+
+                {/* 같은 사용자의 다른 게시글 */}
+                <div>
+                    <h2 className={styles.sectionTitle}>
+                        <UserSquare size={20}/>
+                        작성자의 다른 게시글
+                    </h2>
+                    <div className={styles.cardsGrid}>
+                        {userPosts.map(userPost => (
+                            <div key={userPost.id} className={styles.card} onClick={() => {
+                            }}>
+                                <img
+                                    src={userPost.thumbnail}
+                                    alt={userPost.title}
+                                    className={styles.cardImage}
+                                />
+                                <div className={styles.cardContent}>
+                                    <h3 className={styles.cardTitle}>{userPost.title}</h3>
+                                    <div className={styles.cardCategories}>
+                                        <span className={`${styles.cardCategoryTag} ${styles.main}`}>
+                                            {userPost.offerCategory.main}
+                                        </span>
+                                        <span className={styles.cardCategoryTag}>
+                                            {userPost.offerCategory.sub}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 관련 게시글 */}
+                <div>
+                    <h2 className={styles.sectionTitle}>
+                        <Layers size={20}/>
+                        관련 게시글
+                    </h2>
+                    <div className={styles.cardsGrid}>
+                        {relatedPosts.map(relatedPost => (
+                            <div key={relatedPost.id} className={styles.card} onClick={() => {
+                            }}>
+                                <div className={styles.cardContent}>
+                                    <div className={styles.cardMeta}>
+                                        <img
+                                            src={relatedPost.user.profileImage}
+                                            alt={relatedPost.user.name}
+                                            className={styles.cardAvatar}
+                                        />
+                                        <span className={styles.cardUserName}>{relatedPost.user.name}</span>
+                                    </div>
+                                    <h3 className={styles.cardTitle}>{relatedPost.title}</h3>
+                                    <div className={styles.cardCategories}>
+                                        <span className={`${styles.cardCategoryTag} ${styles.main}`}>
+                                            {relatedPost.offerCategory.main}
+                                        </span>
+                                        <span className={styles.cardCategoryTag}>
+                                            {relatedPost.offerCategory.sub}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>

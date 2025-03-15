@@ -21,9 +21,9 @@ export const usePostDetailFetchWithUseQuery  = () => {
         queryKey: ['postDetail'],  // 쿼리 키는 queryKey로 전달
         queryFn: async () => {     // fetch 함수는 queryFn으로 전달
             const response = await fetchWithAuth(postApi.specificPost);
-            const data = await response.json();
 
             if (!response.ok) {
+                const data = await response.json();
                 // 서버 오류가 발생하면 throw로 에러를 던짐 -> useQuery에서 'error' 항목에 error 내용 받음
                 throw new Error(JSON.stringify(data));
             }

@@ -1,0 +1,452 @@
+/* 전체 레이아웃 */
+.talentExchangeDetail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.flexBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch; /* 안에 자식 높이 일치 */
+  gap: 40px;
+}
+
+// flex일때 비율 조절
+.half {
+  flex: 1;
+}
+
+/* ==================== 로딩 및 에러 메시지 스타일 ==================== */
+.loading,
+.error,
+.notFound {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  font-size: 18px;
+  color: #555;
+}
+
+.error {
+  color: #f43f5e;
+}
+
+/* ==================== 상단 메인 섹션 ==================== */
+.mainSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+/* 이미지 갤러리 */
+.galleryContainer {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: #f8fafc;
+}
+
+.mainImageContainer {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+}
+
+.mainImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnailsContainer {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.thumbnail {
+  width: 80px;
+  height: 60px;
+  border-radius: 4px;
+  cursor: pointer;
+  object-fit: cover;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+  border: 2px solid transparent;
+}
+
+.thumbnail:hover {
+  opacity: 1;
+}
+
+.thumbnailActive {
+  opacity: 1;
+  border-color: #3b82f6;
+}
+
+.carouselPlaceholder {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  color: #64748b;
+  font-size: 18px;
+}
+
+/* 상세 정보 컨테이너 */
+.detailContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 카테고리 */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.categoryGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoryLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.categoryTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 6px;
+}
+
+.offerCategory {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.wantCategory {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* 제목 */
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+  line-height: 1.3;
+}
+
+/* 프로필 섹션 */
+.profileCard {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profileCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.profileImage {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.userMessage {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* 게시글 정보 */
+.postMeta {
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.postMetaItem {
+  display: flex;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.postMetaItem svg {
+  margin-right: 6px;
+}
+
+/* 액션 버튼 */
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.primaryButton {
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+}
+
+.primaryButton:hover {
+  background-color: #2563eb;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  color: #334155;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iconButton:hover {
+  background-color: #e2e8f0;
+  color: #1e40af;
+}
+
+.favoriteButton:hover {
+  color: #ef4444;
+}
+
+.favoriteActive {
+  color: #ef4444;
+}
+
+.shareButton:hover {
+  color: #0369a1;
+}
+
+/* ==================== 컨텐츠 섹션 스타일 ==================== */
+.contentSections {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sectionTitle svg {
+  color: #3b82f6;
+}
+
+.contentBox {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.content {
+  line-height: 1.7;
+  color: #374151;
+  font-size: 16px;
+  white-space: pre-line;
+}
+
+/* ==================== 위치 정보 ==================== */
+.locationInfo {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+}
+
+.locationIcon {
+  font-size: 24px;
+  margin-right: 12px;
+  color: #3b82f6;
+}
+
+.locationText {
+  font-size: 16px;
+  color: #374151;
+}
+
+/* ==================== 카드 그리드 (관련 게시물, 사용자 게시물) ==================== */
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+}
+
+.cardImage {
+  height: 160px;
+  width: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 16px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.cardAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.cardUserName {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.cardCategories {
+  display: flex;
+  gap: 8px;
+}
+
+.cardCategoryTag {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.cardCategoryTag.main {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 920px) {
+  .mainSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .talentExchangeDetail {
+    padding: 20px;
+  }
+
+  .cardsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 24px;
+  }
+
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actionButtons {
+    flex-wrap: wrap;
+  }
+}

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {getSortedRegionCategories} from "../../utils/sortCategories.js";
+import {getSortedRegionCategories} from "../../utils/sortAndGetCategories.js";
 
 // 지역 관련 상태 관리
 export const useRegionCategories = (regionCategories) => {

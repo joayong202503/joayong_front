@@ -28,5 +28,5 @@ export const authApi = {
 // 게시글 관련 API
 export const postApi = {
   newPost : `${API_URL}${AUTH_REQUIRED}${POST}`, // 게시글 등록 (POST METHOD)
-  specificPost : `${API_URL}${AUTH_REQUIRED}${POST}/maisfsfdsfn`// 단일 게시글 조회  (REQUEST PARAM)
+  specificPost : `${API_URL}${AUTH_REQUIRED}${POST}?id=02eceeae-ef54-44d9-8a5a-bb0636de2573`// 단일 게시글 조회  (REQUEST PARAM)
 }
