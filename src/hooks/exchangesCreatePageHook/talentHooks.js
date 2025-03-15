@@ -1,6 +1,6 @@
 // 재능 관련 상태값 관리 : 선택된 재능 대분류 카테고리 ID를 상태 관리 (소분류 필터링용)
 import {useRef, useState} from "react";
-import {getSortedTalentCategories} from "../../utils/sortCategories.js";
+import {getSortedTalentCategories} from "../../utils/sortAndGetCategories.js";
 
 export const useTalentCategories = (talentCategories) => {
 

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {getSortedRegionCategories} from "../../utils/sortCategories.js";
+import {getSortedRegionCategories} from "../../utils/sortAndGetCategories.js";
 
 // 지역 관련 상태 관리
 export const useRegionCategories = (regionCategories) => {
@@ -35,15 +35,12 @@ export const useRegionCategories = (regionCategories) => {
     };
 
     const handleRegionLastCategoryChange = (value) => {
-        console.log('호출');
         const selectedItem = regionLastCategories.find(category => category.name === value);
-        console.log(selectedItem);
         if (selectedItem) {
             setSelectedRegionLastCategory(selectedItem);
         }
-        console.log(selectedRegionLastCategory);
+        // console.log(selectedRegionLastCategory);
     };
-
 
     return {
         sortedRegionCategories,

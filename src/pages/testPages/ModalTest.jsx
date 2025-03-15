@@ -1,8 +1,8 @@
 // 이 페이지는 프로젝트 완성시 삭제해야 할 페이지 입니다. 단순 모달 사용시 참고용 페이지입니다.
 import React, { useState } from 'react';
-import ConfirmModal from '../components/common/ConfirmModal.jsx';
+import ConfirmModal from '../../components/common/ConfirmModal.jsx';
 import styles from './ModalTest.module.scss';
-import AlertModal from "../components/common/AlertModal.jsx";
+import AlertModal from "../../components/common/AlertModal.jsx";
 
 const ModalTest = () => {
     const [showAlertModal, setShowAlertModal] = useState(false);

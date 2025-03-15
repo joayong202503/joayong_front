@@ -2,8 +2,18 @@ import {createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import AuthRequired from "./AuthRequired.jsx";
 import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
 import {LocationProvider} from "../context/LocationContext.jsx";
+import ExchangeDetailPage from "../pages/ExchangeDetailPage.jsx";
+import {queryClient} from "../utils/queryClient.js";
+import {QueryClientProvider} from "@tanstack/react-query";
+import ErrorPage from "../pages/ErrorPage.jsx";
 
 const router = createBrowserRouter([
+  // status 500 에러 페이지
+  {
+    path: '/error',
+    element: <ErrorPage />
+  }
+  ,
   // 회원가입 페이지
   {
     path: '/signup',
@@ -58,7 +68,11 @@ const router = createBrowserRouter([
           },
           {
             path: ':exchangeId',
-            // element: <ExchangeDetailPage/>
+            element:
+                // 성능 최적화를 위한 react-query로 데이터 캐싱
+                <QueryClientProvider client={queryClient}>
+                   <ExchangeDetailPage/>
+                </QueryClientProvider>,
           },
           // 게시글 수정 페이지
           {
@@ -85,14 +99,14 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AuthRequired>
-              <MatchesPage/>
+              {/*<MatchesPage/>*/}
             </AuthRequired>
           },
           // 매칭 후 리뷰작성 사이트
           {
             path: ':matchId/rating',
             element: <AuthRequired>
-                      <MatchRatingPage/>
+                      {/*<MatchRatingPage/>*/}
                   </AuthRequired>
           }
         ]

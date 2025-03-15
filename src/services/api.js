@@ -9,6 +9,9 @@ const API_URL = window.location.hostname === 'localhost'
 const AUTH_NOT_REQUIRED = '/api/joayong/auth';
 const AUTH_REQUIRED = '/api/joayong';
 
+// 주제 별 url 경로
+const POST = '/post'
+
 // ================================================================== //
 
 // 카테고리(지역, 재능) 관련 API
@@ -22,7 +25,8 @@ export const authApi = {
   me : `${API_URL}${AUTH_REQUIRED}/user/me` // 유저 정보 반환(자동 로그인인 경우 이 api로 user정보 조회함)
 };
 
-// 게시글 등록 관련 API
+// 게시글 관련 API
 export const postApi = {
-  newPost : `${API_URL}${AUTH_REQUIRED}/post`, // 게시글 등록
+  newPost : `${API_URL}${AUTH_REQUIRED}${POST}`, // 게시글 등록 (POST METHOD)
+  specificPost : `${API_URL}${AUTH_REQUIRED}${POST}?id=02eceeae-ef54-44d9-8a5a-bb0636de2573`// 단일 게시글 조회  (REQUEST PARAM)
 }
