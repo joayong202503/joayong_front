@@ -1,8 +1,8 @@
 import React, {useRef} from 'react';
-import Button from "../components/common/Button.jsx";
-import DropDownSelect from "../components/common/DropDownSelect.jsx";
+import Button from "../../components/common/Button.jsx";
+import DropDownSelect from "../../components/common/DropDownSelect.jsx";
 import styles from "./TestPage.module.scss";
-import InputBox from "../components/common/InputBox.jsx";
+import InputBox from "../../components/common/InputBox.jsx";
 
 const TestPage = () => {
 

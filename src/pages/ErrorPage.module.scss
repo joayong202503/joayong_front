@@ -1,0 +1,110 @@
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f5f5f7;
+}
+
+.errorCard {
+  width: 100%;
+  max-width: 500px;
+  padding: 40px 30px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.errorIcon {
+  width: 80px;
+  height: 80px;
+  color: #f43f5e;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.errorCode {
+  color: #6b7280;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.message {
+  color: #4b5563;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.errorUrl {
+  background-color: #f3f4f6;
+  padding: 12px;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 24px;
+  word-break: break-all;
+
+  strong {
+    color: #374151;
+  }
+}
+
+.button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover {
+    background-color: #2563eb;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .errorCard {
+    padding: 30px 20px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .message {
+    font-size: 16px;
+  }
+}
