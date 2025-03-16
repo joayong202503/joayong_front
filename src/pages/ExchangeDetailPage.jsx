@@ -19,11 +19,14 @@ import {
     getRegionDetailsBySubRegionId,
     getTalentDetailsBySubTalentId
 } from "../utils/sortAndGetCategories.js";
-import ImageCarouselWithThumbNail from "../components/ExchangeDetailPage/ImageCarouselWithThumbNail.jsx";
+import ImageCarouselWithThumbNail from "../components/common/ImageCarouselWithThumbNail.jsx";
 import {useSelector} from "react-redux";
-import Categories from "../components/ExchangeDetailPage/Categories.jsx";
+import Categories from "../components/common/Categories.jsx";
 import fetchWithAuth from "../services/fetchWithAuth.js";
 import {postApi} from "../services/api.js";
+import {increasePostViewCount} from "../services/postService.js";
+import ProfileCircle from "../components/common/ProfileCircle.jsx";
+import ProfileCard from "../components/common/ProfileCard.jsx";
 
 const ExchangeDetailPage = () => {
 
@@ -57,31 +60,11 @@ const ExchangeDetailPage = () => {
         }
     }, [isError, error, navigate]);
 
-    const increaseViewCount = async (postId) => {
-
-
-        const response = await fetchWithAuth(`${postApi.increaseViewCount}${postId}`, {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',  // JSON 데이터로 보낼 때 설정
-            },
-            body: JSON.stringify({}) // 서버에서 multipart에러 방지
-        });
-
-        if(!response.ok) {
-            console.warn('조회수 올리기 실패');
-        }
-
-        const responseData = await response.json();
-        console.log(responseData);
-        return responseData;
-    }
-
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
         if (!isLoading && post) {
             const increaseView = async () => {
-                const result = await increaseViewCount();
+                const result = await increasePostViewCount();
                 console.log('조회수 증가 결과:', result);
             };
             increaseView();
@@ -175,57 +158,58 @@ const ExchangeDetailPage = () => {
                             label={'배우고 싶어요'}
                         />
                     </div>
-                {/* 카테고리 박스 끝*/}
-
+                    {/* 카테고리 박스 끝*/}
 
                     {/* 제목 */}
                     <h1 className={styles.title}>{post.title}</h1>
 
                     {/* 프로필 카드 */}
-                    <div className={styles.profileCard} onClick={() => alert("프로필로 이동")}>
-                        <img
-                            src={ !isLoading && post.profileImage}
-                            alt={ '프로필 이미지' }
-                            className={styles.profileImage}
-                        />
-                        <div className={styles.profileInfo}>
-                            <div className={styles.name}>{ !isLoading && post.username}</div>
-                            {/*{소개글 : 일단 생략 /*<div className={styles.userMessage}>{ isLoading && post.user.profileMessage}</div>*!/ */}
-                        </div>
-                    </div>
+                    <ProfileCard
+                        imageSrc={post.profileImage}
+                        username={post.username}
+                        isLoading={isLoading}
+                        isPostUploaded={isPostUploaded}
+                        onClick={() => {
+                            console.log('클릭 완료')
+                        }}
+                    />
 
                     {/* 게시글 정보 */}
                     <div className={styles.postMeta}>
                         <div className={styles.postMetaItem}>
-                            <Calendar1Icon size={16} />
-                            { !isLoading && post.createdAt}
+                            <Calendar1Icon size={16}/>
+                            {!isLoading && post.createdAt}
                         </div>
                         <div className={styles.postMetaItem}>
-                            <EyeIcon size={16} />
-                            조회 { !isLoading && post.views}
+                            <EyeIcon size={16}/>
+                            조회 {!isLoading && post.views}
                         </div>
                     </div>
 
                     {/* 액션 버튼들 */}
                     <div className={styles.actionButtons}>
                         <button className={styles.primaryButton}>
-                            <MessageCircleIcon size={18} />
+                            <MessageCircleIcon size={18}/>
                             재능 교환 요청하기
                         </button>
                         <button
                             className={styles.iconButton}
-                            onClick={()=>{}}
+                            onClick={() => {
+                            }}
                         >
-                            <HeartIcon size={20} className={styles.favoriteActive} />
+                            <HeartIcon size={20} className={styles.favoriteActive}/>
                         </button>
-                        <button className={styles.iconButton} onClick={()=>{}}>
-                            <Share2 size={20} />
+                        <button className={styles.iconButton} onClick={() => {
+                        }}>
+                            <Share2 size={20}/>
                         </button>
-                        <button className={styles.iconButton} onClick={()=> {}}>
-                            <Edit2 size={18} />
+                        <button className={styles.iconButton} onClick={() => {
+                        }}>
+                            <Edit2 size={18}/>
                         </button>
-                        <button className={styles.iconButton} onClick={() => {}}>
-                            <Trash2 size={18} />
+                        <button className={styles.iconButton} onClick={() => {
+                        }}>
+                            <Trash2 size={18}/>
                         </button>
                     </div>
                 </div>
@@ -248,7 +232,7 @@ const ExchangeDetailPage = () => {
 
                 {/* 재능 + 지역 */}
                 <div className={styles.flexBox}>
-                    {/* 재능 섹션 */}
+                {/* 재능 섹션 */}
                     <div className={styles.half}>
                         <h2 className={styles.sectionTitle}>
                             <MapPin size={20} className={styles.locationIcon}/>
