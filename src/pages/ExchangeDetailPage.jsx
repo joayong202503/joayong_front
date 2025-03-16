@@ -27,6 +27,11 @@ import {postApi} from "../services/api.js";
 import {increasePostViewCount} from "../services/postService.js";
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import ProfileCard from "../components/common/ProfileCard.jsx";
+import formatDate from "../utils/formatDate.js";
+
+function PostDate(props) {
+    return null;
+}
 
 const ExchangeDetailPage = () => {
 
@@ -72,7 +77,7 @@ const ExchangeDetailPage = () => {
     }, [post]);
 
     // 카테고리 분류 찾기
-    console.log('aaa', data);
+    console.log('post server data', data);
 
     // ============ fetch 된 정보를 바탕으로 내용 업데이트 ============== //
 
@@ -115,11 +120,6 @@ const ExchangeDetailPage = () => {
             setUserPosts(dummyUserPosts);
         } // end of If
     }, [data]); // end of UseEffect
-
-    console.log(post);
-    console.log(222);
-
-
 
     return (
         // 전체에 대한 wrapper
@@ -170,17 +170,19 @@ const ExchangeDetailPage = () => {
                         isLoading={isLoading}
                         isPostUploaded={isPostUploaded}
                         onClick={() => {
-                            console.log('클릭 완료')
+                            navigate(`/profile/${post.username}`);
                         }}
                     />
 
                     {/* 게시글 정보 */}
                     <div className={styles.postMeta}>
-                        <div className={styles.postMetaItem}>
-                            <Calendar1Icon size={16}/>
-                            {!isLoading && post.createdAt}
-                        </div>
-                        <div className={styles.postMetaItem}>
+                        <PostDate
+                            isLoading={isLoading}
+                            isPostUploaded={isPostUploaded}
+                            date={post.createdAt}
+                        />
+
+                                    <div className={styles.postMetaItem}>
                             <EyeIcon size={16}/>
                             조회 {!isLoading && post.views}
                         </div>
