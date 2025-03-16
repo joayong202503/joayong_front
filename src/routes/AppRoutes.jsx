@@ -7,6 +7,7 @@ import ErrorPage from "../pages/ErrorPage.jsx";
 import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
 import {LocationProvider} from "../context/LocationContext.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
+import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -86,7 +87,7 @@ const router = createBrowserRouter([
           {
             path: ':exchangeId/request',
             element: <AuthRequired>
-              {/*<ExchangeRequestPage/>*/}
+              <ExchangeRequestPage/>
             </AuthRequired>
           }
 

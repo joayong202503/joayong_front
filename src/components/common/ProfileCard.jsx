@@ -14,11 +14,11 @@ const ProfileCard = ({isLoading=true,
             <div
                 className={styles.profileCard}
                 onClick={onClick}
+                id={username}
             >
                 <ProfileCircle
                     size={'extraMd'}
-                    src={!isLoading && isPostUploaded ? imageSrc : ''}
-                    id={username}
+                    src={!isLoading && isPostUploaded ? imageSrc : undefined}
                 />
                 <div className={styles.profileInfo}>
                     <div className={styles.userName}>

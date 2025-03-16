@@ -7,17 +7,19 @@
   min-height: 100vh;
 }
 
-.flexBox {
+.contentSections {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: stretch; /* 안에 자식 높이 일치 */
+  flex-direction: column;
   gap: 40px;
 }
 
-// flex일때 비율 조절
-.half {
-  flex: 1;
+.flexBox {
+  display: flex;
+  border: 2px solid red;
+  justify-content: space-between;
+  align-items: stretch; /* 안에 자식 높이 일치 */
+  flex-direction: row;
+  gap: 40px;
 }
 
 /* ==================== 로딩 및 에러 메시지 스타일 ==================== */
@@ -57,6 +59,10 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 6px;
+
+  &.column {
+    flex-direction: column;
+  }
 }
 
 /* 제목 */
@@ -75,16 +81,6 @@
   color: #64748b;
   font-size: 14px;
   margin-bottom: 24px;
-}
-
-.postMetaItem {
-  display: flex;
-  align-items: center;
-  margin-right: 16px;
-}
-
-.postMetaItem svg {
-  margin-right: 6px;
 }
 
 /* 액션 버튼 */
@@ -115,73 +111,6 @@
   background-color: #2563eb;
 }
 
-.iconButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f1f5f9;
-  color: #334155;
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.iconButton:hover {
-  background-color: #e2e8f0;
-  color: #1e40af;
-}
-
-.favoriteButton:hover {
-  color: #ef4444;
-}
-
-.favoriteActive {
-  color: #ef4444;
-}
-
-.shareButton:hover {
-  color: #0369a1;
-}
-
-/* ==================== 컨텐츠 섹션 스타일 ==================== */
-.contentSections {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.sectionTitle {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sectionTitle svg {
-  color: #3b82f6;
-}
-
-.contentBox {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9;
-}
-
-.content {
-  line-height: 1.7;
-  color: #374151;
-  font-size: 16px;
-  white-space: pre-line;
-}
 
 /* ==================== 위치 정보 ==================== */
 .locationInfo {
@@ -310,4 +239,10 @@
   .actionButtons {
     flex-wrap: wrap;
   }
+}
+
+
+// flex일때 비율 조절
+.half {
+  flex: 1;
 }
