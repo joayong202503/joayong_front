@@ -28,5 +28,6 @@ export const authApi = {
 // 게시글 관련 API
 export const postApi = {
   newPost : `${API_URL}${AUTH_REQUIRED}${POST}`, // 게시글 등록 (POST METHOD)
-  specificPost : `${API_URL}${AUTH_REQUIRED}${POST}`// 단일 게시글 조회  (REQUEST PARAM)
+  specificPost : `${API_URL}${AUTH_REQUIRED}${POST}`,// 단일 게시글 조회  (@pathvariable)
+  increaseViewCount : `${API_URL}${AUTH_REQUIRED}${POST}/view-count?id=`// 단일 게시글 조회  (@pathvariable로 post)
 }

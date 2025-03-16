@@ -22,6 +22,8 @@ import {
 import ImageCarouselWithThumbNail from "../components/ExchangeDetailPage/ImageCarouselWithThumbNail.jsx";
 import {useSelector} from "react-redux";
 import Categories from "../components/ExchangeDetailPage/Categories.jsx";
+import fetchWithAuth from "../services/fetchWithAuth.js";
+import {postApi} from "../services/api.js";
 
 const ExchangeDetailPage = () => {
 
@@ -29,14 +31,16 @@ const ExchangeDetailPage = () => {
     const talentList = useSelector((state) => state.talentCategory.talentCategories);
     const regionList = useSelector((state) => state.regionCategory.regionCategories);
 
-    console.log(talentList);
-    console.log(regionList);
-
     // =============== useQuery를 이용한 fetch ====================== //
-
     const {exchangeId:postId} = useParams();  // postId 가져오기
     // useQuery를 통해 5분 간격으로 리패칭하여 fetch. useQuery반환 값 중 data(response), isLoading(useQuery 진행중 여부), isError(에러 발생여부), error(에러값) 반환
     const { data, isLoading, isError, error } = usePostDetailFetchWithUseQuery(postId);
+
+    // fetch 로딩 다 된 후에 업데이트 되므로, 상태값으로 관리
+    const [post, setPost] = useState({});
+    const [relatedPosts, setRelatedPosts] = useState([]); // 추후 구현
+    const [userPosts, setUserPosts] = useState([]); // 추후 구현
+    const [isPostUploaded, setIsPostUploaded] = useState(false);
 
     // useQuery 작업 완료되었고, 에러 메시지의 status가 500이면 : 서버 오류 페이지로 이동
     // 에러 발생 시, 페이지 이동을 useEffect로 처리
@@ -53,16 +57,41 @@ const ExchangeDetailPage = () => {
         }
     }, [isError, error, navigate]);
 
+    const increaseViewCount = async (postId) => {
+
+
+        const response = await fetchWithAuth(`${postApi.increaseViewCount}${postId}`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',  // JSON 데이터로 보낼 때 설정
+            },
+            body: JSON.stringify({}) // 서버에서 multipart에러 방지
+        });
+
+        if(!response.ok) {
+            console.warn('조회수 올리기 실패');
+        }
+
+        const responseData = await response.json();
+        console.log(responseData);
+        return responseData;
+    }
+
+    // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
+    useEffect(() => {
+        if (!isLoading && post) {
+            const increaseView = async () => {
+                const result = await increaseViewCount();
+                console.log('조회수 증가 결과:', result);
+            };
+            increaseView();
+        }
+    }, [post]);
+
     // 카테고리 분류 찾기
     console.log('aaa', data);
 
     // ============ fetch 된 정보를 바탕으로 내용 업데이트 ============== //
-
-    // fetch 로딩 다 된 후에 업데이트 되므로, 상태값으로 관리
-    const [post, setPost] = useState({});
-    const [relatedPosts, setRelatedPosts] = useState([]); // 추후 구현
-    const [userPosts, setUserPosts] = useState([]); // 추후 구현
-    const [isPostUploaded, setIsPostUploaded] = useState(false);
 
     // useQuery에서 완료되면 data 값이 바뀜 -> data 값이 바뀌면 useEffect로 데이터 값 수정
     //  - 이 때, data 값은 useQuery에서 알아서 상태관리 해주므로 useState로 상태값 관리 따로 할 필요 없음
@@ -146,10 +175,8 @@ const ExchangeDetailPage = () => {
                             label={'배우고 싶어요'}
                         />
                     </div>
-                </div>
                 {/* 카테고리 박스 끝*/}
 
-                <div>
 
                     {/* 제목 */}
                     <h1 className={styles.title}>{post.title}</h1>
