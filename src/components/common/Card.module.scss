@@ -52,6 +52,8 @@
   display: flex;
   align-items: center;
   color:gray;
+  margin-top: 10px;
+  margin-bottom: 15px;
 }
 
 .locationContainer p{
@@ -62,8 +64,16 @@
   color:gray;
   font-size: 12px;
 }
-.buttonContainer{
+.buttonContainer {
   margin-top: 12px;
+  width: 100%;
+  display: flex;
+}
+
+.buttonContainer button {
+  flex: 1;
+  width: 100%;
+  padding: 10px 20px;
 }
 .detailButton{
   width: 100%;
