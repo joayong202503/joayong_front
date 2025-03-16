@@ -9,7 +9,7 @@ import {postApi} from "../services/api.js";
 // 캐싱 데이터 유지 시간 (5분)
 const STALE_TIME = 100 * 60 * 5;
 
-export const usePostDetailFetchWithUseQuery  = () => {
+export const usePostDetailFetchWithUseQuery  = (postId) => {
     /**  ###########  react-query를 통해 캐싱된 데이터를 가져옴 ##################
      * @param {queryKey: react-query에서 00이라는 이름으로 이 쿼리를 관리해주세요., queryFn: 데이터 fetch 로직}
      * @return {data: 서버 응답(responseData)
@@ -20,7 +20,7 @@ export const usePostDetailFetchWithUseQuery  = () => {
     return useQuery({
         queryKey: ['postDetail'],  // 쿼리 키는 queryKey로 전달
         queryFn: async () => {     // fetch 함수는 queryFn으로 전달
-            const response = await fetchWithAuth(postApi.specificPost);
+            const response = await fetchWithAuth(`${postApi.specificPost}/${postId}`);
 
             if (!response.ok) {
                 const data = await response.json();

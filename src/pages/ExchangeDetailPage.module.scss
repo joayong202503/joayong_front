@@ -48,66 +48,6 @@
   margin-bottom: 40px;
 }
 
-/* 이미지 갤러리 */
-.galleryContainer {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  background-color: #f8fafc;
-}
-
-.mainImageContainer {
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-  margin-bottom: 8px;
-  border-radius: 8px;
-  background-color: #f1f5f9;
-}
-
-.mainImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumbnailsContainer {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.thumbnail {
-  width: 80px;
-  height: 60px;
-  border-radius: 4px;
-  cursor: pointer;
-  object-fit: cover;
-  transition: all 0.2s ease;
-  opacity: 0.7;
-  border: 2px solid transparent;
-}
-
-.thumbnail:hover {
-  opacity: 1;
-}
-
-.thumbnailActive {
-  opacity: 1;
-  border-color: #3b82f6;
-}
-
-.carouselPlaceholder {
-  height: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f1f5f9;
-  color: #64748b;
-  font-size: 18px;
-}
-
 /* 상세 정보 컨테이너 */
 .detailContainer {
   display: flex;
