@@ -146,6 +146,7 @@ const ExchangeListPage = () => {
                                     talentGive={exchange.talentGive}
                                     talentTake={exchange.talentTake}
                                     lessonLocation={exchange.lessonLocation}
+                                    lessonImageSrc={exchange.imageSrc}
                                     imageSrc={exchange.imageSrc}
                                     profile={exchange.profile}
                                     onDetailClick={handleDetailClick}
@@ -165,6 +166,7 @@ const ExchangeListPage = () => {
                                     talentGive={exchange.talentGive}
                                     talentTake={exchange.talentTake}
                                     lessonLocation={exchange.lessonLocation}
+                                    lessonImageSrc={exchange.imageSrc}
                                     imageSrc={exchange.imageSrc}
                                     profile={exchange.profile}
                                     onDetailClick={handleDetailClick}
@@ -183,6 +185,7 @@ const ExchangeListPage = () => {
                                     talentGive={exchange.talentGive}
                                     talentTake={exchange.talentTake}
                                     lessonLocation={exchange.lessonLocation}
+                                    lessonImageSrc={exchange.imageSrc}
                                     imageSrc={exchange.imageSrc}
                                     profile={exchange.profile}
                                     onDetailClick={handleDetailClick}
