@@ -1,0 +1,37 @@
+
+// 원하는만 혹은 주는만 카테고리 wrapper
+.categoryGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoryLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.categoryTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 6px;
+}
+
+.main {
+  height: 2rem;
+  background-color: #93c5fd; /* 더 진한 하늘색 */
+  color: #eaf2ff; /* 밝은 파랑 (거의 흰색 느낌) */
+  min-width: 3.5rem;
+}
+
+.sub {
+  background-color: #dbeafe;
+  color: #1b399b;
+  height: 2rem;
+  min-width: 3.5rem;
+}

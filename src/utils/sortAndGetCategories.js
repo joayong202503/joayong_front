@@ -2,11 +2,12 @@ import React from 'react';
 import {useSelector} from "react-redux";
 
 // 재능 소분류 id로 대분류 및 소분류 이름 찾기
-const useGetTalentDetailsBySubTalentId = (subTalentCategoryId) => {
+// 안에서 uuseSelector 사용하면 useeffect안에서 못쓰므로, 리스트는 parameter로 전달해줌
+const getTalentDetailsBySubTalentId = (subTalentCategoryId, talentList) => {
 
-        const talentList = useSelector((state) => state.talentCategory.talentCategories);
+    if (!talentList) return;
 
-        // talentData를 순회하면서 대분류, 소분류 값 찾기
+    // talentData를 순회하면서 대분류, 소분류 값 찾기
         for (const majorCategory of talentList) {  // 대분류 순회
             for (const subCategory of majorCategory.subTalentList) {  // 소분류 순회
                 if (subCategory.id === subTalentCategoryId) {
@@ -23,9 +24,9 @@ const useGetTalentDetailsBySubTalentId = (subTalentCategoryId) => {
 
 
 // 지역 소분류 id로 대분류 및 소분류 이름 찾기
-const useGetRegionDetailsBySubRegionId  = (smallRegionCategoryId) => {
+const getRegionDetailsBySubRegionId  = (smallRegionCategoryId, regionList) => {
 
-    const regionList = useSelector((state) => state.regionCategory.regionCategories);
+    if (!regionList) return;
 
     // regionList를 순회하면서 소분류 id를 찾는다
     for (const majorKey in regionList) {  // majorKey : 대분류 키
@@ -50,6 +51,7 @@ const useGetRegionDetailsBySubRegionId  = (smallRegionCategoryId) => {
 
 
 const getSortedTalentCategories = (categories) => {
+
     // 1차 정렬: talentCategories의 name(재능 카테고리 대분류 이름)
     const sortedCategories = categories.map(category => ({
         ...category,
@@ -111,4 +113,4 @@ const getSortedRegionCategories = (categories) => {
     return sortedCategories;
 };
 
-export { getSortedTalentCategories, getSortedRegionCategories, useGetRegionDetailsBySubRegionId, useGetTalentDetailsBySubTalentId }
+export { getSortedTalentCategories, getSortedRegionCategories, getRegionDetailsBySubRegionId, getTalentDetailsBySubTalentId }
