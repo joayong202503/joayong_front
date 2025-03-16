@@ -16,8 +16,6 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
     // 이미지 경로를 /uploads/..... 앞에 http://localhost:8999 를 붙임 (useQuery 로딩이 끝난 후, 그 값으로 post 값이 업로드 된 후에 실행)
     const images = !isLoading && isPostUploaded ?getCompleteImagePath(imagesObject) : [];
 
-    console.log('sdfsfsdf', images);
-
     const openModal = () => setIsModalOpen(true); // 모달 열기
     const closeModal = () => setIsModalOpen(false); // 모달 닫기
 
@@ -37,7 +35,6 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
     const handlePrevClick = () => {
         // 이전에 index가 0이었으면 마지막 사진으로, 나머지는 이전 사진으로
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-        console.log('버튼이 클릭됨');
     };
 
     // 우측 사진으로 이동
@@ -45,8 +42,6 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
         // 이전 index가 마지막 index 였으면 첫번째 사진으로 이동, 나머지는 +1번째 index로 이동
         setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
     };
-
-    console.log('current: ', currentIndex);
 
     // 모달 내부 클릭 시 모달 닫히지 않도록
     const handleModalClick = (e) => {

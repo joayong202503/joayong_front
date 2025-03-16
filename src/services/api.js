@@ -11,7 +11,7 @@ const AUTH_REQUIRED = '/api/joayong';
 
 // 주제 별 url 경로
 const POST = '/post'
-
+const MESSAGE_URL = `${API_URL}${AUTH_REQUIRED}/message`;
 // ================================================================== //
 
 // 카테고리(지역, 재능) 관련 API
@@ -30,4 +30,9 @@ export const postApi = {
   newPost : `${API_URL}${AUTH_REQUIRED}${POST}`, // 게시글 등록 (POST METHOD)
   specificPost : `${API_URL}${AUTH_REQUIRED}${POST}`,// 단일 게시글 조회  (@pathvariable)
   increaseViewCount : `${API_URL}${AUTH_REQUIRED}${POST}/view-count?id=`// 단일 게시글 조회  (@pathvariable로 post)
+}
+
+// 메시지 관련 api
+export const messageApi = {
+  isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`
 }
