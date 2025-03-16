@@ -16,19 +16,21 @@ import {
 } from "lucide-react";
 import {dummyRelatedPosts, dummyUserPosts} from "../dummyData/forPostDetailPage/dummyData.js";
 import {
-    useGetRegionDetailsBySubRegionId,
-    useGetTalentDetailsBySubTalentId
+    getRegionDetailsBySubRegionId,
+    getTalentDetailsBySubTalentId
 } from "../utils/sortAndGetCategories.js";
 import ImageCarouselWithThumbNail from "../components/ExchangeDetailPage/ImageCarouselWithThumbNail.jsx";
+import {useSelector} from "react-redux";
+import Categories from "../components/ExchangeDetailPage/Categories.jsx";
 
 const ExchangeDetailPage = () => {
 
     const navigate = useNavigate();
+    const talentList = useSelector((state) => state.talentCategory.talentCategories);
+    const regionList = useSelector((state) => state.regionCategory.regionCategories);
 
-    // ### 테스트용 ####
-    console.log('재능 찾기', useGetTalentDetailsBySubTalentId(11));
-    console.log('region', useGetRegionDetailsBySubRegionId(
-        101));
+    console.log(talentList);
+    console.log(regionList);
 
     // =============== useQuery를 이용한 fetch ====================== //
 
@@ -51,6 +53,9 @@ const ExchangeDetailPage = () => {
         }
     }, [isError, error, navigate]);
 
+    // 카테고리 분류 찾기
+    console.log('aaa', data);
+
     // ============ fetch 된 정보를 바탕으로 내용 업데이트 ============== //
 
     // fetch 로딩 다 된 후에 업데이트 되므로, 상태값으로 관리
@@ -60,13 +65,10 @@ const ExchangeDetailPage = () => {
     const [isPostUploaded, setIsPostUploaded] = useState(false);
 
     // useQuery에서 완료되면 data 값이 바뀜 -> data 값이 바뀌면 useEffect로 데이터 값 수정
-    //  - 이 떄, data 값은 useQuery에서 알아서 상태관리 해주므로 useState로 상태값 관리 따로 할 필요 없음
+    //  - 이 때, data 값은 useQuery에서 알아서 상태관리 해주므로 useState로 상태값 관리 따로 할 필요 없음
     useEffect(() => {
 
         const serverResponse = data;
-
-        console.log(serverResponse);
-        console.log(3333);
 
         // useQuery에서 데이터 업데이트 진행 data 로딩이 완료되고, 에러가 나지 않았을 때만 진행
         if (!isLoading && !isError && data) {
@@ -80,10 +82,16 @@ const ExchangeDetailPage = () => {
                 views: serverResponse.viewCount,
                 id: serverResponse['post-id'], // postId랑 postItemId랑 다름
                 postItemId: serverResponse['post-item-id'],
-                location: serverResponse.location || 14, // !! 백엔드 구현 전
                 profileImage: serverResponse.profileImage || nullProfileImage,
-                offerCategory: serverResponse.offerCategory || 14, // !! 백엔드 구현 전
-                wantCategory: serverResponse.wantCategory || 14, // !! 백엔드 구현 전
+                locationMain: serverResponse.location ? getRegionDetailsBySubRegionId(serverResponse.location, regionList).majorCategory : getRegionDetailsBySubRegionId(101, regionList).majorCategory, // !! 백엔드 구현 전
+                locationSub: serverResponse.location ? getRegionDetailsBySubRegionId(serverResponse.location, regionList).subCategory : getRegionDetailsBySubRegionId(101, regionList).subCategory, // !! 백엔드 구현 전
+                locationSmall: serverResponse.location ? getRegionDetailsBySubRegionId(serverResponse.location, regionList).smallCategory : getRegionDetailsBySubRegionId(101, regionList).smallCategory, // !! 백엔드 구현 전
+                offerCategoryMain: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.offerCategory, talentList).majorCategory : '', // !! 백엔드 구현 전
+                offerCategorySub: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.offerCategory, talentList).subCategory : getTalentDetailsBySubTalentId(11, talentList).subCategory, // !! 백엔드 구현 전
+                offerCategorySubId: serverResponse.offerCategory ? serverResponse.offerCategory : 14, // !! 백엔드 구현 전
+                wantCategoryMain: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.wantCategory, talentList).majorCategory : getTalentDetailsBySubTalentId(11, talentList).majorCategory, // !! 백엔드 구현 전
+                wantCategorySub: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.wantCategory, talentList).subCategory : getTalentDetailsBySubTalentId(11, talentList).subCategory, // !! 백엔드 구현 전
+                wantCategorySubId: serverResponse.offerCategory ? serverResponse.wantCategory : 11, // !! 백엔드 구현 전
             });
 
             setIsPostUploaded(true);
@@ -115,27 +123,33 @@ const ExchangeDetailPage = () => {
 
                 {/* 오른쪽: 상세 정보 */}
                 <div className={styles.detailContainer}>
-                    {/* 카테고리 */}
+                    {/* 카테고리 박스 */}
                     <div className={styles.categories}>
-                        <div className={styles.categoryGroup}>
-                            <span className={styles.categoryLabel}>제공:</span>
-                            <div className={`${styles.categoryTag} ${styles.offerCategory}`}>
-                                {/*{ isLoading && post.offerCategory.main}*/}
-                            </div>
-                            <div className={`${styles.categoryTag} ${styles.offerCategory}`}>
-                                { !isLoading && post.offerCategory}
-                            </div>
-                        </div>
-                        <div className={styles.categoryGroup}>
-                            <span className={styles.categoryLabel}>원하는:</span>
-                            <div className={`${styles.categoryTag} ${styles.wantCategory}`}>
-                                { !isLoading && post.wantCategory }
-                            </div>
-                            <div className={`${styles.categoryTag} ${styles.wantCategory}`}>
-                                {/*{post.wantCategory.sub}*/}
-                            </div>
-                        </div>
+                        {/* 가르쳐 줄 것 */}
+                        <Categories
+                            key={'giveCategory'}
+                            isLoading={isLoading}
+                            isPostUploaded={isPostUploaded}
+                            mainCategory={post.offerCategoryMain}
+                            subCategory={post.offerCategorySub}
+                            subCategoryId={post.offerCategorySubId}
+                            label={'가르칠 수 있어요'}
+                        />
+                        {/* 배울 것 */}
+                        <Categories
+                            key={'wantCategory'}
+                            isLoading={isLoading}
+                            isPostUploaded={isPostUploaded}
+                            mainCategory={post.wantCategoryMain}
+                            subCategory={post.wantCategorySub}
+                            subCategoryId={post.wantCategorySubId}
+                            label={'배우고 싶어요'}
+                        />
                     </div>
+                </div>
+                {/* 카테고리 박스 끝*/}
+
+                <div>
 
                     {/* 제목 */}
                     <h1 className={styles.title}>{post.title}</h1>
@@ -223,7 +237,7 @@ const ExchangeDetailPage = () => {
                                             {/*{ isLoading && post.offerCategory}*/}
                                         </div>
                                         <div className={`${styles.categoryTag} ${styles.offerCategory}`}>
-                                            { isLoading && post.offerCategory }
+                                            { isLoading && post.offerCategoryMain }
                                         </div>
                                     </div>
                                     <div className={styles.categoryGroup}>
@@ -232,7 +246,7 @@ const ExchangeDetailPage = () => {
                                             {/*/!*{ isLoading && post.wantCategory.main}*!/ // 리스트에서 조회해야 함*/}
                                         </div>
                                         <div className={`${styles.categoryTag} ${styles.wantCategory}`}>
-                                            { isLoading && post.wantCategory }
+                                            { isLoading && post.wantCategoryMain }
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +263,7 @@ const ExchangeDetailPage = () => {
                         <div className={styles.contentBox}>
                             <div className={`${styles.content}`}>
                                 <span className={styles.locationText}>
-                                    { isLoading && post.location }
+                                    { isLoading && post?.locationSmall }
                                 </span>
                             </div>
                         </div>

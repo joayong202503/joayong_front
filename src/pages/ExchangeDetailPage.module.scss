@@ -1,14 +1,10 @@
 /* 전체 레이아웃 */
 .talentExchangeDetail {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
   padding: 32px;
   background-color: #fff;
   min-height: 100vh;
-}
-
-* {
-  box-sizing: border-box;
 }
 
 .flexBox {
@@ -55,43 +51,12 @@
 }
 
 /* 카테고리 */
+// 원하는 + 주는 카테고리 wrapper
 .categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.categoryGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.categoryLabel {
-  font-size: 14px;
-  font-weight: 600;
-  color: #64748b;
-}
-
-.categoryTag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
   gap: 6px;
-}
-
-.offerCategory {
-  background-color: #dbeafe;
-  color: #1e40af;
-}
-
-.wantCategory {
-  background-color: #e0f2fe;
-  color: #0369a1;
+  margin-bottom: 6px;
 }
 
 /* 제목 */
