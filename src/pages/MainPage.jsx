@@ -1,0 +1,169 @@
+import React, {useEffect, useState} from 'react';
+import styles from './MainPage.module.scss'
+import Card from "../components/common/Card.jsx";
+import { GoChevronLeft } from "react-icons/go";
+import { GoChevronRight } from "react-icons/go";
+import mainPhoto from "../assets/images/mainPage.jpeg"
+import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {fetchRecentExchanges} from "../services/exchangeApi.js";
+import profileImage from '../assets/images/profile.png'
+
+
+
+const MainPage = () => {
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [recentExchanges,setRecentExchanges] =useState([]);
+  const [error,setError] = useState(null);
+
+  // redux에서 카테고리 데이터 가져오기
+  const talentCategories = useSelector(state => state.talentCategory.talentCategories);
+  const regionCategories = useSelector(state => state.regionCategory.regionCategories);
+
+  // 카테고리 ID로 카테고리 이름 찾기
+  const getTalentName =(categoryId) =>{
+    if(!talentCategories || talentCategories.length === 0) return " 카테고리 로딩중";
+    const allSubCategories =talentCategories.flatMap(main => main.subTalentList || []);
+    // 소분류에서 해당 ID 찾기
+    const category = allSubCategories.find(sub => sub.id === categoryId);
+    return category ? category.name : " 카테고리 없음 ";
+
+  };
+
+  const getRegionName = (regionId) =>{
+    if(!regionCategories || regionCategories.length === 0) return "지역 로딩중";
+    const allSubRegions = regionCategories.flatMap(main => main.subRegionList || []);
+    // 소분류에서 해당 ID 찾기
+    const region = allSubRegions.find(sub=>sub.id === regionId);
+    return region? region.name : "지역없음";
+  };
+
+  useEffect(() => {
+    const getRecentExchanges = async() =>{
+      try {
+        // 12개의 최근 교환 게시물 가져오기
+        const response = await fetchRecentExchanges(12);
+
+        if(response && response.postList && response.postList.content){
+          const mappedData = response.postList.content.map(post =>{
+            const talentGive =post[`talent-g-id`] ? getTalentName(post[`talent-g-id`]) : "정보없음";
+            const talentTake = post[`talent-t-id`] ? getTalentName(post[`talent-t-id`]) : "정보없음";
+            const lessonLocation = post[`region-id`] ? getRegionName(post[`region-id`]) : "정보없음";
+
+            return{
+              id : post["post-id"],
+              title: post.title,
+              talentGive: talentGive,
+              talentTake: talentTake,
+              lessonLocation: lessonLocation,
+              imageSrc : post.images && post.images.length > 0
+                ? `http://localhost:8999${post.images[0].imageUrl}` : undefined,
+              profile: {
+                name: post.name,
+                imageSrc: profileImage,
+                size: 'xs'
+              },
+              content: post.content,
+              createdAt: post.createdAt
+            };
+          });
+          setRecentExchanges(mappedData);
+        }else{
+          setRecentExchanges([]);
+        }
+      }catch(err){
+        console.error('최근 재능 교환 목록을 가져오는데 실패했습니다:',err);
+        setError('데이터를 불러오는데 실패했습니다. 잠시후 다시 시도해주세요.');
+      }
+    };
+
+    if(talentCategories.length > 0 && regionCategories.length >0){
+      getRecentExchanges();
+    }
+  }, [talentCategories, regionCategories]);
+
+
+  // 이전 슬라이드로 이동
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  // 다음 슬라이드로 이동
+  const handleNext = () => {
+    if (currentIndex < recentExchanges.length-4) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  // 상세보기 페이지로 이동
+  const handleDetailClick = (exchangeId) => {
+    navigate(`/exchanges/${exchangeId}`);
+  };
+
+  // 현재 보여줄 스킬들 (슬라이딩 윈도우)
+  const visibleExchanges = recentExchanges.slice(currentIndex, currentIndex + 4);
+
+  return (
+    <>
+      <div className={styles.mainContainer}>
+        <section className={styles.topContainer}>
+          <div className={styles.photoContainer}>
+            <img className={styles.mainImage} src={mainPhoto}/>
+            <div className={styles.contentContainer}>
+              <h1>재능을 교환하고, 같이 성장합니다.</h1>
+              <p> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
+                함께 만들어가는 재능교환 플랫폼 입니다.
+              </p>
+            </div>
+          </div>
+
+        </section>
+        <section className={styles.bottomContainer}>
+          <div className={styles.titleContainer}>
+            <h2> 최근 등록 스킬</h2>
+          </div>
+          <div className={styles.cardContainer}>
+            {/*아직 임시로 만들어놓은 화살표 시간 가능하면 구현*/}
+            <button className={styles.arrows}
+                    onClick={handlePrev}
+                    disabled={currentIndex ===0 ||recentExchanges.length <= 4}>
+              <GoChevronLeft />
+            </button>
+
+            {error? (
+                <div className={styles.errorState}>
+                  {error}
+                </div>
+            ):recentExchanges.length === 0 ?(
+                <div className={styles.emptyState}>등록된 재능교환이 없습니다.</div>
+            ):(
+                visibleExchanges.map(exchange => (
+                    <Card
+                        key={exchange.id}
+                        title={exchange.title}
+                        talentGive={exchange.talentGive}
+                        talentTake={exchange.talentTake}
+                        lessonLocation={exchange.lessonLocation}
+                        profile={exchange.profile}
+                        lessonImageSrc={exchange.imageSrc}
+                        onDetailClick={() => handleDetailClick(exchange.id)}
+                    />
+
+            ))
+            )}
+
+            <button className={styles.arrows}
+                    onClick={handleNext}
+                    disabled={recentExchanges.length <= 4}><GoChevronRight />
+            </button>
+          </div>
+        </section>
+      </div>
+    </>
+  );
+};
+
+export default MainPage;
