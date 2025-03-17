@@ -123,16 +123,19 @@ const MainPage = () => {
         </section>
         <section className={styles.bottomContainer}>
           <div className={styles.titleContainer}>
-            <h2> 최근 등록 스킬</h2>
+            <h2> 최근 등록된 재능교환</h2>
           </div>
           <div className={styles.cardContainer}>
-            {/*아직 임시로 만들어놓은 화살표 시간 가능하면 구현*/}
-            <button className={styles.arrows}
-                    onClick={handlePrev}
-                    disabled={currentIndex ===0 ||recentExchanges.length <= 4}>
-              <GoChevronLeft />
-            </button>
-
+           {/*재능교환 게시물이 없을 경우에는 화살표 출력X*/}
+            {recentExchanges.length > 0 && (
+              <button
+                className={styles.arrows}
+                onClick={handlePrev}
+                disabled={currentIndex === 0 || recentExchanges.length <= 4}
+              >
+                <GoChevronLeft />
+              </button>
+            )}
             {error? (
                 <div className={styles.errorState}>
                   {error}
@@ -155,10 +158,15 @@ const MainPage = () => {
             ))
             )}
 
-            <button className={styles.arrows}
-                    onClick={handleNext}
-                    disabled={recentExchanges.length <= 4}><GoChevronRight />
-            </button>
+            {recentExchanges.length > 0 && (
+              <button
+                className={styles.arrows}
+                onClick={handleNext}
+                disabled={currentIndex === recentExchanges.length - 4 || recentExchanges.length <= 4}
+              >
+                <GoChevronRight />
+              </button>
+            )}
           </div>
         </section>
       </div>
