@@ -8,7 +8,25 @@ import styles from './AlertModal.module.scss'
 * pages-ModalTest 페이지 참고해주세요
 */
 
-const AlertModal = ({title,message,onClose}) => {
+const AlertModal = ({title,message,onClose,onPressEscape}) => {
+
+    useEffect(() => {
+        // Escape 키 이벤트 리스너 등록
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                onPressEscape && onPressEscape();  // onPressEscape가 있으면 실행
+                onClose(); // 모달 닫기
+            }
+        };
+
+        // 키보드 이벤트 리스너 등록
+        window.addEventListener('keydown', handleEscape);
+
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('keydown', handleEscape);
+        };
+    }, [onClose, onPressEscape]);  // onClose, onPressEscape가 변경되면 다시 실행
 
     return (
         <>

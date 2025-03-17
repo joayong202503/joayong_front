@@ -2,14 +2,22 @@
 // 원하는만 혹은 주는만 카테고리 wrapper
 .categoryGroup {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  //align-items: stretch;
+  gap: 2px;
+
+  &.column{
+    flex-direction: column;
+  }
 }
 
 .categoryLabel {
   font-size: 14px;
   font-weight: 600;
   color: #64748b;
+}
+
+.labelHighlight {
+  color: #1b399b;
 }
 
 .categoryTag {
@@ -47,4 +55,10 @@
   background-color: #fee2e2; /* 연한 핑크 */
   color: #8c1a1a; /* 진한 적갈색 */
   min-width: 3.5rem;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }

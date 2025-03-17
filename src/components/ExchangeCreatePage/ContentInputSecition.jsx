@@ -2,7 +2,7 @@ import React, {forwardRef, useState} from 'react';
 import styles from './ContentInputSection.module.scss';
 
 const ContentInputSection
-    = forwardRef(({ onKeyDown }, ref) => {
+    = forwardRef(({ onKeyDown, isTitleNecessary=true }, ref) => {
 
     const handleTabButton = onKeyDown;
 
@@ -15,9 +15,9 @@ const ContentInputSection
     }
 
     return (
-        <div className={`${styles.inputWrapper} ${styles.content}`}>
+        <div className={`${styles.inputWrapper} ${isTitleNecessary ? '' : styles.noTitle }`}>
             <label htmlFor={'content'}>
-                <span className={styles.inputLabel}>설명</span>
+                {isTitleNecessary && <span className={styles.inputLabel}>설명</span>}
             </label>
             <textarea
                 placeholder={'가르칠 내용과 이 재능에 대한 경험을 설명해주세요'}

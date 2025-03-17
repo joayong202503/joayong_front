@@ -104,7 +104,7 @@ const ExchangeDetailPage = () => {
             return;
         }
 
-        return navigate("request"); // 매칭 요청이 이미 있으면 이동
+        return navigate("request", { state: { postDetail: post } }); // 매칭 요청이 이미 있으면 이동하면서 post 정보 전달
     };
 
     // 게시물 삭제
