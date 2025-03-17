@@ -19,7 +19,7 @@ export const usePostDetailFetchWithUseQuery  = (postId) => {
      *          , error: throw Error 처리한 내용(처음에는 undefined, isError 완료된 후 업데이트 됨) }
      */
     return useQuery({
-        queryKey: ['postDetail'],  // 쿼리 키는 queryKey로 전달
+        queryKey: ['postDetail', postId],  // 쿼리 키는 queryKey로 전달
         queryFn: async () => {     // fetch 함수는 queryFn으로 전달
             const response = await fetchWithAuth(`${postApi.specificPost}/${postId}`);
 
@@ -31,7 +31,8 @@ export const usePostDetailFetchWithUseQuery  = (postId) => {
 
             return await response.json();
         },
-        staleTime: STALE_TIME
+        staleTime: STALE_TIME,
+        retry: 0
     });
 }
 

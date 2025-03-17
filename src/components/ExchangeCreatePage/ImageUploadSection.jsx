@@ -39,7 +39,7 @@ const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
             </div>
             <Button
                 theme={'blueTheme'}
-                fontSize={'medium'}
+                fontSize={'small'}
             >파일 첨부하기</Button>
             <input
                 ref={inputBoxRef}

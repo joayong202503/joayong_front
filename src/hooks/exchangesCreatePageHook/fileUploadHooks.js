@@ -1,8 +1,4 @@
-import {
-    areImageFiles,
-    areValidFileSizes,
-    isValidFileCount,
-} from "../../utils/validateUploadedFiles.js";
+import {areImageFiles, areValidFileSizes, isValidFileCount,} from "../../utils/validateUploadedFiles.js";
 import {useState} from "react";
 // 파일 업로드 관련
 export const useFileUpload = () => {
@@ -32,6 +28,7 @@ export const useFileUpload = () => {
 
     // 파일을 첨부했을 때의 로직
     const handleFileSelect = (e) => {
+
         // 파일 최대 개수를 구하려면, 검증 함수 호출 전 일단 기존 파일 + 이전 파일을 합쳐서 검증을 해야 함
         const newFiles = Array.from(e.target.files); // 배열이 아닌 FileList이므로 배열로 변환하여 전달
         const allFiles = [...uploadedFile, ...newFiles];
@@ -56,17 +53,6 @@ export const useFileUpload = () => {
         setFileUploadErrorMessage(null); // 에러 메시지 초기화
     };
 
-    // 파일 삭제 기능(FileListDisplay 컴포넌트에서 파일리스트의 index 번호를 전달하면, 그 인덱스 번호를 uplaodedFiles 리스트에서 삭제)
-    const handleFileDelete = (index) => {
 
-        const handleDelete = () => {
-            // index 번호 일치하는 것은 삭제
-            setUploadedFile((prevFiles) => prevFiles.filter((_, i) => i !== index));
-        }
-        return handleDelete;
-
-    };
-
-
-    return { uploadedFile, fileUploadErrorMessage, handleFileSelect, handleFileDelete };
+    return { uploadedFile, setUploadedFile, fileUploadErrorMessage, handleFileSelect };
 };
