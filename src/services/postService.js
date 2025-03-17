@@ -7,6 +7,7 @@ import {ApiError} from '../utils/ApiError.js'
 export const increasePostViewCount = async (postId) => {
 
     try {
+        console.log(1111, postId);
         const response = await fetchWithAuth(`${postApi.increaseViewCount}${postId}`, {
             method: 'POST',
             headers: {

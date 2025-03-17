@@ -10,24 +10,6 @@ import styles from './AlertModal.module.scss'
 
 const AlertModal = ({title,message,onClose}) => {
 
-    // useEffect를 사용하여 Esc 키 이벤트 처리
-    useEffect(() => {
-        // Esc 키를 눌렀을 때 onClose를 호출하여 모달을 닫기
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
-                onClose();
-            }
-        };
-
-        // 이벤트 리스너 추가
-        document.addEventListener('keydown', handleKeyDown);
-
-        // 모달이 닫힐 때 이벤트 리스너 제거
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [onClose]);
-
     return (
         <>
             <div onClick={onClose} className={styles.backdrop}>

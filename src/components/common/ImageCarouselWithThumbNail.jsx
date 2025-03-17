@@ -67,7 +67,7 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
         return () => {
             window.removeEventListener('keydown', handleKeyDown); // Cleanup on unmount
         };
-    }, [setIsOpenModal]); // Dependency includes setIsOpenModal
+    }, [setIsOpenModal]);
 
     return (
         <>

@@ -70,21 +70,21 @@ const ExchangeDetailPage = () => {
     // ============== fetching 끝 ============= //
 
     // 모달 관련
-    const [isOpenModal, setIsOpenModal ] = useState(false);
+    const [isOpenModal, setIsOpenModal ] = useState(false); // 매칭 요청
     const [modalTitle, setModalTitle] = useState('');
-    const [isOpenSubmitModal, setIsOpenSubmitModal ] = useState(false);
-    const [submitModalTitle, setSubmitModalTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('')
+    const [isOpenDeleteModal, setIsOpenDeleteModal ] = useState(false); // 게시글 삭제
+    const [deleteModalTitle, setDeleteModalTitle] = useState('');
 
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
-        if (!isLoading && post) {
-            const increaseView = async () => {
-                const result = await increasePostViewCount();
+        if (!isLoading && post && isPostUploaded) {
+            const increaseView = async (postId) => {
+                const result = await increasePostViewCount(postId);
             };
-            increaseView();
+            increaseView(postId);
         }
-    }, [post]);
+    }, [isLoading, post, isPostUploaded, postId]);
 
     // 매칭 요청 했을 때 로직
     //  - 본인 게시글인 경우, 버튼 자체가 안뜸
@@ -116,11 +116,11 @@ const ExchangeDetailPage = () => {
         // postId를 첫 번째 인자로만 전달
         mutate(postId, {
             onSuccess: () => {
-                setSubmitModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
-                setIsOpenSubmitModal(true);
+                setDeleteModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
+                setIsOpenDeleteModal(true);
 
                 setTimeout(() => {
-                    setIsOpenSubmitModal(false);
+                    setIsOpenDeleteModal(false);
 
                     // 모달이 닫힌 후 페이지 이동을 실행
                     setTimeout(() => {
@@ -155,16 +155,18 @@ const ExchangeDetailPage = () => {
                     onClose={() => {
                         setIsOpenModal(false);
                         navigate("/");
-                    }}/>
+                    }}
+                />
             }
 
-            { isOpenSubmitModal &&
+            { isOpenDeleteModal &&
                 <AlertModal
-                    title={submitModalTitle}
+                    title={deleteModalTitle}
                     onClose={() => {
-                        setIsOpenSubmitModal(false);
+                        setIsOpenDeleteModal(false);
                         navigate("/");
-                    }}/>
+                    }}
+                />
             }
 
             {/* 상단 섹션 (이미지 갤러리 + 상세 정보) */}

@@ -31,11 +31,6 @@ export const usePostData = (postId, data, isLoading, isError) => {
             setUserPosts(dummyUserPosts); // 추후 실제 API로 변경 필요
             setIsMyPost(data.name === myUsername);
 
-            // 조회수 증가 로직
-            const increaseView = async () => {
-                const result = await increasePostViewCount(postId);
-            };
-            increaseView();
         }
     }, [data, isLoading, isError, postId, regionList, talentList, myUsername]);
 
