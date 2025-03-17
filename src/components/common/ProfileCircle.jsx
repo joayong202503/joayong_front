@@ -7,7 +7,7 @@ import profileImage from '../../assets/images/profile.png'
 * @param src: 선택적 이미지소스 (기본값: 기본 프로필 이미지)
 */
 
-const ProfileCircle = ({size ='xs',src=profileImage}) => {
+const ProfileCircle = ({size ='xs',src=profileImage, username}) => {
 
 // 크기에 따른 클래스 이름 결정
   const sizeClass = styles[`size-${size}`];
@@ -18,6 +18,7 @@ const ProfileCircle = ({size ='xs',src=profileImage}) => {
         className={`${styles.profileImage} ${sizeClass}`}
         src={src}
         alt="프로필 사진"
+        id={username}
       />
     </div>
   );

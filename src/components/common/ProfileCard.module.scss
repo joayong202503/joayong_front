@@ -1,0 +1,41 @@
+.profileCard {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 12px;
+}
+
+.profileCard:hover {
+  transform: translateY(-1px);
+}
+
+.profileImage {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.userName {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.userMessage {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.4;
+}

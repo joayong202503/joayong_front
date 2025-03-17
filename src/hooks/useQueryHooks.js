@@ -4,12 +4,13 @@
 import {useQuery} from "@tanstack/react-query";
 import fetchWithAuth from "../services/fetchWithAuth.js";
 import {postApi} from "../services/api.js";
+import {useEffect} from "react";
 
 // Default 세팅
 // 캐싱 데이터 유지 시간 (5분)
 const STALE_TIME = 100 * 60 * 5;
 
-export const usePostDetailFetchWithUseQuery  = () => {
+export const usePostDetailFetchWithUseQuery  = (postId) => {
     /**  ###########  react-query를 통해 캐싱된 데이터를 가져옴 ##################
      * @param {queryKey: react-query에서 00이라는 이름으로 이 쿼리를 관리해주세요., queryFn: 데이터 fetch 로직}
      * @return {data: 서버 응답(responseData)
@@ -20,7 +21,7 @@ export const usePostDetailFetchWithUseQuery  = () => {
     return useQuery({
         queryKey: ['postDetail'],  // 쿼리 키는 queryKey로 전달
         queryFn: async () => {     // fetch 함수는 queryFn으로 전달
-            const response = await fetchWithAuth(postApi.specificPost);
+            const response = await fetchWithAuth(`${postApi.specificPost}/${postId}`);
 
             if (!response.ok) {
                 const data = await response.json();
@@ -34,3 +35,41 @@ export const usePostDetailFetchWithUseQuery  = () => {
     });
 }
 
+
+// useQuery에서 에러를 반환할 때 핸들링
+export const useUseQueryErrorHandler = (isError, error, navigate) => {
+    useEffect(() => {
+        if (isError && error) {
+            console.log("Error object:", error);
+            try {
+                const errorDetails = JSON.parse(error.message);
+                if (errorDetails.status === 500) {
+                    navigate('/error', {
+                        state: {
+                            errorPageUrl: window.location.pathname,
+                            status: errorDetails.status,
+                            message: errorDetails.message
+                        }
+                    });
+                } else if (errorDetails.status === 404) {
+                    navigate('/error', {
+                        state: {
+                            errorPageUrl: window.location.pathname,
+                            status: errorDetails.status,
+                            message: "존재하지 않는 게시물입니다."
+                        }
+                    });
+                }
+            } catch (parseError) {
+                console.error("Error parsing error message:", parseError);
+                navigate('/error', {
+                    state: {
+                        errorPageUrl: window.location.pathname,
+                        status: 500,
+                        message: "알 수 없는 오류가 발생했습니다."
+                    }
+                });
+            }
+        }
+    }, [isError, error, navigate]);
+};

@@ -1,11 +1,13 @@
 import {createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import AuthRequired from "./AuthRequired.jsx";
-import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
-import {LocationProvider} from "../context/LocationContext.jsx";
 import ExchangeDetailPage from "../pages/ExchangeDetailPage.jsx";
 import {queryClient} from "../utils/queryClient.js";
 import {QueryClientProvider} from "@tanstack/react-query";
 import ErrorPage from "../pages/ErrorPage.jsx";
+import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
+import {LocationProvider} from "../context/LocationContext.jsx";
+import ProfilePage from "../pages/ProfilePage.jsx";
+import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
           {
             path: 'new',
             element:
-                // 유저 실시간 위치 파악 : LocationProvider로 감싼후(geolocation으로 경도위도 파악), reverGeoCoding의 getAddressByCoords로 주소로 변환
+            // 유저 실시간 위치 파악 : LocationProvider로 감싼후(geolocation으로 경도위도 파악), reverGeoCoding의 getAddressByCoords로 주소로 변환
                 <LocationProvider>
                   <AuthRequired>
                     <ExchangeCreatePage />
@@ -85,7 +87,7 @@ const router = createBrowserRouter([
           {
             path: ':exchangeId/request',
             element: <AuthRequired>
-              {/*<ExchangeRequestPage/>*/}
+              <ExchangeRequestPage/>
             </AuthRequired>
           }
 
@@ -123,7 +125,7 @@ const router = createBrowserRouter([
       // 프로필 페이지
       {
         path: 'profile/:username',
-        // element: <ProfilePage/>
+        element: <ProfilePage/>
       },
       // 프로필 수정 페이지
       {
@@ -142,8 +144,8 @@ const router = createBrowserRouter([
 
   // 잘못된 경로로 접근 시 홈으로 리다이렉트
   {
-    path: '*',
-    element: <Navigate to="/" replace/>
+    // path: '*',
+    // element: <Navigate to="/" replace/>
 
   }
 
