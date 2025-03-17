@@ -29,6 +29,8 @@ export const useFileUpload = () => {
     // 파일을 첨부했을 때의 로직
     const handleFileSelect = (e) => {
 
+        setFileUploadErrorMessage(null); // 에러 메시지 초기화
+
         // 파일 최대 개수를 구하려면, 검증 함수 호출 전 일단 기존 파일 + 이전 파일을 합쳐서 검증을 해야 함
         const newFiles = Array.from(e.target.files); // 배열이 아닌 FileList이므로 배열로 변환하여 전달
         const allFiles = [...uploadedFile, ...newFiles];
@@ -43,7 +45,11 @@ export const useFileUpload = () => {
 
         // 에러가 있었을 시, 에러 메시지 모달을 CreateNewPost 모달에서 띄어주기 위해, usestate로 관리하는 에러 값을 수정해줌
         if (!validateFilesResult.valid) {
-            setFileUploadErrorMessage(validateFilesResult.errorMessage); // 에러 메시지 상태 업데이트
+            setFileUploadErrorMessage(null); // 상태 초기화
+            setTimeout(() => {
+                setFileUploadErrorMessage(validateFilesResult.errorMessage); // 딜레이 후 설정
+            }, 10); // 10ms 정도의 딜레이
+            // setFileUploadErrorMessage(validateFilesResult.errorMessage); // 에러 메시지 상태 업데이트
             console.log('파일 검사 미통과');
             return;
         }

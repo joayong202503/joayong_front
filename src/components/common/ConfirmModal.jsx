@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styles from './ConfirmModal.module.scss';
 
 /* 확인,취소버튼 모달
@@ -11,7 +11,26 @@ import styles from './ConfirmModal.module.scss';
 * pages-ModalTest 페이지 참고해주세요
 */
 
-const ConfirmModal = ({title,message, onConfirm, onClose, confirmText = "확인", cancelText = "취소"}) => {
+const ConfirmModal = ({title,message, onConfirm, onClose, onPressEscape, confirmText = "확인", cancelText = "취소"}) => {
+
+    useEffect(() => {
+        // Escape 키 이벤트 리스너 등록
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                onPressEscape && onPressEscape();  // onPressEscape가 있으면 실행
+                onClose(); // 모달 닫기
+            }
+        };
+
+        // 키보드 이벤트 리스너 등록
+        window.addEventListener('keydown', handleEscape);
+
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('keydown', handleEscape);
+        };
+    }, [onClose, onPressEscape]);  // onClose, onPressEscape가 변경되면 다시 실행
+
     return (
         <div onClick={onClose} className={styles.backdrop}>
 

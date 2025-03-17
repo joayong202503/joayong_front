@@ -9,6 +9,13 @@ const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
         inputBoxRef.current.click();
     };
 
+    const handleKeyDown = (e) => {
+        // Enter 키가 눌렸을 때 기본 동작(파일 선택 창 열기)을 방지
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    };
+
     // 파일을 드래그한 상태에서 드롭할 때 호출되는 함수
     const handleDrop = (e) => {
         e.preventDefault();  // 기본 동작 방지 (페이지가 새로고침 되지 않도록)
@@ -32,6 +39,7 @@ const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
             onClick={triggerFileInput}
             onDrop={handleDrop}    // 파일을 드롭할 때 호출
             onDragOver={handleDragOver}  // 드래그 오버 시 호출하여 드롭 가능 상태로 만듦
+            onKeyDown={handleKeyDown} // 엔터키 눌림 방지
         >
             <div className={styles.textContainer}>
                 <p className={styles.inputLabel}>능력을 한 눈에 보여줄 수 있는 사진을 첨부해보는 건 어떤신가요?</p>
