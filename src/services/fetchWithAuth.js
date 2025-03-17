@@ -3,7 +3,6 @@ const fetchWithAuth = async (url, options = {}) => {
     const token = localStorage.getItem("accessToken");
 
     if (!token || token === "undefined") {
-        console.log('token 없을 때 로직 작동');
         return fetch(url, { ...options });
     }
 

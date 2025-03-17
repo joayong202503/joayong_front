@@ -5,7 +5,7 @@ import {usePostDetailFetchWithUseQuery, useUseQueryErrorHandler} from "../hooks/
 import { MessageCircleIcon, Trash2} from "lucide-react";
 import ImageCarouselWithThumbNail from "../components/common/ImageCarouselWithThumbNail.jsx";
 import Categories from "../components/common/Categories.jsx";
-import { increasePostViewCount, useDeletePost} from "../services/postService.js";
+import {getPostViewCount, increasePostViewCount, useDeletePost} from "../services/postService.js";
 import ProfileCard from "../components/common/ProfileCard.jsx";
 import PostDate from "../components/common/PostDate.jsx";
 import ViewCount from "../components/common/ViewCount.jsx";
@@ -16,10 +16,13 @@ import {checkMatchingRequestValidity} from "../services/matchingService.js";
 import {usePostData} from "../hooks/ExchangeDetailPage/usePostData.js";
 import {useSelector} from "react-redux";
 import DeleteButton from "../components/common/DeleteButton.jsx";
+import fetchWithAuth from "../services/fetchWithAuth.js";
+import {postApi} from "../services/api.js";
 
 const ExchangeDetailPage = () => {
 
     const [shouldNavigate, setShouldNavigate] = useState(false);
+    const [viewCount, setViewCount] = useState(0);
 
     useEffect(() => {
         if (shouldNavigate) {
@@ -31,8 +34,6 @@ const ExchangeDetailPage = () => {
     const myUsername = useSelector((state) => state.auth.user?.name); // 매칭 요청 버튼 숨기는 용
     // useMutation을 통해 삭제 후 캐싱 데이터 반환한 결과를 반환
     const { mutate, isLoading:isMutationLoading, error:deletePostError } = useDeletePost();
-
-    console.log('mutation', mutate);
 
     // =============== useQuery를 이용한 fetch ====================== //
     const {exchangeId:postId} = useParams();  // postId 가져오기
@@ -46,6 +47,26 @@ const ExchangeDetailPage = () => {
     // useQuery 작업 완료되었고, 에러 메시지의 status가 500이면 : 서버 오류 페이지로 이동
     useUseQueryErrorHandler(isError, error, navigate);
 
+    // 조회수 fetch
+    useEffect(() => {
+        const fetchViewCount = async (postId) => {
+            try {
+                const response = await getPostViewCount(postId);
+                if (!response.ok) {
+                    setViewCount('정보 없음');
+                    return;
+                }
+                const result = await response.json();
+                setViewCount(result.viewCount); // 조회수 업데이트
+            } catch (error) {
+                setViewCount('정보 없음');
+                console.error("조회수 가져오기 실패:", error);
+            }
+        };
+
+        fetchViewCount(postId); // 조회수 호출
+    }, [postId]); // postId가 변경될 때마다 실행
+
     // ============== fetching 끝 ============= //
 
     // 모달 관련
@@ -55,13 +76,11 @@ const ExchangeDetailPage = () => {
     const [submitModalTitle, setSubmitModalTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('')
 
-
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
         if (!isLoading && post) {
             const increaseView = async () => {
                 const result = await increasePostViewCount();
-                console.log('조회수 증가 결과:', result);
             };
             increaseView();
         }
@@ -90,16 +109,8 @@ const ExchangeDetailPage = () => {
 
     // 게시물 삭제
     const handleDeletePost = async (postId) => {
-        console.log(postId);
-
-        console.log(333);
-        console.log(333);
-        console.log(333);
-        console.log(333);
-        console.log(isMutationLoading);
 
         // mutate : useMutation을 통해 게시물 삭제 후 캐싱 데이터까지 업데이트하는 함수
-
         if (mutate.loading) return; // 이미 진행 중인 요청이 있다면 중단
 
         // postId를 첫 번째 인자로만 전달
@@ -222,7 +233,7 @@ const ExchangeDetailPage = () => {
                         <ViewCount
                             isLoading={isLoading}
                             isPostUploaded={isPostUploaded}
-                            viewCount={post.views}
+                            viewCount={viewCount} // 이것만 실시간 fetch하여 가져옴
                         />
                     </div>
 

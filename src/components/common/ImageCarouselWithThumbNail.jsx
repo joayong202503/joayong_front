@@ -18,8 +18,6 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
     // 이미지 경로를 /uploads/..... 앞에 http://localhost:8999 를 붙임 (useQuery 로딩이 끝난 후, 그 값으로 post 값이 업로드 된 후에 실행)
     const images = !isLoading && isPostUploaded ? getCompleteImagePath(imagesObject) : [];
 
-    console.log('333', images.length);
-
     // 모달 열기
     const handleOpenModal = () => {
         setIsOpenModal(true); // 모달 열기

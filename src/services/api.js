@@ -29,8 +29,9 @@ export const authApi = {
 export const postApi = {
   newPost : POST_URL, // 게시글 등록 (POST METHOD)
   specificPost : POST_URL,// 단일 게시글 조회
-  increaseViewCount : `${POST_URL}/view-count/`, // 단일 게시글 조회
-  deletePost : `${POST_URL}/delete/` // 게시글 삭제
+  increaseViewCount : `${POST_URL}/view-count/`, // "POST" MAPPING
+  viewCount : `${POST_URL}/view-count/`, // "GET" MAPPING
+  deletePost : `${POST_URL}/delete/`, // 게시글 삭제
 }
 
 // 메시지 관련 api
