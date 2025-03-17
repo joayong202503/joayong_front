@@ -103,9 +103,6 @@ const MainPage = () => {
     navigate(`/exchanges/${exchangeId}`);
   };
 
-  // 현재 보여줄 스킬들 (슬라이딩 윈도우)
-  const visibleExchanges = recentExchanges.slice(currentIndex, currentIndex + 4);
-
   return (
     <>
       <div className={styles.mainContainer}>
@@ -123,26 +120,34 @@ const MainPage = () => {
         </section>
         <section className={styles.bottomContainer}>
           <div className={styles.titleContainer}>
-            <h2> 최근 등록 스킬</h2>
+            <h2> 최근 등록된 재능교환</h2>
           </div>
           <div className={styles.cardContainer}>
-            {/*아직 임시로 만들어놓은 화살표 시간 가능하면 구현*/}
-            <button className={styles.arrows}
-                    onClick={handlePrev}
-                    disabled={currentIndex ===0 ||recentExchanges.length <= 4}>
-              <GoChevronLeft />
-            </button>
-
+           {/*재능교환 게시물이 없을 경우에는 화살표 출력X*/}
+            {recentExchanges.length > 0 && (
+              <button
+                className={styles.arrows}
+                onClick={handlePrev}
+                disabled={currentIndex === 0 || recentExchanges.length <= 4}
+              >
+                <GoChevronLeft />
+              </button>
+            )}
             {error? (
                 <div className={styles.errorState}>
                   {error}
                 </div>
             ):recentExchanges.length === 0 ?(
                 <div className={styles.emptyState}>등록된 재능교환이 없습니다.</div>
-            ):(
-                visibleExchanges.map(exchange => (
-                    <Card
-                        key={exchange.id}
+            ): (
+              <div className={styles.cardsWrapper}>
+                <div
+                  className={styles.cardsTrack}
+                  style={{transform: `translateX(-${currentIndex * 25}%)`}}
+                >
+                  {recentExchanges.map(exchange => (
+                    <div className={styles.cardItem} key={exchange.id}>
+                      <Card
                         title={exchange.title}
                         talentGive={exchange.talentGive}
                         talentTake={exchange.talentTake}
@@ -150,15 +155,23 @@ const MainPage = () => {
                         profile={exchange.profile}
                         lessonImageSrc={exchange.imageSrc}
                         onDetailClick={() => handleDetailClick(exchange.id)}
-                    />
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-            ))
+              )}
+
+            {recentExchanges.length > 0 && (
+              <button
+                className={styles.arrows}
+                onClick={handleNext}
+                disabled={currentIndex === recentExchanges.length - 4 || recentExchanges.length <= 4}
+              >
+                <GoChevronRight/>
+              </button>
             )}
-
-            <button className={styles.arrows}
-                    onClick={handleNext}
-                    disabled={recentExchanges.length <= 4}><GoChevronRight />
-            </button>
           </div>
         </section>
       </div>
