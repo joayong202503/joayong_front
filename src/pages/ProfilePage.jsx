@@ -3,6 +3,7 @@ import styles from './ProfilePage.module.scss'
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import Card from "../components/common/Card.jsx";
 import Button from "../components/common/Button.jsx";
+import RatingBox from "../components/common/RatingBox.jsx";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('ratings'); // 초기 탭을 'ratings'로 설정
@@ -56,11 +57,11 @@ const ProfilePage = () => {
               <div className={styles.ratingTitle}>
               <h2>Ratings </h2>
               <span>⭐4.5</span>
-
               </div>
-             <div className={styles.r}>
+              <div className={styles.ratingBoxContainer}>
 
-             </div>
+              <RatingBox/>
+              </div>
             </div>
           )}
 

@@ -76,6 +76,9 @@
 .activeButton {
   color: #000000 !important;
 }
+.navContainer{
+  width: 100%;
+}
 .ratingContainer h2{
   font-size: 40px;
 }
@@ -86,6 +89,10 @@
 .ratingTitle{
   display: flex;
   align-items: center;
+}
+.ratingBoxContainer{
+  margin-left: 50px;
+  margin-top: 30px;
 }
 .myExchangesContainer h2{
   margin-bottom: 50px;
