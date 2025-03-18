@@ -59,8 +59,7 @@ const ProfilePage = () => {
               <span>⭐4.5</span>
               </div>
               <div className={styles.ratingBoxContainer}>
-
-              <RatingBox/>
+                <RatingBox/>
               </div>
             </div>
           )}
