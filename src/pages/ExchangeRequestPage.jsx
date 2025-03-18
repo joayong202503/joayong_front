@@ -2,17 +2,18 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AlertModal from "../components/common/AlertModal.jsx";
-import Categories from "../components/common/Categories.jsx";
+import Categories from "../components/common/categories/Categories.jsx";
 import styles from "./ExchangeRequestPage.module.scss";
 import {useSelector} from "react-redux";
 import {MapPinnedIcon} from "lucide-react";
 import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSecition.jsx";
 import Button from "../components/common/Button.jsx";
-import ImageUploadSection from "../components/ExchangeCreatePage/ImageUploadSection.jsx";
-import FileListDisplay from "../components/ExchangeCreatePage/FileListDisplay.jsx";
+import ImageUploadSection from "../components/common/imagesAndFiles/ImageUploadSection.jsx";
+import FileListDisplay from "../components/common/imagesAndFiles/FileListDisplay.jsx";
 import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js";
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import MiniAlert from "../components/common/MiniAlert.jsx";
+import ToolTip from "../components/common/ToolTip.jsx";
 
 const ExchangeRequestPage = () => {
 
@@ -100,7 +101,6 @@ const ExchangeRequestPage = () => {
 
     return (
         <div className={styles.mainWrapper}>
-
             {/* 상세페이지로 옮기는 모달 */}
             {redirectModalOpen && (
                 <AlertModal
@@ -109,7 +109,6 @@ const ExchangeRequestPage = () => {
                     onPressEscape={() => navigate(`/exchanges/${postId}`)}
                 />
             )}
-
 
             <div className={styles.fileSection}>
                 {/* 이미지 업로드 */}
@@ -183,6 +182,7 @@ const ExchangeRequestPage = () => {
             {/* 지역 */}
             <div className={`${styles.sectionBox}`}>
                 <span className={styles.title}>{username}님의 재능을 어필해보세요</span>
+                <ToolTip content={post?.content} title={`${post?.username}님은 이런 사람을 찾고 있어요`} />
                 <ContentInputSection
                     placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
                     isTitleNecessary={false}
@@ -225,5 +225,5 @@ const ExchangeRequestPage = () => {
     );
 };
 
-export default ExchangeRequestPage;
+export default ExchangeRequestPage;</Formik>
 

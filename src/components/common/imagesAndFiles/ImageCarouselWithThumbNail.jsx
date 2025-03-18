@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styles from "./ImageCarouselWithThumbNail.module.scss";
-import getCompleteImagePath from "../../utils/getCompleteImagePath.js";
+import getCompleteImagePath from "../../../utils/getCompleteImagePath.js";
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Feather 아이콘 임포트
 
 // isLoading : useQuery에서 fetch 완료 여부

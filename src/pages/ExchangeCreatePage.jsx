@@ -3,12 +3,12 @@ import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.
 import React, { useEffect, useRef, useState} from "react";
 import styles from "./ExchangeCreatePage.module.scss";
 import {Form, useNavigate} from "react-router-dom";
-import ImageUploadSection from "../components/ExchangeCreatePage/ImageUploadSection.jsx";
+import ImageUploadSection from "../components/common/imagesAndFiles/ImageUploadSection.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
-import FileListDisplay from "../components/ExchangeCreatePage/FileListDisplay.jsx";
+import FileListDisplay from "../components/common/imagesAndFiles/FileListDisplay.jsx";
 import TitleInputSection from "../components/ExchangeCreatePage/TitleInputSection.jsx";
-import RegionSelectSection from "../components/ExchangeCreatePage/RegionSelectSection.jsx";
-import TalentSelectSection from "../components/ExchangeCreatePage/TalentSelectSection.jsx";
+import RegionSelectSection from "../components/common/categories/RegionSelectSection.jsx";
+import TalentSelectSection from "../components/common/categories/TalentSelectSection.jsx";
 import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSecition.jsx";
 import SubmitButton from "../components/ExchangeCreatePage/SubmitButton.jsx";
 import {useTalentCategories} from "../hooks/exchangesCreatePageHook/talentHooks.js";

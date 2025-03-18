@@ -3,21 +3,19 @@ import styles from './ExchangeDetailPage.module.scss';
 import {useNavigate, useParams} from "react-router-dom";
 import {usePostDetailFetchWithUseQuery, useUseQueryErrorHandler} from "../hooks/useQueryHooks.js";
 import { MessageCircleIcon, Trash2} from "lucide-react";
-import ImageCarouselWithThumbNail from "../components/common/ImageCarouselWithThumbNail.jsx";
-import Categories from "../components/common/Categories.jsx";
+import ImageCarouselWithThumbNail from "../components/common/imagesAndFiles/ImageCarouselWithThumbNail.jsx";
+import Categories from "../components/common/categories/Categories.jsx";
 import {getPostViewCount, increasePostViewCount, useDeletePost} from "../services/postService.js";
 import ProfileCard from "../components/common/ProfileCard.jsx";
-import PostDate from "../components/common/PostDate.jsx";
-import ViewCount from "../components/common/ViewCount.jsx";
+import PostDate from "../components/common/icons/PostDate.jsx";
+import ViewCount from "../components/common/icons/ViewCount.jsx";
 import Button from "../components/common/Button.jsx";
 import DetailPageDescription from "../components/ExchangeDetailPage/DetailPageDescription.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import {checkMatchingRequestValidity} from "../services/matchingService.js";
 import {usePostData} from "../hooks/ExchangeDetailPage/usePostData.js";
 import {useSelector} from "react-redux";
-import DeleteButton from "../components/common/DeleteButton.jsx";
-import fetchWithAuth from "../services/fetchWithAuth.js";
-import {postApi} from "../services/api.js";
+import DeleteButton from "../components/common/icons/DeleteButton.jsx";
 
 const ExchangeDetailPage = () => {
 

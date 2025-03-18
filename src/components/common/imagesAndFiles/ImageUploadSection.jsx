@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import styles from './ImageUploadSection.module.scss';
-import Button from "../common/Button.jsx";
+import Button from "../Button.jsx";
 
 const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
 
