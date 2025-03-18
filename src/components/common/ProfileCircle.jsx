@@ -3,7 +3,7 @@ import styles from './ProfileCircle.module.scss'
 import profileImage from '../../assets/images/profile.png'
 
 /*
-* @param size: 프로필 이미지크기 (xs,sm,md,lg,xl)
+* @param size: 프로필 이미지크기 (xs,sm,md,lg,llg,xl)
 * @param src: 선택적 이미지소스 (기본값: 기본 프로필 이미지)
 */
 
