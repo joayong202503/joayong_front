@@ -2,7 +2,7 @@ import React, {forwardRef, useState} from 'react';
 import styles from './ContentInputSection.module.scss';
 
 const ContentInputSection
-    = forwardRef(({ onKeyDown, isTitleNecessary=true }, ref) => {
+    = forwardRef(({ onKeyDown, isTitleNecessary=true, onChange }, ref) => {
 
     const handleTabButton = onKeyDown;
 
@@ -14,6 +14,7 @@ const ContentInputSection
         setCharCount(charLength);
     }
 
+
     return (
         <div className={`${styles.inputWrapper} ${isTitleNecessary ? '' : styles.noTitle }`}>
             <label htmlFor={'content'}>
@@ -22,10 +23,13 @@ const ContentInputSection
             <textarea
                 placeholder={'가르칠 내용과 이 재능에 대한 경험을 설명해주세요'}
                 ref={ref}
-                name={'content'}
                 id={'content'}
                 maxLength={2200}
-                onChange={handleCharCountChange}
+                onChange={(e) => {
+                    // 부모에서 전달된 onChange를 호출
+                    if (onChange) onChange(e);
+                    handleCharCountChange(e);
+                }}
                 onKeyDown={handleTabButton}
             >
             </textarea>

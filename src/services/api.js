@@ -36,5 +36,6 @@ export const postApi = {
 
 // 메시지 관련 api
 export const messageApi = {
-  isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`
+  isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`,
+  sendMatchingRequest : `${MESSAGE_URL}`,
 }

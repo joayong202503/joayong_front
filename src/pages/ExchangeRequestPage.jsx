@@ -14,8 +14,49 @@ import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import MiniAlert from "../components/common/MiniAlert.jsx";
 import ToolTip from "../components/common/ToolTip.jsx";
+import {useFormik} from "formik";
+import * as Yup from 'yup';
+import fetchWithAuth from "../services/fetchWithAuth.js";
+import {messageApi} from "../services/api.js";
 
 const ExchangeRequestPage = () => {
+
+    // Yup으로 유효성 검사
+    const validationSchema = Yup.object({
+        content: Yup.string()
+            .trim("내용을 입력해 주세요") // 이건 직접적 처리가 필요할 경우에만 사용하세요
+            .required("내용을 입력해주세요")
+            .max(2200, "내용은 2200자 이내로 입력해주세요"),
+
+        uploadedFiles: Yup.array()
+            .of(
+                Yup.mixed()
+                    // 파일 형식 검증 (JPEG, PNG, GIF만 허용)
+                    .test("fileFormat", "이미지는 JPEG, PNG, GIF 형식만 허용됩니다.", (value) => {
+                        if (!value) return true; // 파일이 없으면 통과
+                        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+                        return allowedTypes.includes(value.type);
+                    })
+                    // 파일 크기 검증 (5MB 이하)
+                    .test("fileSize", "파일 크기는 5MB 이하이어야 합니다.", (value) => {
+                        if (!value) return true; // 파일이 없으면 통과
+                        return value.size <= 5 * 1024 * 1024; // 5MB = 5 * 1024 * 1024 bytes
+                    })
+            )
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            uploadedFiles: [],
+            content: '',
+        },
+        validationSchema,
+        onSubmit: (values) => {
+            // 브라우저 창에 Formik 폼에 입력된 값들이 담긴 객체를 출력(space 2는 들여쓰기)
+            alert(JSON.stringify(values, null, 2));
+            console.log('aaaaa', values);
+        },
+    });
 
     // ===== 전역 관리
     const username = useSelector((state) => state.auth.user.name);
@@ -47,6 +88,9 @@ const ExchangeRequestPage = () => {
             setModalOpen(true); // 짧은 딜레이 후 다시 열기
         }
     }, [fileUploadErrorMessage])
+
+    // 내용 값 상태관리
+    const contentInputRef = useRef();
 
     // ========== 비정상 접인 경로아서 접근했는지 확인
     const isInValidateAccess = () => {
@@ -89,15 +133,36 @@ const ExchangeRequestPage = () => {
     }
 
     // 수락 버튼 누르기
-    const handleRequestConfirm = () => {
-        setConfirmModalMessage(
-            '정말 메시지를 전송하시겠습니까?'
-        );
-        setConfirmModalOpen(true);
-        setRequestCancelHandler(() => () => {setConfirmModalMessage(''); setConfirmModalOpen(false)});
-        setRequestConfirmHandler(() => () => {setIsSuccessModalOpen(true); setConfirmModalOpen(false)});
-    }
+    const handleSubmit = async () => {
 
+        // 먼저 유효성 검사 먼저 해야 함
+        const content = contentInputRef.current.value;
+        try {
+            const response = await validationSchema.validate({content, uploadedFile}, {abortEarly: true});
+            const formData = new FormData();
+            // 텍스트 데이터 추가
+            const message = JSON.stringify({ content: "Hello, World", postId: "12345" });
+            formData.append("message", new Blob([message], { type: "application/json" }));
+
+            // 여러 파일이 있는 경우 파일 배열을 반복문으로 추가
+            if (uploadedFile && uploadedFile.length > 0) {
+                uploadedFile.forEach(file => {
+                    formData.append('images', file); // 'uploadedFiles'는 서버에서 받을 파일 필드명
+                });
+            }
+
+            const response2 = await fetchWithAuth(messageApi.sendMatchingRequest, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response2.json();
+            console.log(data);
+        } catch (error)  {
+            console.log(error);
+            setModalMessage(error.errors.join(','));
+            setModalOpen(true);
+        }
+     };
 
     return (
         <div className={styles.mainWrapper}>
@@ -186,8 +251,9 @@ const ExchangeRequestPage = () => {
                 <ContentInputSection
                     placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
                     isTitleNecessary={false}
-                    // ref={contentInputRef}
-                    // name="content"
+                    name={'content'}
+                    onChange={() => {formik.handleChange}}
+                    ref={contentInputRef}
                 />
             </div>
 
@@ -197,15 +263,13 @@ const ExchangeRequestPage = () => {
                     fontSize={'medium'}
                     className={'fill'}
                     onClick={handleRequestCancel}
-                    // ref={ref}
                 >취소하기</Button>
 
                 <Button
                     theme={'blueTheme'}
                     fontSize={'medium'}
                     className={'fill'}
-                    onClick={handleRequestConfirm}
-                    // ref={ref}
+                    onClick={handleSubmit}
                 >제출하기</Button>
 
                 {confirmModalOpen &&
@@ -225,5 +289,5 @@ const ExchangeRequestPage = () => {
     );
 };
 
-export default ExchangeRequestPage;</Formik>
+export default ExchangeRequestPage;
 

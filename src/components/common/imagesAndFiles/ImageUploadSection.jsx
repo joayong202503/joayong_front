@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import styles from './ImageUploadSection.module.scss';
 import Button from "../Button.jsx";
 
-const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
+const ImageUploadSection = forwardRef(({ onFileSelect, name }, inputBoxRef) => {
 
     // 드롭박스 클릭 시 input(type:file) 클릭되게
     const triggerFileInput = () => {
@@ -52,6 +52,7 @@ const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
             <input
                 ref={inputBoxRef}
                 type="file"
+                name={name}
                 multiple={true}
                 id="fileInputBox"
                 accept="image/*"
