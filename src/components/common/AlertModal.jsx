@@ -8,25 +8,26 @@ import styles from './AlertModal.module.scss'
 * pages-ModalTest 페이지 참고해주세요
 */
 
-const AlertModal = ({title,message,onClose,onPressEscape}) => {
+const AlertModal = ({title,message,onClose,onPressEscapeOrEnter}) => {
 
     useEffect(() => {
-        // Escape 키 이벤트 리스너 등록
-        const handleEscape = (e) => {
-            if (e.key === 'Escape') {
-                onPressEscape && onPressEscape();  // onPressEscape가 있으면 실행
-                onClose(); // 모달 닫기
+        // Escape, 엔터 키 키 이벤트 리스너 등록
+        const handleEscapeOrEnter = (e) => {
+            if (e.key === 'Escape' || e.key ==='Enter') {
+                onPressEscapeOrEnter && onPressEscapeOrEnter();
+                onClose();
             }
         };
 
         // 키보드 이벤트 리스너 등록
-        window.addEventListener('keydown', handleEscape);
+        window.addEventListener('keydown', handleEscapeOrEnter);
 
         // 컴포넌트 언마운트 시 이벤트 리스너 제거
         return () => {
-            window.removeEventListener('keydown', handleEscape);
+            window.removeEventListener('keydown', handleEscapeOrEnter);
         };
-    }, [onClose, onPressEscape]);  // onClose, onPressEscape가 변경되면 다시 실행
+    }, [onClose, onPressEscapeOrEnter]);
+
 
     return (
         <>
@@ -35,7 +36,7 @@ const AlertModal = ({title,message,onClose,onPressEscape}) => {
                 <div className={styles.modal} onClick ={(e) =>e.stopPropagation()}>
                     <h2 className={styles.title}>{title}</h2>
                     <p className ={styles.message}>{message}</p>
-                    <button className={styles.button} onClick={onClose}>확인</button>
+                    <button className={styles.button} onClick={onClose} onKeyDown={onPressEscapeOrEnter}>확인</button>
                 </div>
 
             </div>

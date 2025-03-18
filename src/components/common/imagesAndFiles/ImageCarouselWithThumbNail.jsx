@@ -8,7 +8,6 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Feather 아�
 const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, initialIndex=0, width, height,
                                         isOpenModal, setIsOpenModal}) => {
 
-
     // 현재 큰 이미지 박스에 표시된 이미지의 index를 설정
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -29,6 +28,7 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
     // 썸네일 클릭하면, 클릭한 썸네일의 인덱스를 가져와서 -> 이미지 객체에서 찾아서 -> 큰 이미지 넣는 란의 src을 변경
     const handleThumbNailImageClick = (index) => {
         bigImageRef.current.src = images[index].imageUrl;
+        setCurrentIndex(index);
     }
 
     // 큰 이미지 클릭하면 모달창 열림

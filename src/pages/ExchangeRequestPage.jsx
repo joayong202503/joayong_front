@@ -14,7 +14,6 @@ import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import MiniAlert from "../components/common/MiniAlert.jsx";
 import ToolTip from "../components/common/ToolTip.jsx";
-import {useFormik} from "formik";
 import * as Yup from 'yup';
 import fetchWithAuth from "../services/fetchWithAuth.js";
 import {messageApi} from "../services/api.js";
@@ -45,18 +44,6 @@ const ExchangeRequestPage = () => {
             )
     });
 
-    const formik = useFormik({
-        initialValues: {
-            uploadedFiles: [],
-            content: '',
-        },
-        validationSchema,
-        onSubmit: (values) => {
-            // 브라우저 창에 Formik 폼에 입력된 값들이 담긴 객체를 출력(space 2는 들여쓰기)
-            alert(JSON.stringify(values, null, 2));
-            console.log('aaaaa', values);
-        },
-    });
 
     // ===== 전역 관리
     const username = useSelector((state) => state.auth.user.name);
@@ -75,7 +62,9 @@ const ExchangeRequestPage = () => {
     const [confirmModalMessage, setConfirmModalMessage] = useState('');
     const [requestCancelHandler, setRequestCancelHandler] = useState(null);
     const [requestConfirmHandler, setRequestConfirmHandler] = useState(null);
-    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // 성공 알림 미니 모달
+    const [isminiModalOpen, setIsMiniModalOpen] = useState(false); // 성공 알림 미니 모달
+    const [miniModalMessage, setMiniModalMessage] = useState(false); // 성공 알림 미니 모달
+    const closeTimeoutRef = useRef(null); // 타이머를 저장할 ref
 
     // ======== 파일 업로드 상태값
     const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile } = useFileUpload();
@@ -86,6 +75,17 @@ const ExchangeRequestPage = () => {
         if (fileUploadErrorMessage) {
             setModalMessage(fileUploadErrorMessage);
             setModalOpen(true); // 짧은 딜레이 후 다시 열기
+
+            // 기존 타이머가 있다면 취소
+            if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current);
+            }
+
+            // 2초 뒤에 모달 닫기
+            closeTimeoutRef.current = setTimeout(() => {
+                setModalOpen(false);
+            }, 2000);
+
         }
     }, [fileUploadErrorMessage])
 
@@ -104,6 +104,11 @@ const ExchangeRequestPage = () => {
         setRedirectModalMessage("올바르지 않은 접속 경로입니다. 게시글 상세 페이지로 이동합니다.");
         // 모달 열기
         setRedirectModalOpen(true);
+
+        // 기존 타이머가 있다면 취소
+        if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+        }
 
         // 2초 뒤에 페이지 이동
         setTimeout(() => {
@@ -124,16 +129,31 @@ const ExchangeRequestPage = () => {
     // ========= 취소 / 매칭 메시지 보내기
     // 취소 버튼 누르기
     const handleRequestCancel = () => {
+
+        // 버튼 포커스 제거
+        document.activeElement.blur();
+
         setConfirmModalMessage(
             '메시지 작성을 취소하시겠습니까?'
         );
+
         setConfirmModalOpen(true);
-        setRequestConfirmHandler(() => () => {navigate(-1)});
-        setRequestCancelHandler(() => () => {setConfirmModalMessage(''); setConfirmModalOpen(false)});
+        setRequestConfirmHandler(() => () => {
+            setIsMiniModalOpen(true);
+            setMiniModalMessage('메시지 작성이 취소되었습니다.');
+            navigate(-1);
+        });
+        setRequestCancelHandler(() => () => {
+            setConfirmModalMessage('');
+            setConfirmModalOpen(false);
+        });
     }
 
     // 수락 버튼 누르기
     const handleSubmit = async () => {
+
+        // 버튼 포커스 제거
+        document.activeElement.blur();
 
         // 먼저 유효성 검사 먼저 해야 함
         const content = contentInputRef.current.value;
@@ -156,11 +176,61 @@ const ExchangeRequestPage = () => {
                 body: formData
             });
             const data = await response2.json();
-            console.log(data);
+
+            // 서버 응답 :
+            if (response.status === 500) {
+
+                navigate("/error", {
+                    state: {
+                        errorPageUrl: window.location.pathname,
+                        status: 500,
+                        message: "서버 오류가 발생했습니다.",
+                    },
+                });
+            } if (response.status === 200) {
+                setIsMiniModalOpen(true);
+                setMiniModalMessage('매칭 요청이 정상적으로 발송되었습니다.');
+            } else {
+                console.log('catch함');
+                throw new Error(data.message);
+            }
+            // else {
+
+                // // POST.EXCEPTION : ALREADY_SENT
+                // setModalMessage(data.message);
+                // setModalOpen(true);
+                //
+                // // 기존 타이머가 있다면 취소
+                // if (closeTimeoutRef.current) {
+                //     clearTimeout(closeTimeoutRef.current);
+                // }
+                //
+                // // 2초 뒤에 모달 닫기
+                // closeTimeoutRef.current = setTimeout(() => {
+                //     setModalOpen(false);
+                // }, 2000);
+            //
+            // }
+            // console.log(data);
+
+
         } catch (error)  {
+            // validate 오류
             console.log(error);
-            setModalMessage(error.errors.join(','));
+            setModalMessage(error.errors ? error.errors.join(',') : error.message);
             setModalOpen(true);
+
+            // 기존 타이머가 있다면 취소
+
+            if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current);
+            }
+
+            // 2초 뒤에 모달 닫기
+            closeTimeoutRef.current = setTimeout(() => {
+                setModalOpen(false);
+            }, 2000);
+
         }
      };
 
@@ -171,7 +241,7 @@ const ExchangeRequestPage = () => {
                 <AlertModal
                     title={redirectModalMessage}
                     onClose={() => navigate(`/exchanges/${postId}`)}
-                    onPressEscape={() => navigate(`/exchanges/${postId}`)}
+                    onPressEscapeOrEnter={() => navigate(`/exchanges/${postId}`)}
                 />
             )}
 
@@ -199,6 +269,7 @@ const ExchangeRequestPage = () => {
                     title={modalMessage}
                     onClose={() => {setModalMessage(''); setModalOpen(false)}}
                     onPressEscape={() => {setModalMessage(''); setModalOpen(false)}}
+                    onPressEnter={() => {setModalMessage(''); setModalOpen(false)}}
                 />
             )}
 
@@ -252,7 +323,6 @@ const ExchangeRequestPage = () => {
                     placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
                     isTitleNecessary={false}
                     name={'content'}
-                    onChange={() => {formik.handleChange}}
                     ref={contentInputRef}
                 />
             </div>
@@ -270,6 +340,7 @@ const ExchangeRequestPage = () => {
                     fontSize={'medium'}
                     className={'fill'}
                     onClick={handleSubmit}
+                    type={'button'}
                 >제출하기</Button>
 
                 {confirmModalOpen &&
@@ -278,11 +349,15 @@ const ExchangeRequestPage = () => {
                         onConfirm={requestConfirmHandler}
                         onClose={requestCancelHandler}
                         onPressEscape={requestCancelHandler}
+                        onPressEnter={requestCancelHandler}
                     />
                 }
 
                 {/*  메시지 전송 알림 */}
-                {isSuccessModalOpen && <MiniAlert message={'매칭 요청이 정상적으로 발송되었습니다.'} onClose={() => {navigate(-1)}}/>}
+                {isMiniModalOpen &&
+                    <MiniAlert
+                        message={miniModalMessage}
+                        onClose={() => {navigate(-1)}}/>}
             </div>
 
         </div>

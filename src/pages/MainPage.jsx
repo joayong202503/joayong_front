@@ -39,6 +39,7 @@ const MainPage = () => {
     return region? region.name : "지역없음";
   };
 
+  //
   useEffect(() => {
     const getRecentExchanges = async() =>{
       try {

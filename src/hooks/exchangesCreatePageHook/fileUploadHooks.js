@@ -60,5 +60,5 @@ export const useFileUpload = () => {
     };
 
 
-    return { uploadedFile, setUploadedFile, fileUploadErrorMessage, handleFileSelect };
+    return { uploadedFile, setUploadedFile, fileUploadErrorMessage, handleFileSelect, setFileUploadErrorMessage };
 };
