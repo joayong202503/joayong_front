@@ -5,7 +5,7 @@
 }
 
 .sectionTitle {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #111827;
   margin-bottom: 1rem;
@@ -24,7 +24,7 @@
 .contentBox {
   background-color: #fff;
   border-radius: 12px;
-  padding: 24px;
+  padding: 13px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border: 1px solid #f1f5f9;
   flex-wrap: wrap;
@@ -33,7 +33,7 @@
 .content {
   line-height: 1.7;
   color: #374151;
-  font-size: 1rem;
+  font-size: 0.9rem;
   white-space: pre-line;
   // 글자 길면 옆으로 늘어지는 것 방지
   word-wrap: break-word;

@@ -5,7 +5,7 @@ import {usePostDetailFetchWithUseQuery, useUseQueryErrorHandler} from "../hooks/
 import { MessageCircleIcon, Trash2} from "lucide-react";
 import ImageCarouselWithThumbNail from "../components/common/ImageCarouselWithThumbNail.jsx";
 import Categories from "../components/common/Categories.jsx";
-import {increasePostViewCount} from "../services/postService.js";
+import { increasePostViewCount, useDeletePost} from "../services/postService.js";
 import ProfileCard from "../components/common/ProfileCard.jsx";
 import PostDate from "../components/common/PostDate.jsx";
 import ViewCount from "../components/common/ViewCount.jsx";
@@ -15,11 +15,24 @@ import AlertModal from "../components/common/AlertModal.jsx";
 import {checkMatchingRequestValidity} from "../services/matchingService.js";
 import {usePostData} from "../hooks/ExchangeDetailPage/usePostData.js";
 import {useSelector} from "react-redux";
+import DeleteButton from "../components/common/DeleteButton.jsx";
 
 const ExchangeDetailPage = () => {
 
+    const [shouldNavigate, setShouldNavigate] = useState(false);
+
+    useEffect(() => {
+        if (shouldNavigate) {
+            navigate("/");
+        }
+    }, [shouldNavigate]);
+
     const navigate = useNavigate();
     const myUsername = useSelector((state) => state.auth.user?.name); // 매칭 요청 버튼 숨기는 용
+    // useMutation을 통해 삭제 후 캐싱 데이터 반환한 결과를 반환
+    const { mutate, isLoading:isMutationLoading, error:deletePostError } = useDeletePost();
+
+    console.log('mutation', mutate);
 
     // =============== useQuery를 이용한 fetch ====================== //
     const {exchangeId:postId} = useParams();  // postId 가져오기
@@ -38,7 +51,10 @@ const ExchangeDetailPage = () => {
     // 모달 관련
     const [isOpenModal, setIsOpenModal ] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
-    const [modalMessage, setModalMessage] = useState('');
+    const [isOpenSubmitModal, setIsOpenSubmitModal ] = useState(false);
+    const [submitModalTitle, setSubmitModalTitle] = useState('');
+    const [modalMessage, setModalMessage] = useState('')
+
 
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
@@ -51,9 +67,6 @@ const ExchangeDetailPage = () => {
         }
     }, [post]);
 
-    // 카테고리 분류 찾기
-    console.log('post server data', data);
-
     // 매칭 요청 했을 때 로직
     //  - 본인 게시글인 경우, 버튼 자체가 안뜸
     //  - 따라서, 여기에서는 그 사람에게 보낸 매칭 요청이 있는지랑 로그인 했는지만 확인
@@ -63,7 +76,6 @@ const ExchangeDetailPage = () => {
         }
 
         // 이미 수락되거나 대기 중인 매칭 요청 메시지가 있는지 확인
-        // const { available: isMatchingRequestValid } = checkMatchingRequestValidity(postId);
         const {available:isMatchingRequestValid} = await checkMatchingRequestValidity(postId);
 
         if (!isMatchingRequestValid) {
@@ -76,19 +88,72 @@ const ExchangeDetailPage = () => {
         return navigate("request"); // 매칭 요청이 이미 있으면 이동
     };
 
+    // 게시물 삭제
+    const handleDeletePost = async (postId) => {
+        console.log(postId);
+
+        console.log(333);
+        console.log(333);
+        console.log(333);
+        console.log(333);
+        console.log(isMutationLoading);
+
+        // mutate : useMutation을 통해 게시물 삭제 후 캐싱 데이터까지 업데이트하는 함수
+
+        if (mutate.loading) return; // 이미 진행 중인 요청이 있다면 중단
+
+        // postId를 첫 번째 인자로만 전달
+        mutate(postId, {
+            onSuccess: () => {
+                setSubmitModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
+                setIsOpenSubmitModal(true);
+
+                setTimeout(() => {
+                    setIsOpenSubmitModal(false);
+
+                    // 모달이 닫힌 후 페이지 이동을 실행
+                    setTimeout(() => {
+                        setShouldNavigate(true);  // 페이지 이동
+                    }, 300);
+                }, 2000);
+            },
+
+            onError: (error) => {
+                // 요청 실패 시 수행할 작업
+                console.error("에러 발생:", error);
+                navigate("/error", {
+                    state: {
+                        errorPageUrl: window.location.pathname,
+                        status: error.status,
+                        message: error.message,
+                    },
+                });
+            },
+        });
+    };
+
 
     return (
         // 전체에 대한 wrapper
         <div className={styles.talentExchangeDetail}>
 
             { isOpenModal &&
-                <>
-                 <AlertModal
-                     title={modalTitle}
-                     message={modalMessage}
-                     onClose={() => {setIsOpenModal(false)}}
-                 />
-                </>
+                <AlertModal
+                    title={modalTitle}
+                    message={modalMessage}
+                    onClose={() => {
+                        setIsOpenModal(false);
+                        navigate("/");
+                    }}/>
+            }
+
+            { isOpenSubmitModal &&
+                <AlertModal
+                    title={submitModalTitle}
+                    onClose={() => {
+                        setIsOpenSubmitModal(false);
+                        navigate("/");
+                    }}/>
             }
 
             {/* 상단 섹션 (이미지 갤러리 + 상세 정보) */}
@@ -98,6 +163,8 @@ const ExchangeDetailPage = () => {
                     imagesObject={post.images}
                     isLoading={isLoading}
                     isPostUploaded={isPostUploaded}
+                    isOpenModal={isOpenModal}
+                    setIsOpenModal={setIsOpenModal}
                 />
 
                 {/* 오른쪽: 상세 정보 */}
@@ -112,6 +179,7 @@ const ExchangeDetailPage = () => {
                             mainCategory={post.offerCategoryMain}
                             subCategory={post.offerCategorySub}
                             subCategoryId={post.offerCategorySubId}
+                            theme={'give'}
                             label={'가르칠 수 있어요'}
                         />
                         {/* 배울 것 */}
@@ -122,6 +190,7 @@ const ExchangeDetailPage = () => {
                             mainCategory={post.wantCategoryMain}
                             subCategory={post.wantCategorySub}
                             subCategoryId={post.wantCategorySubId}
+                            theme={'want'}
                             label={'배우고 싶어요'}
                         />
                     </div>
@@ -173,8 +242,8 @@ const ExchangeDetailPage = () => {
                         {/*{ (isMyPost && !isLoading && isPostUploaded) &&*/}
                         {/*    <EditButton onClick={()=>{alert('수정 버튼 클릭')}}/>}*/}
 
-                        {/*{ (isMyPost && !isLoading && isPostUploaded) &&*/}
-                        {/*    <DeleteButton onClick={()=>{alert('삭제 버튼 클릭')}}/>}*/}
+                        { (isMyPost && !isLoading && isPostUploaded) &&
+                            <DeleteButton onClick={() => handleDeletePost(postId)}/>}
 
 
                     </div>
@@ -202,6 +271,7 @@ const ExchangeDetailPage = () => {
                             mainCategory={post.offerCategoryMain}
                             subCategory={post.offerCategorySub}
                             subCategoryId={post.offerCategorySubId}
+                            theme={'give'}
                             label={'가르칠 수 있어요'}
                         />
                         {/* 배울 것 */}
@@ -212,6 +282,7 @@ const ExchangeDetailPage = () => {
                             mainCategory={post.wantCategoryMain}
                             subCategory={post.wantCategorySub}
                             subCategoryId={post.wantCategorySubId}
+                            theme={'want'}
                             label={'배우고 싶어요'}
                         />
                     </div>
@@ -223,7 +294,7 @@ const ExchangeDetailPage = () => {
                         section={'location'}
                         title={'지역'}
                         isLoading={isLoading}
-                        content={`${post.locationSub} ${post.locationSmall}`}
+                        content={post.locationSub ? `${post.locationSub} ${post.locationSmall}` : ''}
                         isPostUploaded={isPostUploaded}
                     />
                 </div>
@@ -238,8 +309,8 @@ const ExchangeDetailPage = () => {
                 />
             </div>
         </div>
-        );
-        };
+    );
+};
 
 
 export default ExchangeDetailPage;

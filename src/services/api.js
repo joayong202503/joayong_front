@@ -10,7 +10,7 @@ const AUTH_NOT_REQUIRED = '/api/joayong/auth';
 const AUTH_REQUIRED = '/api/joayong';
 
 // 주제 별 url 경로
-const POST = '/post'
+const POST_URL = `${API_URL}${AUTH_REQUIRED}/post`
 const MESSAGE_URL = `${API_URL}${AUTH_REQUIRED}/message`;
 // ================================================================== //
 
@@ -27,9 +27,10 @@ export const authApi = {
 
 // 게시글 관련 API
 export const postApi = {
-  newPost : `${API_URL}${AUTH_REQUIRED}${POST}`, // 게시글 등록 (POST METHOD)
-  specificPost : `${API_URL}${AUTH_REQUIRED}${POST}`,// 단일 게시글 조회  (@pathvariable)
-  increaseViewCount : `${API_URL}${AUTH_REQUIRED}${POST}/view-count?id=`// 단일 게시글 조회  (@pathvariable로 post)
+  newPost : POST_URL, // 게시글 등록 (POST METHOD)
+  specificPost : POST_URL,// 단일 게시글 조회
+  increaseViewCount : `${POST_URL}/view-count/`, // 단일 게시글 조회
+  deletePost : `${POST_URL}/delete/` // 게시글 삭제
 }
 
 // 메시지 관련 api

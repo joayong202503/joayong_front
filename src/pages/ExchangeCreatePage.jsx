@@ -1,8 +1,8 @@
 import {useSelector} from "react-redux";
 import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.js";
-import React, {useContext, useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState} from "react";
 import styles from "./ExchangeCreatePage.module.scss";
-import {Form, UNSAFE_LocationContext, useNavigate} from "react-router-dom";
+import {Form, useNavigate} from "react-router-dom";
 import ImageUploadSection from "../components/ExchangeCreatePage/ImageUploadSection.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import FileListDisplay from "../components/ExchangeCreatePage/FileListDisplay.jsx";
@@ -17,6 +17,7 @@ import { postApi } from "../services/api.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
 import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
+import { debounce } from 'lodash';
 
 const ExchangeCreatePage = () => {
 
@@ -52,8 +53,7 @@ const ExchangeCreatePage = () => {
         handleTalentToReceiveSubCategoryChange, selectedTalentToReceiveSubCategory, selectedTalentToGiveSubCategory } = useTalentCategories(talentCategories);
     const { sortedRegionCategories, regionMiddleCategories, regionLastCategories, selectedRegionLastCategory,
         handleRegionMainCategoryChange, handleRegionMiddleCategoryChange, handleRegionLastCategoryChange } = useRegionCategories(regionCategories);
-    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, handleFileDelete:handleDelete } = useFileUpload();
-    const handleFileDelete = handleDelete();
+    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile } = useFileUpload();
 
     // 값 가져오기 위해, ref 만들어서 자식 컴포넌트에 내려 줌
     const fileInputRef = useRef();
@@ -72,11 +72,18 @@ const ExchangeCreatePage = () => {
     // 값 가져오기 위해, ref 만들어서 자식 컴포넌트에 내려 줌
 
     // Tab 키가 눌렸을 때 제출 버튼으로 포커스를 이동
-    const handleKeyDown = (e) => {
+    const handleTabKeyDown = (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
             console.log(submitButtonRef.current);
             submitButtonRef.current.focus();
+        }
+    };
+
+    // 엔터키로 폼 제출되는 것을 막음
+    const handleEnterKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
         }
     };
 
@@ -105,7 +112,7 @@ const ExchangeCreatePage = () => {
         //   :  json의 경우, formData.append(fetch 할 때 보낼 key 이름, new Blob([JSON.stringify(data)], {data type} )'
         formData.append('post',
             new Blob([JSON.stringify(post)],
-            { type: 'application/json' }));
+                { type: 'application/json' }));
 
         // uploadedFile(상태값으로 관리)가 존재하고 배열인 경우에만 append
         appendUploadedFileToFormData(uploadedFile, formData);
@@ -174,9 +181,14 @@ const ExchangeCreatePage = () => {
         return nonFileData;
     }
 
+
+
+
     // 제출할 때 로직
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (isSubmitting) return;
 
         // 버튼 클릭 후 다시 제출 못하도록 비활성화
         setIsSubmitting(true);
@@ -201,6 +213,10 @@ const ExchangeCreatePage = () => {
         // 성공 : 모달 뜬 후 이전 페이지로 이동
         if (response.ok) {
             setShowSuccessModal(true);
+            setTimeout(() => {
+                setShowSuccessModal(false);
+                navigate(-1);
+            }, 2000)
         } else {
             // 400대, 500대 에러 처리
             if (response.status >= 500) {
@@ -254,8 +270,8 @@ const ExchangeCreatePage = () => {
 
                 <Form
                     method={'post'}
+                    onKeyDown={handleEnterKeyDown}
                     onSubmit={handleSubmit}>
-                    {/*formData값 확인용*/}
                     {/* 이미지 업로드 하는 부분 */}
                     <ImageUploadSection
                         ref={fileInputRef}
@@ -263,61 +279,63 @@ const ExchangeCreatePage = () => {
                     />
 
                     {/* 파일 이름 목록을 표시하는 컴포넌트 */}
-                    <FileListDisplay uploadedFiles={uploadedFile} />
                     <FileListDisplay
-                        uploadedFile={uploadedFile}
-                         // 파일 딜리트 하는 함수
-                        onDelete={handleFileDelete}
+                        uploadedFiles={uploadedFile}
+                        setUploadedFile={setUploadedFile}
+                    />
+                    {/*<FileListDisplay*/}
+                    {/*    uploadedFile={uploadedFile}*/}
+                    {/*    setUploadedFile={setUploadedFile}*/}
+                    {/*/>*/}
+
+                    {/*제목 입력 */}
+                    <TitleInputSection
+                        label="제목"
+                        placeholder="제목을 입력하세요"
+                        ref={titleInputRef}
+                        id="title"
+                    />
+                    {/*지역 선택*/}
+                    <RegionSelectSection
+                        userAddress={userAddress}
+                        sortedRegionCategories={sortedRegionCategories}
+                        regionMiddleCategories={regionMiddleCategories}
+                        regionLastCategories={regionLastCategories}
+                        handleRegionMainCategoryChange={handleRegionMainCategoryChange}
+                        handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange}
+                        handleRegionLastCategoryChange={handleRegionLastCategoryChange}
+                    />
+                    {/* 재능 선택 */}
+                    <TalentSelectSection
+                        label='talentToGive'
+                        sortedTalentCategories={sortedTalentCategories}
+                        talentToGiveSubCategories={talentToGiveSubCategories}
+                        talentToReceiveSubCategories={talentToReceiveSubCategories}
+                        handleTalentToGiveMainCategoryChange={handleTalentToGiveMainCategoryChange}
+                        handleTalentToReceiveMainCategoryChange={handleTalentToReceiveMainCategoryChange}
+                        handleTalentToGiveSubCategoryChange={handleTalentToGiveSubCategoryChange}
+                        handleTalentToReceiveSubCategoryChange={handleTalentToReceiveSubCategoryChange}
+                    />
+                    {/* 내용 입력 */}
+                    <ContentInputSection
+                        placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
+                        ref={contentInputRef}
+                        name="content"
+                        id="content"
+                        onKeyDown={handleTabKeyDown}
                     />
 
-                     {/*제목 입력 */}
-                     <TitleInputSection
-                         label="제목"
-                         placeholder="제목을 입력하세요"
-                         ref={titleInputRef}
-                         id="title"
-                     />
-                     {/*지역 선택*/}
-                     <RegionSelectSection
-                           userAddress={userAddress}
-                           sortedRegionCategories={sortedRegionCategories}
-                           regionMiddleCategories={regionMiddleCategories}
-                           regionLastCategories={regionLastCategories}
-                           handleRegionMainCategoryChange={handleRegionMainCategoryChange}
-                           handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange}
-                           handleRegionLastCategoryChange={handleRegionLastCategoryChange}
-                     />
-                    {/* 재능 선택 */}
-                     <TalentSelectSection
-                       label='talentToGive'
-                       sortedTalentCategories={sortedTalentCategories}
-                       talentToGiveSubCategories={talentToGiveSubCategories}
-                       talentToReceiveSubCategories={talentToReceiveSubCategories}
-                       handleTalentToGiveMainCategoryChange={handleTalentToGiveMainCategoryChange}
-                       handleTalentToReceiveMainCategoryChange={handleTalentToReceiveMainCategoryChange}
-                       handleTalentToGiveSubCategoryChange={handleTalentToGiveSubCategoryChange}
-                       handleTalentToReceiveSubCategoryChange={handleTalentToReceiveSubCategoryChange}
-                     />
-                    {/* 내용 입력 */}
-                     <ContentInputSection
-                       placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
-                       ref={contentInputRef}
-                       name="content"
-                       id="content"
-                       onKeyDown={handleKeyDown}
-                     />
-
-                     {/*제출 버튼*/}
-                     <SubmitButton
-                       text="재능교환 등록하기"
-                       theme="blackTheme"
-                       fontSize="medium"
-                       width="100%"
-                       className="fill"
-                       ref={submitButtonRef}
-                       onSubmit={handleSubmit}
-                       disabled={isSubmitting}
-                     />
+                    {/*제출 버튼*/}
+                    <SubmitButton
+                        text="재능교환 등록하기"
+                        theme="blackTheme"
+                        fontSize="medium"
+                        width="100%"
+                        className="fill"
+                        ref={submitButtonRef}
+                        onSubmit={handleSubmit}
+                        disabled={isSubmitting}
+                    />
                 </Form>
             </div>
         </div>

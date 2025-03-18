@@ -8,6 +8,8 @@ import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
 import {LocationProvider} from "../context/LocationContext.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
+import MainPage from "../pages/MainPage.jsx";
+import MainLayout from "../layouts/mainLayout.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -42,12 +44,12 @@ const router = createBrowserRouter([
   // 메인페이지
   {
     path: '/',
-    // element: <MainLayout/>,
+    element: <MainLayout/>,
     children: [
       // 메인페이지
       {
         index: true,
-        // element: <MainPage/>,
+        element: <MainPage/>,
       },
       {
         path: 'exchanges',
@@ -71,9 +73,9 @@ const router = createBrowserRouter([
           {
             path: ':exchangeId',
             element:
-                // 성능 최적화를 위한 react-query로 데이터 캐싱
+            // 성능 최적화를 위한 react-query로 데이터 캐싱
                 <QueryClientProvider client={queryClient}>
-                   <ExchangeDetailPage/>
+                  <ExchangeDetailPage/>
                 </QueryClientProvider>,
           },
           // 게시글 수정 페이지
@@ -108,8 +110,8 @@ const router = createBrowserRouter([
           {
             path: ':matchId/rating',
             element: <AuthRequired>
-                      {/*<MatchRatingPage/>*/}
-                  </AuthRequired>
+              {/*<MatchRatingPage/>*/}
+            </AuthRequired>
           }
         ]
 
@@ -155,7 +157,7 @@ const router = createBrowserRouter([
 const AppRoutes = () => {
 
   return (
-    <RouterProvider router={router}/>
+      <RouterProvider router={router}/>
   );
 };
 

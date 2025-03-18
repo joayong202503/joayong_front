@@ -67,10 +67,10 @@
 
 /* 제목 */
 .title {
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   line-height: 1.3;
 }
 
@@ -209,38 +209,6 @@
   background-color: #dbeafe;
   color: #1e40af;
 }
-
-/* 반응형 스타일 */
-@media (max-width: 920px) {
-  .mainSection {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .talentExchangeDetail {
-    padding: 20px;
-  }
-
-  .cardsGrid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .title {
-    font-size: 24px;
-  }
-
-  .cardsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .actionButtons {
-    flex-wrap: wrap;
-  }
-}
-
 
 // flex일때 비율 조절
 .half {

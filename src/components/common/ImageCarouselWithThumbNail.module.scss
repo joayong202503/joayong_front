@@ -19,6 +19,7 @@
   background-color: #f1f5f9;
   position: relative;
   flex: 8;
+  cursor: pointer;
 }
 
 .slideButton {
@@ -28,18 +29,18 @@
   background-color: rgba(0, 0, 0, 0.2);
   color: white;
   border: none;
-  padding: 5px;
+  padding: 3px;
   cursor: pointer;
   border-radius: 50%;
   z-index: 10;
 }
 
 .slideButtonLeft {
-  left: 30px;
+  left: 20px;
 }
 
 .slideButtonRight {
-  right: 30px;
+  right: 20px;
 }
 
 .mainImage {

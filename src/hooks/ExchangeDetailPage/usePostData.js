@@ -21,6 +21,9 @@ export const usePostData = (postId, data, isLoading, isError) => {
 
     useEffect(() => {
         if (!isLoading && !isError && data) {
+
+            console.log(data);
+
             const transformedPost = transformPostData(data, regionList, talentList);
             setPost(transformedPost);
             setIsPostUploaded(true);
@@ -31,7 +34,6 @@ export const usePostData = (postId, data, isLoading, isError) => {
             // 조회수 증가 로직
             const increaseView = async () => {
                 const result = await increasePostViewCount(postId);
-                console.log('조회수 증가 결과:', result);
             };
             increaseView();
         }
@@ -41,6 +43,7 @@ export const usePostData = (postId, data, isLoading, isError) => {
 };
 
 const transformPostData = (serverResponse, regionList, talentList) => {
+
     return {
         title: serverResponse.title,
         content: serverResponse.content,
@@ -50,15 +53,18 @@ const transformPostData = (serverResponse, regionList, talentList) => {
         views: serverResponse.viewCount,
         id: serverResponse['post-id'],
         postItemId: serverResponse['post-item-id'],
-        profileImage: serverResponse.profileImage || nullProfileImage,
-        locationMain: serverResponse.location ? getRegionDetailsBySubRegionId(serverResponse.location, regionList).majorCategory : getRegionDetailsBySubRegionId(101, regionList).majorCategory,
-        locationSub: serverResponse.location ? getRegionDetailsBySubRegionId(serverResponse.location, regionList).subCategory : getRegionDetailsBySubRegionId(101, regionList).subCategory,
-        locationSmall: serverResponse.location ? getRegionDetailsBySubRegionId(serverResponse.location, regionList).smallCategory : getRegionDetailsBySubRegionId(101, regionList).smallCategory,
-        offerCategoryMain: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.offerCategory, talentList).majorCategory : '',
-        offerCategorySub: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.offerCategory, talentList).subCategory : getTalentDetailsBySubTalentId(11, talentList).subCategory,
-        offerCategorySubId: serverResponse.offerCategory ? serverResponse.offerCategory : 14,
-        wantCategoryMain: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.wantCategory, talentList).majorCategory : getTalentDetailsBySubTalentId(11, talentList).majorCategory,
-        wantCategorySub: serverResponse.offerCategory ? getTalentDetailsBySubTalentId(serverResponse.wantCategory, talentList).subCategory : getTalentDetailsBySubTalentId(11, talentList).subCategory,
-        wantCategorySubId: serverResponse.offerCategory ? serverResponse.wantCategory : 11,
+        profileImage: serverResponse['profile-url'] || nullProfileImage,
+
+        locationMain: serverResponse['region-id'] && getRegionDetailsBySubRegionId(serverResponse['region-id'], regionList).majorCategory,
+        locationSub: serverResponse['region-id'] && getRegionDetailsBySubRegionId(serverResponse['region-id'], regionList).subCategory,
+        locationSmall: serverResponse['region-id'] && getRegionDetailsBySubRegionId(serverResponse['region-id'], regionList).smallCategory,
+
+        offerCategoryMain: serverResponse['talent-g-id'] && getTalentDetailsBySubTalentId(serverResponse['talent-g-id'], talentList).majorCategory,
+        offerCategorySub: serverResponse['talent-g-id'] && getTalentDetailsBySubTalentId(serverResponse['talent-g-id'], talentList).subCategory,
+        offerCategorySubId: serverResponse['talent-g-id'] && serverResponse['talent-g-id'],
+
+        wantCategoryMain: serverResponse['talent-t-id'] && getTalentDetailsBySubTalentId(serverResponse['talent-t-id'], talentList).majorCategory,
+        wantCategorySub: serverResponse['talent-t-id'] && getTalentDetailsBySubTalentId(serverResponse['talent-t-id'], talentList).subCategory,
+        wantCategorySubId: serverResponse['talent-t-id'] && serverResponse['talent-t-id'],
     };
 };
