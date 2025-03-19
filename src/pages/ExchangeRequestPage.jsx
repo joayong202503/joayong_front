@@ -1,5 +1,5 @@
 
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import AlertModal from "../components/common/AlertModal.jsx";
 import Categories from "../components/common/categories/Categories.jsx";
@@ -47,7 +47,6 @@ const ExchangeRequestPage = () => {
 
     // ===== 전역 관리
     const username = useSelector((state) => state.auth.user.name);
-    // const username = useSelector((state) => state.auth.user.name);
     const navigate = useNavigate();
     const { exchangeId: postId } = useParams();
     const {state} = useLocation(); // navigate 할 때 전달한 값.렌더링 후 가져와짐
@@ -100,6 +99,7 @@ const ExchangeRequestPage = () => {
 
     // 상세 페이지로 이동
     function redirectToDetailPage() {
+
         // 모달 메시지 설정
         setRedirectModalMessage("올바르지 않은 접속 경로입니다. 게시글 상세 페이지로 이동합니다.");
         // 모달 열기
@@ -110,10 +110,10 @@ const ExchangeRequestPage = () => {
             clearTimeout(closeTimeoutRef.current);
         }
 
-        // 2초 뒤에 페이지 이동
+        // 3초 뒤에 페이지 이동
         setTimeout(() => {
             navigate(`/exchanges/${postId}`);
-        }, 5000);
+        }, 3000);
     }
 
 
@@ -158,10 +158,10 @@ const ExchangeRequestPage = () => {
         // 먼저 유효성 검사 먼저 해야 함
         const content = contentInputRef.current.value;
         try {
-            const response = await validationSchema.validate({content, uploadedFile}, {abortEarly: true});
+            await validationSchema.validate({content, uploadedFile}, {abortEarly: true});
             const formData = new FormData();
             // 텍스트 데이터 추가
-            const message = JSON.stringify({ content: "Hello, World", postId: "12345" });
+            const message = JSON.stringify({ content: content, postId: postId });
             formData.append("message", new Blob([message], { type: "application/json" }));
 
             // 여러 파일이 있는 경우 파일 배열을 반복문으로 추가
@@ -171,11 +171,11 @@ const ExchangeRequestPage = () => {
                 });
             }
 
-            const response2 = await fetchWithAuth(messageApi.sendMatchingRequest, {
+            const response = await fetchWithAuth(messageApi.sendMatchingRequest, {
                 method: 'POST',
                 body: formData
             });
-            const data = await response2.json();
+            const data = await response.json();
 
             // 서버 응답 :
             if (response.status === 500) {
@@ -190,30 +190,12 @@ const ExchangeRequestPage = () => {
             } if (response.status === 200) {
                 setIsMiniModalOpen(true);
                 setMiniModalMessage('매칭 요청이 정상적으로 발송되었습니다.');
+                setTimeout(() => {
+                    navigate(`/exchanges/${postId}`);
+                    }, 2000)
             } else {
-                console.log('catch함');
                 throw new Error(data.message);
             }
-            // else {
-
-                // // POST.EXCEPTION : ALREADY_SENT
-                // setModalMessage(data.message);
-                // setModalOpen(true);
-                //
-                // // 기존 타이머가 있다면 취소
-                // if (closeTimeoutRef.current) {
-                //     clearTimeout(closeTimeoutRef.current);
-                // }
-                //
-                // // 2초 뒤에 모달 닫기
-                // closeTimeoutRef.current = setTimeout(() => {
-                //     setModalOpen(false);
-                // }, 2000);
-            //
-            // }
-            // console.log(data);
-
-
         } catch (error)  {
             // validate 오류
             console.log(error);
@@ -240,8 +222,12 @@ const ExchangeRequestPage = () => {
             {redirectModalOpen && (
                 <AlertModal
                     title={redirectModalMessage}
-                    onClose={() => navigate(`/exchanges/${postId}`)}
-                    onPressEscapeOrEnter={() => navigate(`/exchanges/${postId}`)}
+                    onClose={() => {
+                        navigate(`/exchanges/${postId}`);
+                     }}
+                    onPressEscapeOrEnter={() => {
+                        navigate(`/exchanges/${postId}`);
+                    }}
                 />
             )}
 
@@ -267,9 +253,10 @@ const ExchangeRequestPage = () => {
             {modalOpen && (
                 <AlertModal
                     title={modalMessage}
-                    onClose={() => {setModalMessage(''); setModalOpen(false)}}
-                    onPressEscape={() => {setModalMessage(''); setModalOpen(false)}}
-                    onPressEnter={() => {setModalMessage(''); setModalOpen(false)}}
+                    onClose={() => {
+                        setModalMessage('');
+                        setModalOpen(false)}}
+                    onPressEscapeOrEnter={() => {setModalMessage(''); setModalOpen(false)}}
                 />
             )}
 
@@ -357,7 +344,11 @@ const ExchangeRequestPage = () => {
                 {isMiniModalOpen &&
                     <MiniAlert
                         message={miniModalMessage}
-                        onClose={() => {navigate(-1)}}/>}
+                        onClose={() => {
+                            navigate(-1);
+                        }}
+                    />
+                }
             </div>
 
         </div>

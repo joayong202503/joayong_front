@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import styles from './AlertModal.module.scss'
 
 /* 확인버튼 모달
@@ -8,13 +8,18 @@ import styles from './AlertModal.module.scss'
 * pages-ModalTest 페이지 참고해주세요
 */
 
-const AlertModal = ({title,message,onClose,onPressEscapeOrEnter}) => {
+const AlertModal = ({title,message,onClose,onPressEscapeOrEnter, preventEnterDefault=false}) => {
 
+    // Escape, 엔터 이벤트 리스너 등록
     useEffect(() => {
-        // Escape, 엔터 키 키 이벤트 리스너 등록
         const handleEscapeOrEnter = (e) => {
+
+            e.preventDefault();
+
             if (e.key === 'Escape' || e.key ==='Enter') {
-                onPressEscapeOrEnter && onPressEscapeOrEnter();
+
+                if(preventEnterDefault) return;
+                console.log('엔터 키카 눌림');
                 onClose();
             }
         };
@@ -28,6 +33,14 @@ const AlertModal = ({title,message,onClose,onPressEscapeOrEnter}) => {
         };
     }, [onClose, onPressEscapeOrEnter]);
 
+    // 모달 모달 열리면 자동으로 모달의 버튼에 포커스가 되어야, 모달이 생긴 페이지에서의 브라우저에 의한 오작용 방지할 수 있음
+    const ref = useRef();
+    useEffect(() => {
+        setTimeout(() => {
+            console.log("Button ref:", ref.current); // 버튼 요소 확인
+            ref.current?.focus();
+        }, 0);
+    }, []);
 
     return (
         <>
@@ -36,7 +49,11 @@ const AlertModal = ({title,message,onClose,onPressEscapeOrEnter}) => {
                 <div className={styles.modal} onClick ={(e) =>e.stopPropagation()}>
                     <h2 className={styles.title}>{title}</h2>
                     <p className ={styles.message}>{message}</p>
-                    <button className={styles.button} onClick={onClose} onKeyDown={onPressEscapeOrEnter}>확인</button>
+                    <button
+                        ref={ref}
+                        className={styles.button}
+                        onClick={onClose}
+                        onKeyDown={onPressEscapeOrEnter}>확인</button>
                 </div>
 
             </div>

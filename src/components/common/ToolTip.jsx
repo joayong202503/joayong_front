@@ -6,6 +6,10 @@ const ToolTip = ({ title, content }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const tooltipRef = useRef(null);
 
+    // 줄바꿈 살리기
+    const formattedText = content?.replace(/\n/g, '<br>');
+
+
     const handleMouseEnter = () => {
         setShowTooltip(true);
     };
@@ -33,7 +37,12 @@ const ToolTip = ({ title, content }) => {
             {showTooltip && (
                 <div className={styles.tooltipContent}>
                     {/*<h4 className={styles.tooltipTitle}>{title}</h4>*/}
-                    <p className={styles.tooltipText}>{content || "상세 내용이 없습니다."}</p>
+                    <p
+                        className={styles.tooltipText}
+                        dangerouslySetInnerHTML={{
+                            __html: content?.replace(/\n/g, '<br>') || "상세 내용이 없습니다."
+                        }}
+                    ></p>
                     <div className={styles.tooltipFooter}>매칭 게시글 내용</div>
                 </div>
             )}

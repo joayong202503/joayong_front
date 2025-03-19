@@ -17,8 +17,10 @@ const ConfirmModal = ({title,message,
                           confirmText = "확인", cancelText = "취소"}) => {
 
     useEffect(() => {
-        // Escape, 엔터 키 키 이벤트 리스너 등록
+
+        // Escape, 엔터 키 이벤트 리스너 등록
         const handleEscape = (e) => {
+
             if (e.key === 'Escape') {
                 onClose();
             }
@@ -32,10 +34,11 @@ const ConfirmModal = ({title,message,
         window.addEventListener('keydown', handleEscape);
 
         // 컴포넌트 언마운트 시 이벤트 리스너 제거
-        return () => {
-            window.removeEventListener('keydown', handleEscape);
-        };
+        // return () => {
+        //     window.removeEventListener('keydown', handleEscape);
+        // };
     }, [onClose, onPressEscape]);
+
 
     return (
         <div onClick={onClose} className={styles.backdrop}>

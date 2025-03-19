@@ -20,25 +20,6 @@ import ConfirmModal from "../components/common/ConfirmModal.jsx";
 
 const ExchangeDetailPage = () => {
 
-    // 컨덜 모달 창이켜저 있을 때 엔터 누르면 버튼 자동으로 다시 또 클릭되는 것 방지
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-
-            if (!isConfirmModalOpen) return;
-
-            if (e.key === 'Enter') {
-                e.preventDefault(); // 엔터 동작을 방지
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
-
-
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const [shouldNavigate, setShouldNavigate] = useState(false);
@@ -130,10 +111,6 @@ const ExchangeDetailPage = () => {
 
        fetchDelete(postId);
 
-
-
-
-
     }, [deleteConfirmFlag, postId]);
 
     // ============== fetching 끝 ============= //
@@ -142,6 +119,7 @@ const ExchangeDetailPage = () => {
     const [isOpenModal, setIsOpenModal ] = useState(false); // 매칭 요청
     const [modalTitle, setModalTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('')
+    const [isOpenImageModal, setIsOpenImageModal ] = useState(false); // 이미지 캐러셀
     const [isOpenDeleteModal, setIsOpenDeleteModal ] = useState(false); // 게시글 삭제
     const [deleteModalTitle, setDeleteModalTitle] = useState('');
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 게시굴 삭제 컨펌 모달
@@ -199,7 +177,6 @@ const ExchangeDetailPage = () => {
                     message={modalMessage}
                     onClose={() => {
                         setIsOpenModal(false);
-                        navigate("/");
                     }}
                 />
             }
@@ -221,8 +198,8 @@ const ExchangeDetailPage = () => {
                     imagesObject={post.images}
                     isLoading={isLoading}
                     isPostUploaded={isPostUploaded}
-                    isOpenModal={isOpenModal}
-                    setIsOpenModal={setIsOpenModal}
+                    isOpenModal={isOpenImageModal}
+                    setIsOpenModal={setIsOpenImageModal}
                     initialIndex={currentIndex}
                     setCurrentIndex={setCurrentIndex}
                 />
@@ -314,8 +291,9 @@ const ExchangeDetailPage = () => {
             { isConfirmModalOpen &&
                 <ConfirmModal
                     title={"정말 삭제하시겠습니까?"}
-                    onConfirm={() => {setDeleteConfirmFlag(true)}}
+                    onConfirm={() => {setDeleteConfirmFlag(true); }}
                     onClose={() => {setIsConfirmModalOpen(false)}}
+                    isOpenModal={isOpenModal}
             />}
 
             {/* 모든 컨텐츠 섹션 */}
