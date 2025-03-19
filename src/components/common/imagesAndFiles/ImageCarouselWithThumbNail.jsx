@@ -5,11 +5,11 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Feather 아�
 
 // isLoading : useQuery에서 fetch 완료 여부
 // isPostUploaded : 로딩 완료 후 post 까지 업데이트 되었는지
-const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, initialIndex=0, width, height,
+const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, width, height,
+                                        initialIndex=0, setCurrentIndex,
                                         isOpenModal, setIsOpenModal}) => {
 
-    // 현재 큰 이미지 박스에 표시된 이미지의 index를 설정
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndexLocal] = useState(initialIndex);
 
     // 큰 이미지 담는 박스
     const bigImageRef = useRef();
@@ -28,7 +28,8 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
     // 썸네일 클릭하면, 클릭한 썸네일의 인덱스를 가져와서 -> 이미지 객체에서 찾아서 -> 큰 이미지 넣는 란의 src을 변경
     const handleThumbNailImageClick = (index) => {
         bigImageRef.current.src = images[index].imageUrl;
-        setCurrentIndex(index);
+        setCurrentIndexLocal(index); // 큰 이미지 박스에 보이는 것
+        setCurrentIndex(index);  // 부모의 setCurrentIndex를 호출하여 상태 동기화
     }
 
     // 큰 이미지 클릭하면 모달창 열림
@@ -40,13 +41,15 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
     // 좌측 사진으로 이동
     const handlePrevClick = () => {
         // 이전에 index가 0이었으면 마지막 사진으로, 나머지는 이전 사진으로
-        setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+        setCurrentIndexLocal((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));  // 부모 상태 동기화
     };
 
     // 우측 사진으로 이동
     const handleNextClick = () => {
         // 이전 index가 마지막 index 였으면 첫번째 사진으로 이동, 나머지는 +1번째 index로 이동
-        setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+        setCurrentIndexLocal((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
+        setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));  // 부모 상태 동기화
     };
 
     // 모달 내부 클릭 시 모달 닫히지 않도록
@@ -54,10 +57,10 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
         e.stopPropagation();
     }
 
-    // esc 키 누르면 모달 종료
+    // enter, esc 키 누르면 모달 종료
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key === 'Escape') {
+            if (event.key === 'Escape' || event.key ==='Enter') {
                 setIsOpenModal(false);
             }
         };
@@ -104,7 +107,7 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
                                     className={`${styles.slideButton} ${styles.slideButtonLeft}`}
                                     onClick={handlePrevClick}
                                 >
-                                    <FiChevronLeft size={20} style={{color: "#ffffff"}} />
+                                    <FiChevronLeft size={25} style={{color: "#ffffff"}} />
                                 </button>
                             ) : null}
 
@@ -122,7 +125,7 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, in
                                     className={`${styles.slideButton} ${styles.slideButtonRight}`}
                                     onClick={handleNextClick}
                                 >
-                                    <FiChevronRight size={20} style={{color: "#ffffff"}} />
+                                    <FiChevronRight size={25} style={{color: "#ffffff"}} />
                                 </button>
                             )}
                         </div>

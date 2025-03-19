@@ -87,7 +87,7 @@ const ExchangeCreatePage = () => {
     }, [fileUploadErrorMessage]); // fileUploadErrorMessage 값이 변경될 때마다 실행
 
     // 모달 띄우기
-    const handleAlertModal = (title) => {
+    const handleAlertModal = (message) => {
         // 기존 타이머가 실행 중이라면 취소
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
@@ -95,7 +95,7 @@ const ExchangeCreatePage = () => {
         }
 
         // 모달 열기 및 메시지 설정
-        setAlertMessage({message: "데이터를 확인해주세요", title: title});
+        setAlertMessage({message: '', title: message});
         setShowAlertModal(true);
 
         // 2초 후 모달 자동 닫기
@@ -107,6 +107,10 @@ const ExchangeCreatePage = () => {
 
     // 엔터키로 폼 제출되는 것을 막음
     const handleEnterKeyDown = (e) => {
+
+        // enter키의 작동을 막을 건데, 그치만 textarea에 있을 때는 enter키가 정상적으로 작동해야 줄 띄우기가 가능,
+        if (e.target === contentInputRef.current) return;
+
         if (e.key === 'Enter') {
             e.preventDefault();
         }
@@ -233,10 +237,10 @@ const ExchangeCreatePage = () => {
             }, 2000)
         } else {
             // 400대, 500대 에러 처리
-            if (response.status >= 500) {
+            if (response.status = 500) {
                 setShowAlertModal(true);
                 setAlertMessage({
-                    title: "서버 내부 문제",
+                    title: "서버 오류",
                     message: "서버에서 문제가 발생했습니다. 잠시 후 다시 시도해주세요."
                 });
             } else if (response.status >= 400 && response.status < 500) {

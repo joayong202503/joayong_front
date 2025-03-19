@@ -49,8 +49,6 @@ export const useFileUpload = () => {
             setTimeout(() => {
                 setFileUploadErrorMessage(validateFilesResult.errorMessage); // 딜레이 후 설정
             }, 10); // 10ms 정도의 딜레이
-            // setFileUploadErrorMessage(validateFilesResult.errorMessage); // 에러 메시지 상태 업데이트
-            console.log('파일 검사 미통과');
             return;
         }
 

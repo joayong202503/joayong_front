@@ -19,6 +19,8 @@ import DeleteButton from "../components/common/icons/DeleteButton.jsx";
 
 const ExchangeDetailPage = () => {
 
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     const [shouldNavigate, setShouldNavigate] = useState(false);
     const [viewCount, setViewCount] = useState(0);
 
@@ -176,6 +178,8 @@ const ExchangeDetailPage = () => {
                     isPostUploaded={isPostUploaded}
                     isOpenModal={isOpenModal}
                     setIsOpenModal={setIsOpenModal}
+                    initialIndex={currentIndex}
+                    setCurrentIndex={setCurrentIndex}
                 />
 
                 {/* 오른쪽: 상세 정보 */}
