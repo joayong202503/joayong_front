@@ -1,5 +1,5 @@
 .fullContainer{
-  margin-top: 100px;
+  margin-top: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,8 +8,9 @@
 .topContainer{
   display: flex;
   width: 80%;
-  padding: 50px 100px;
+  padding: 100px 50px;
   justify-content: center;
+
 }
 .profileContainer{
   display: flex;
@@ -22,6 +23,7 @@
   flex-direction: column;
   justify-content: center;
   margin-left: 300px;
+
 }
 .profileContentContainer h2{
   font-size: 45px;
@@ -86,14 +88,7 @@
   font-size: 20px;
   margin-left: 5px;
 }
-.ratingTitle{
-  display: flex;
-  align-items: center;
-}
-.ratingBoxContainer{
-  margin-left: 50px;
-  margin-top: 40px;
-}
+
 .myExchangesContainer h2{
   margin-bottom: 40px;
   font-size: 40px;

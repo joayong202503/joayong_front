@@ -10,7 +10,21 @@
 }
 .ratingResultContainer{
   display: flex;
-  flex-direction: column;
   margin-top: 15px;
+  font-size: 20px;
+}
+.leftRatingContainer{
+  display: flex;
+  flex-direction: column;
   gap:10px;
+}
+.rightRatingContainer{
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+}
+.ratingItem{
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
