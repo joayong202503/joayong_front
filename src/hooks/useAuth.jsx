@@ -76,6 +76,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
+<<<<<<< HEAD
       // API 호출
       const response = await mockApiCall(API_ENDPOINTS.LOGIN, { email, password });
       
@@ -88,15 +89,43 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('rememberedEmail', email);
       } else {
         sessionStorage.setItem('user', JSON.stringify(response.user));
+=======
+      // 실제 구현에서는 API 호출을 통해 인증을 처리해야 합니다.
+      // 여기서는 간단한 모의 인증을 구현합니다.
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // 모의 사용자 데이터 (실제 환경에서는 백엔드에서 받아와야 함)
+      const mockUser = {
+        id: '1',
+        email,
+        username: email.split('@')[0]
+      };
+      
+      // 로그인 성공 처리
+      setUser(mockUser);
+      
+      // 사용자 기억 설정
+      if (remember) {
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        localStorage.setItem('rememberedEmail', email);
+      } else {
+        sessionStorage.setItem('user', JSON.stringify(mockUser));
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0
         localStorage.removeItem('rememberedEmail');
       }
       
       toast.success("로그인 성공!");
+<<<<<<< HEAD
       return response.user;
     } catch (err) {
       setError(err.message || '로그인에 실패했습니다. 다시 시도해주세요.');
       toast.error(err.message || "로그인 실패. 다시 시도해주세요.");
       throw err;
+=======
+    } catch (err) {
+      setError('로그인에 실패했습니다. 다시 시도해주세요.');
+      toast.error("로그인 실패. 다시 시도해주세요.");
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0
     } finally {
       setLoading(false);
     }
@@ -112,6 +141,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error('비밀번호가 일치하지 않습니다.');
       }
       
+<<<<<<< HEAD
       // API 호출
       const response = await mockApiCall(API_ENDPOINTS.SIGNUP, { 
         email, 
@@ -130,13 +160,41 @@ export const AuthProvider = ({ children }) => {
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
+=======
+      // 실제 구현에서는 API 호출을 통해 회원가입을 처리해야 합니다.
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // 회원가입 성공 처리 (실제 환경에서는 백엔드에서 처리)
+      const newUser = {
+        id: Date.now().toString(),
+        email,
+        username
+      };
+      
+      // 회원가입 후 자동 로그인
+      setUser(newUser);
+      localStorage.setItem('user', JSON.stringify(newUser));
+      
+      toast.success("회원가입 성공!");
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        toast.error(err.message);
+      } else {
+        setError('회원가입에 실패했습니다. 다시 시도해주세요.');
+        toast.error("회원가입 실패. 다시 시도해주세요.");
+      }
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0
     } finally {
       setLoading(false);
     }
   };
 
   const logout = () => {
+<<<<<<< HEAD
     // In a real app, you would call the logout API here
+=======
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0
     setUser(null);
     localStorage.removeItem('user');
     sessionStorage.removeItem('user');
@@ -156,4 +214,8 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0

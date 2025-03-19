@@ -54,15 +54,12 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     
-    // 유효성 검사
-    const isEmailValid = validateEmail(email);
-    const isPasswordValid = validatePassword();
-    
-    if (!isEmailValid || !isPasswordValid) {
+    if (!email || !name || !password || !confirmPassword || !agreeTerms) {
       return;
     }
     
-    if (!username) {
+    if (password !== confirmPassword) {
+      alert('비밀번호가 일치하지 않습니다.');
       return;
     }
     
@@ -190,4 +187,8 @@ const SignUp = () => {
   );
 };
 
+<<<<<<< HEAD
 export default SignUp;
+=======
+export default SignUp;
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0

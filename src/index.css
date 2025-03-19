@@ -1,14 +1,30 @@
+<<<<<<< HEAD
 /* 
 
+=======
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
+<<<<<<< HEAD
 @tailwind utilities; */
 
 /* @layer base { */
   /* :root {
+=======
+@tailwind utilities;
+
+@layer utilities {
+  .border-border {
+    border-color: theme('colors.border');
+  }
+}
+
+@layer base {
+  :root {
+>>>>>>> b9a1291280d459fddf79b6e6e370edc6547e7db0
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -134,6 +150,3 @@
 .auth-link:hover {
   color: hsl(var(--primary));
 }
-
-
-*/
