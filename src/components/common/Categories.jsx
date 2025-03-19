@@ -8,7 +8,7 @@ const Categories = ({isLoading, isPostUploaded, label, mainCategory, subCategory
             <div className={`${styles.categoryTag} ${styles.main}`}>
                 {!isLoading && isPostUploaded ? mainCategory : ''}
             </div>
-            <span>></span>
+            <span>&gt;</span>
             <div
                 className={`${styles.categoryTag} ${styles.sub}`}
                 id={subCategoryId}

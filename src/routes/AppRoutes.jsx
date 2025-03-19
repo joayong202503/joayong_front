@@ -1,4 +1,5 @@
 import {createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import React from "react";
 import AuthRequired from "./AuthRequired.jsx";
 import ExchangeDetailPage from "../pages/ExchangeDetailPage.jsx";
 import {queryClient} from "../utils/queryClient.js";
@@ -8,6 +9,8 @@ import ExchangeCreatePage from "../pages/ExchangeCreatePage.jsx";
 import {LocationProvider} from "../context/LocationContext.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
+import LoginPage from "../pages/LoginPage.jsx";
+import SignUp from "../pages/SignUp.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -23,7 +26,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <SignupPage/>
+        element: <SignUp/>
       }
     ]
   },
@@ -34,7 +37,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <LoginPage/>
+        element: <LoginPage />
       }
     ]
 
