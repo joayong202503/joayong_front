@@ -10,6 +10,7 @@ import profileImage from '../../assets/images/profile.png'
 const ProfileCircle = ({size ='xs',src=profileImage, username}) => {
 
 // 크기에 따른 클래스 이름 결정
+// lg, xl, md, sm, xs
   const sizeClass = styles[`size-${size}`];
 
   return (

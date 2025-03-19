@@ -40,6 +40,23 @@
     }
   }
 
+  &.greenTheme {
+    background-color: #179b17;
+    color: #FFFFFF;
+    border: transparent;
+
+    &:hover:not(.disabled) {
+      background-color: #0f770f;
+    }
+
+    &.disabled {
+      background-color: #f6f6f6;
+      color: #aaaaaa;
+      cursor: not-allowed;
+      border: 1px solid #dddddd;
+    }
+  }
+
   &.whiteTheme {
     background-color: #FFFFFF;
     color: #007AFF;
@@ -78,6 +95,9 @@
 }
 
 // 공통 : 폰트 사이즈별
+.extrasmall {
+  font-size: 0.9rem;
+}
 .small {
   font-size: 14px;
 }

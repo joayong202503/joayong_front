@@ -1,0 +1,151 @@
+.matchesContainer {
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pageTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.searchContainer {
+  margin-bottom: 25px;
+}
+
+.matchesList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.matchingMessageThumbnailWrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.divForLine {
+  padding: 12px 0;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+}
+
+.leftLayout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profileWithIndicator {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+p.requestSummary {
+  font-weight: 500;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 1rem;
+  white-space: pre; // 띄어쓰기 무시하지 않도록
+}
+
+.skillText {
+  &.want {
+    color: #8c1a1a; /* 진한 적갈색 */
+  }
+
+  &.give {
+    color: #1b399b;
+  }
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 7px;
+}
+
+.searchResultPreview {
+  margin-top: 12px;
+  margin-left: 60px;
+  padding: 12px 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #555;
+  animation: fadeIn 0.3s ease-in-out;
+  border-left: 3px solid #4a5568;
+
+  p {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .contentMatch, .titleMatch {
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .matchLabel {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #4a5568;
+    display: inline-block;
+    margin-bottom: 4px;
+    background-color: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .contentPreview {
+    font-style: italic;
+    color: #718096;
+  }
+}
+
+.highlight {
+  background-color: #FFF3CD;
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// 재능을 아이콘처럼 테두리 꾸며주기
+.skillWrapper {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  justify-content: center;
+
+  &.give {
+    background-color: #dbeafe;
+    border: 2px solid #183388;
+  }
+
+  &.want {
+    background-color: #fee2e2; /* 연한 핑크 */
+    color: #8c1a1a; /* 진한 적갈색 */
+    border: 2px solid #801818; /* 진한 적갈색 */
+  }
+}
+
+// 00님
+.user {
+  margin-right: 6px;
+}

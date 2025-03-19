@@ -10,6 +10,7 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 import MainPage from "../pages/MainPage.jsx";
 import MainLayout from "../layouts/mainLayout.jsx";
+import MatchesPage from "../pages/MatchesPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -103,7 +104,7 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AuthRequired>
-              {/*<MatchesPage/>*/}
+              <MatchesPage/>
             </AuthRequired>
           },
           // 매칭 후 리뷰작성 사이트

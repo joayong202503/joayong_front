@@ -3,7 +3,7 @@ import styles from './Button.module.scss';
 
 /** 버튼 공동 UI
  * @param theme - 전체 테마( blueTHeme, whiteTheme, blackTheme )
- * @param fontSize - small(14px), middle(16), large)18)
+ * @param fontSize - small(14px), middle(16), large)18), + extrasmall
  * @param hidden - hidden (display가 none이 됨)
  * @param children
  * @param disabled - (*default : false)
@@ -44,7 +44,6 @@ const Button = ({
         styles[hidden],
         disabled && styles['disabled'],
         customClassNames,
-
     ]
         .filter(Boolean)
         .join(' ');
@@ -55,6 +54,7 @@ const Button = ({
             className={buttonClass}
             disabled={disabled}
             onClick={disabled ? undefined : onClick}
+            style={fontSize === 'extrasmall' ? {padding: '3px 20px'} : {}}
             {...props}
         >
             {children}

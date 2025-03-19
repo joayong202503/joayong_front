@@ -1,0 +1,40 @@
+.bubbleIndicator {
+  position: absolute;
+  left: -60px; /* 프로필을 가리지 않도록 왼쪽으로 더 이동 */
+  top: 0px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -4px; /* 화살표를 오른쪽으로 조정 */
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg); /* 화살표 위치 조정 */
+  }
+
+  &.incoming {
+    background-color: #E5DEFF;
+    color: #6B46C1;
+
+    &::after {
+      background-color: #E5DEFF;
+    }
+  }
+
+  &.outgoing {
+    background-color: #D3E4FD;
+    color: #2563EB;
+
+    &::after {
+      background-color: #D3E4FD;
+    }
+  }
+}
