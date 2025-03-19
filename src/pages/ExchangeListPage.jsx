@@ -30,14 +30,29 @@ const ExchangeListPage = () => {
         return category ? category.name : " 카테고리 없음 ";
     };
 
-
+    // 지역카테고리에서 ID로 for문을 통해 대분류,중분류,소분류 배열을 순회하여 해당 ID와 일치하는 소분류를 찾고,
+    // 소분류에 해당되는 중분류와 소분류를 합쳐서 return
     const getRegionName = (regionId) => {
+        if (!regionId) return "지역없음";
         if (!regionCategories || regionCategories.length === 0) return "지역 로딩중";
-        const allSubRegions = regionCategories.flatMap(main => main.subRegionList || []);
-        // 소분류에서 해당 ID 찾기
-        const region = allSubRegions.find(sub => sub.id === regionId);
-        return region ? region.name : "지역없음";
+
+        for (const region of regionCategories) {
+            if (!region.subRegionList) continue;
+
+            for (const subRegion of region.subRegionList) {
+                if (!subRegion.detailRegionList) continue;
+
+                const detailRegion = subRegion.detailRegionList.find(detail => detail.id === regionId);
+                if (detailRegion) {
+                    return `${subRegion.name} ${detailRegion.name}`;
+                }
+            }
+        }
+
+        return "지역없음";
     };
+
+
 
     useEffect(() => {
         const getRecentExchanges = async () => {
