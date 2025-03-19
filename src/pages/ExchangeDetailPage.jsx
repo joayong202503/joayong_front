@@ -291,11 +291,11 @@ const ExchangeDetailPage = () => {
                         { (!isMyPost && !isLoading && isPostUploaded) &&
                             <Button
                                 theme={'blueTheme'}
-                                fontSize={'large'}
+                                fontSize={'medium'}
                                 className={'fill'}
                                 onClick={handleRequestMatching}
                             >
-                                <MessageCircleIcon size={23}/>재능교환 요청하기
+                                <MessageCircleIcon size={20}/>재능교환 요청하기
                             </Button>
                         }
 
