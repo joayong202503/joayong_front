@@ -62,7 +62,7 @@ const ExchangeRequestPage = () => {
     const [confirmModalMessage, setConfirmModalMessage] = useState('');
     const [requestCancelHandler, setRequestCancelHandler] = useState(null);
     const [requestConfirmHandler, setRequestConfirmHandler] = useState(null);
-    const [isminiModalOpen, setIsMiniModalOpen] = useState(false); // 성공 알림 미니 모달
+    const [isMiniModalOpen, setIsMiniModalOpen] = useState(false); // 성공 알림 미니 모달
     const [miniModalMessage, setMiniModalMessage] = useState(false); // 성공 알림 미니 모달
     const closeTimeoutRef = useRef(null); // 타이머를 저장할 ref
 

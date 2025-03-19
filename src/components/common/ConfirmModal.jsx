@@ -13,26 +13,29 @@ import styles from './ConfirmModal.module.scss';
 
 const ConfirmModal = ({title,message,
                           onConfirm, onClose,
-                          onPressEscapeOrEnter,
+                          onPressEscape,
                           confirmText = "확인", cancelText = "취소"}) => {
 
     useEffect(() => {
         // Escape, 엔터 키 키 이벤트 리스너 등록
-        const handleEscapeOrEnter = (e) => {
-            if (e.key === 'Escape' || e.key ==='Enter') {
-                onPressEscapeOrEnter && onPressEscapeOrEnter();
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
                 onClose();
+            }
+            // Enter 키는 아무 동작도 하지 않음
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 기본 동작 방지
             }
         };
 
         // 키보드 이벤트 리스너 등록
-        window.addEventListener('keydown', handleEscapeOrEnter);
+        window.addEventListener('keydown', handleEscape);
 
         // 컴포넌트 언마운트 시 이벤트 리스너 제거
         return () => {
-            window.removeEventListener('keydown', handleEscapeOrEnter);
+            window.removeEventListener('keydown', handleEscape);
         };
-    }, [onClose, onPressEscapeOrEnter]);
+    }, [onClose, onPressEscape]);
 
     return (
         <div onClick={onClose} className={styles.backdrop}>

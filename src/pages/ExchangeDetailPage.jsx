@@ -16,8 +16,28 @@ import {checkMatchingRequestValidity} from "../services/matchingService.js";
 import {usePostData} from "../hooks/ExchangeDetailPage/usePostData.js";
 import {useSelector} from "react-redux";
 import DeleteButton from "../components/common/icons/DeleteButton.jsx";
+import ConfirmModal from "../components/common/ConfirmModal.jsx";
 
 const ExchangeDetailPage = () => {
+
+    // 컨덜 모달 창이켜저 있을 때 엔터 누르면 버튼 자동으로 다시 또 클릭되는 것 방지
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+
+            if (!isConfirmModalOpen) return;
+
+            if (e.key === 'Enter') {
+                e.preventDefault(); // 엔터 동작을 방지
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -67,6 +87,55 @@ const ExchangeDetailPage = () => {
         fetchViewCount(postId); // 조회수 호출
     }, [postId]); // postId가 변경될 때마다 실행
 
+    // ===== delete confirm이 되면, 삭제 fetch
+    const [deleteConfirmFlag, setDeleteConfirmFlag] = useState(false);
+    useEffect(() => {
+        const fetchDelete = (postId) => {
+
+            if(!deleteConfirmFlag) return; // 만약 삭제 컨펌 하지 않았으면 return
+
+            // mutate : useMutation을 통해 게시물 삭제 후 캐싱 데이터까지 업데이트하는 함수
+            if (mutate.loading) return; // 이미 진행 중인 요청이 있다면 중단
+
+            // postId를 첫 번째 인자로만 전달
+            mutate(postId, {
+                onSuccess: () => {
+                    setIsConfirmModalOpen(false); // 컨펌 모달 지우기
+                    setDeleteModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
+                    setIsOpenDeleteModal(true);
+
+                    setTimeout(() => {
+                        setIsOpenDeleteModal(false);
+
+                        // 모달이 닫힌 후 페이지 이동을 실행
+                        setTimeout(() => {
+                            setShouldNavigate(true);  // 페이지 이동
+                        }, 300);
+                    }, 2000);
+                },
+
+                onError: (error) => {
+                    // 요청 실패 시 수행할 작업
+                    console.error("에러 발생:", error);
+                    navigate("/error", {
+                        state: {
+                            errorPageUrl: window.location.pathname,
+                            status: error.status,
+                            message: error.message,
+                        },
+                    });
+                },
+            });
+        }
+
+       fetchDelete(postId);
+
+
+
+
+
+    }, [deleteConfirmFlag, postId]);
+
     // ============== fetching 끝 ============= //
 
     // 모달 관련
@@ -75,6 +144,7 @@ const ExchangeDetailPage = () => {
     const [modalMessage, setModalMessage] = useState('')
     const [isOpenDeleteModal, setIsOpenDeleteModal ] = useState(false); // 게시글 삭제
     const [deleteModalTitle, setDeleteModalTitle] = useState('');
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 게시굴 삭제 컨펌 모달
 
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
@@ -107,41 +177,16 @@ const ExchangeDetailPage = () => {
         return navigate("request", { state: { postDetail: post } }); // 매칭 요청이 이미 있으면 이동하면서 post 정보 전달
     };
 
+    // 게시물 진짜로 삭제할 것인지 다시 한 번 물어보는 창 띄우기
+    const confirmDeletePost = () => {
+        setIsConfirmModalOpen(true);
+    }
+
     // 게시물 삭제
-    const handleDeletePost = async (postId) => {
-
-        // mutate : useMutation을 통해 게시물 삭제 후 캐싱 데이터까지 업데이트하는 함수
-        if (mutate.loading) return; // 이미 진행 중인 요청이 있다면 중단
-
-        // postId를 첫 번째 인자로만 전달
-        mutate(postId, {
-            onSuccess: () => {
-                setDeleteModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
-                setIsOpenDeleteModal(true);
-
-                setTimeout(() => {
-                    setIsOpenDeleteModal(false);
-
-                    // 모달이 닫힌 후 페이지 이동을 실행
-                    setTimeout(() => {
-                        setShouldNavigate(true);  // 페이지 이동
-                    }, 300);
-                }, 2000);
-            },
-
-            onError: (error) => {
-                // 요청 실패 시 수행할 작업
-                console.error("에러 발생:", error);
-                navigate("/error", {
-                    state: {
-                        errorPageUrl: window.location.pathname,
-                        status: error.status,
-                        message: error.message,
-                    },
-                });
-            },
-        });
-    };
+    const handleDeletePostRequest = async (postId) => {
+        // 정말 삭제할 것인지 컨펌 창 뜸
+        confirmDeletePost();
+    }
 
 
     return (
@@ -258,12 +303,20 @@ const ExchangeDetailPage = () => {
                         {/*    <EditButton onClick={()=>{alert('수정 버튼 클릭')}}/>}*/}
 
                         { (isMyPost && !isLoading && isPostUploaded) &&
-                            <DeleteButton onClick={() => handleDeletePost(postId)}/>}
+                            <DeleteButton onClick={() => handleDeletePostRequest(postId)}/>}
 
 
                     </div>
                 </div>
             </div>
+
+            {/* 게시글 정말 삭제할 것인지 컨펌 받는 모달창 */}
+            { isConfirmModalOpen &&
+                <ConfirmModal
+                    title={"정말 삭제하시겠습니까?"}
+                    onConfirm={() => {setDeleteConfirmFlag(true)}}
+                    onClose={() => {setIsConfirmModalOpen(false)}}
+            />}
 
             {/* 모든 컨텐츠 섹션 */}
             <div className={styles.contentSections}>
