@@ -53,6 +53,7 @@ const MainPage = () => {
     return "지역없음";
   };
 
+  //
   useEffect(() => {
     const getRecentExchanges = async() =>{
       try {

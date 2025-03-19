@@ -3,23 +3,27 @@ import styles from './ExchangeDetailPage.module.scss';
 import {useNavigate, useParams} from "react-router-dom";
 import {usePostDetailFetchWithUseQuery, useUseQueryErrorHandler} from "../hooks/useQueryHooks.js";
 import { MessageCircleIcon, Trash2} from "lucide-react";
-import ImageCarouselWithThumbNail from "../components/common/ImageCarouselWithThumbNail.jsx";
-import Categories from "../components/common/Categories.jsx";
-import { increasePostViewCount, useDeletePost} from "../services/postService.js";
+import ImageCarouselWithThumbNail from "../components/common/imagesAndFiles/ImageCarouselWithThumbNail.jsx";
+import Categories from "../components/common/categories/Categories.jsx";
+import {getPostViewCount, increasePostViewCount, useDeletePost} from "../services/postService.js";
 import ProfileCard from "../components/common/ProfileCard.jsx";
-import PostDate from "../components/common/PostDate.jsx";
-import ViewCount from "../components/common/ViewCount.jsx";
+import PostDate from "../components/common/icons/PostDate.jsx";
+import ViewCount from "../components/common/icons/ViewCount.jsx";
 import Button from "../components/common/Button.jsx";
 import DetailPageDescription from "../components/ExchangeDetailPage/DetailPageDescription.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import {checkMatchingRequestValidity} from "../services/matchingService.js";
 import {usePostData} from "../hooks/ExchangeDetailPage/usePostData.js";
 import {useSelector} from "react-redux";
-import DeleteButton from "../components/common/DeleteButton.jsx";
+import DeleteButton from "../components/common/icons/DeleteButton.jsx";
+import ConfirmModal from "../components/common/ConfirmModal.jsx";
 
 const ExchangeDetailPage = () => {
 
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     const [shouldNavigate, setShouldNavigate] = useState(false);
+    const [viewCount, setViewCount] = useState(0);
 
     useEffect(() => {
         if (shouldNavigate) {
@@ -31,8 +35,6 @@ const ExchangeDetailPage = () => {
     const myUsername = useSelector((state) => state.auth.user?.name); // 매칭 요청 버튼 숨기는 용
     // useMutation을 통해 삭제 후 캐싱 데이터 반환한 결과를 반환
     const { mutate, isLoading:isMutationLoading, error:deletePostError } = useDeletePost();
-
-    console.log('mutation', mutate);
 
     // =============== useQuery를 이용한 fetch ====================== //
     const {exchangeId:postId} = useParams();  // postId 가져오기
@@ -46,26 +48,91 @@ const ExchangeDetailPage = () => {
     // useQuery 작업 완료되었고, 에러 메시지의 status가 500이면 : 서버 오류 페이지로 이동
     useUseQueryErrorHandler(isError, error, navigate);
 
+    // 조회수 fetch
+    useEffect(() => {
+        const fetchViewCount = async (postId) => {
+            try {
+                const response = await getPostViewCount(postId);
+                if (!response.ok) {
+                    setViewCount('정보 없음');
+                    return;
+                }
+                const result = await response.json();
+                setViewCount(result.viewCount); // 조회수 업데이트
+            } catch (error) {
+                setViewCount('정보 없음');
+                console.error("조회수 가져오기 실패:", error);
+            }
+        };
+
+        fetchViewCount(postId); // 조회수 호출
+    }, [postId]); // postId가 변경될 때마다 실행
+
+    // ===== delete confirm이 되면, 삭제 fetch
+    const [deleteConfirmFlag, setDeleteConfirmFlag] = useState(false);
+    useEffect(() => {
+        const fetchDelete = (postId) => {
+
+            if(!deleteConfirmFlag) return; // 만약 삭제 컨펌 하지 않았으면 return
+
+            // mutate : useMutation을 통해 게시물 삭제 후 캐싱 데이터까지 업데이트하는 함수
+            if (mutate.loading) return; // 이미 진행 중인 요청이 있다면 중단
+
+            // postId를 첫 번째 인자로만 전달
+            mutate(postId, {
+                onSuccess: () => {
+                    setIsConfirmModalOpen(false); // 컨펌 모달 지우기
+                    setDeleteModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
+                    setIsOpenDeleteModal(true);
+
+                    setTimeout(() => {
+                        setIsOpenDeleteModal(false);
+
+                        // 모달이 닫힌 후 페이지 이동을 실행
+                        setTimeout(() => {
+                            setShouldNavigate(true);  // 페이지 이동
+                        }, 300);
+                    }, 2000);
+                },
+
+                onError: (error) => {
+                    // 요청 실패 시 수행할 작업
+                    console.error("에러 발생:", error);
+                    navigate("/error", {
+                        state: {
+                            errorPageUrl: window.location.pathname,
+                            status: error.status,
+                            message: error.message,
+                        },
+                    });
+                },
+            });
+        }
+
+       fetchDelete(postId);
+
+    }, [deleteConfirmFlag, postId]);
+
     // ============== fetching 끝 ============= //
 
     // 모달 관련
-    const [isOpenModal, setIsOpenModal ] = useState(false);
+    const [isOpenModal, setIsOpenModal ] = useState(false); // 매칭 요청
     const [modalTitle, setModalTitle] = useState('');
-    const [isOpenSubmitModal, setIsOpenSubmitModal ] = useState(false);
-    const [submitModalTitle, setSubmitModalTitle] = useState('');
     const [modalMessage, setModalMessage] = useState('')
-
+    const [isOpenImageModal, setIsOpenImageModal ] = useState(false); // 이미지 캐러셀
+    const [isOpenDeleteModal, setIsOpenDeleteModal ] = useState(false); // 게시글 삭제
+    const [deleteModalTitle, setDeleteModalTitle] = useState('');
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 게시굴 삭제 컨펌 모달
 
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
-        if (!isLoading && post) {
-            const increaseView = async () => {
-                const result = await increasePostViewCount();
-                console.log('조회수 증가 결과:', result);
+        if (!isLoading && post && isPostUploaded) {
+            const increaseView = async (postId) => {
+                const result = await increasePostViewCount(postId);
             };
-            increaseView();
+            increaseView(postId);
         }
-    }, [post]);
+    }, [isLoading, post, isPostUploaded, postId]);
 
     // 매칭 요청 했을 때 로직
     //  - 본인 게시글인 경우, 버튼 자체가 안뜸
@@ -85,52 +152,19 @@ const ExchangeDetailPage = () => {
             return;
         }
 
-        return navigate("request"); // 매칭 요청이 이미 있으면 이동
+        return navigate("request", { state: { postDetail: post } }); // 매칭 요청이 이미 있으면 이동하면서 post 정보 전달
     };
+
+    // 게시물 진짜로 삭제할 것인지 다시 한 번 물어보는 창 띄우기
+    const confirmDeletePost = () => {
+        setIsConfirmModalOpen(true);
+    }
 
     // 게시물 삭제
-    const handleDeletePost = async (postId) => {
-        console.log(postId);
-
-        console.log(333);
-        console.log(333);
-        console.log(333);
-        console.log(333);
-        console.log(isMutationLoading);
-
-        // mutate : useMutation을 통해 게시물 삭제 후 캐싱 데이터까지 업데이트하는 함수
-
-        if (mutate.loading) return; // 이미 진행 중인 요청이 있다면 중단
-
-        // postId를 첫 번째 인자로만 전달
-        mutate(postId, {
-            onSuccess: () => {
-                setSubmitModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
-                setIsOpenSubmitModal(true);
-
-                setTimeout(() => {
-                    setIsOpenSubmitModal(false);
-
-                    // 모달이 닫힌 후 페이지 이동을 실행
-                    setTimeout(() => {
-                        setShouldNavigate(true);  // 페이지 이동
-                    }, 300);
-                }, 2000);
-            },
-
-            onError: (error) => {
-                // 요청 실패 시 수행할 작업
-                console.error("에러 발생:", error);
-                navigate("/error", {
-                    state: {
-                        errorPageUrl: window.location.pathname,
-                        status: error.status,
-                        message: error.message,
-                    },
-                });
-            },
-        });
-    };
+    const handleDeletePostRequest = async (postId) => {
+        // 정말 삭제할 것인지 컨펌 창 뜸
+        confirmDeletePost();
+    }
 
 
     return (
@@ -143,17 +177,18 @@ const ExchangeDetailPage = () => {
                     message={modalMessage}
                     onClose={() => {
                         setIsOpenModal(false);
-                        navigate("/");
-                    }}/>
+                    }}
+                />
             }
 
-            { isOpenSubmitModal &&
+            { isOpenDeleteModal &&
                 <AlertModal
-                    title={submitModalTitle}
+                    title={deleteModalTitle}
                     onClose={() => {
-                        setIsOpenSubmitModal(false);
+                        setIsOpenDeleteModal(false);
                         navigate("/");
-                    }}/>
+                    }}
+                />
             }
 
             {/* 상단 섹션 (이미지 갤러리 + 상세 정보) */}
@@ -163,8 +198,10 @@ const ExchangeDetailPage = () => {
                     imagesObject={post.images}
                     isLoading={isLoading}
                     isPostUploaded={isPostUploaded}
-                    isOpenModal={isOpenModal}
-                    setIsOpenModal={setIsOpenModal}
+                    isOpenModal={isOpenImageModal}
+                    setIsOpenModal={setIsOpenImageModal}
+                    initialIndex={currentIndex}
+                    setCurrentIndex={setCurrentIndex}
                 />
 
                 {/* 오른쪽: 상세 정보 */}
@@ -222,7 +259,7 @@ const ExchangeDetailPage = () => {
                         <ViewCount
                             isLoading={isLoading}
                             isPostUploaded={isPostUploaded}
-                            viewCount={post.views}
+                            viewCount={viewCount} // 이것만 실시간 fetch하여 가져옴
                         />
                     </div>
 
@@ -231,11 +268,11 @@ const ExchangeDetailPage = () => {
                         { (!isMyPost && !isLoading && isPostUploaded) &&
                             <Button
                                 theme={'blueTheme'}
-                                fontSize={'large'}
+                                fontSize={'medium'}
                                 className={'fill'}
                                 onClick={handleRequestMatching}
                             >
-                                <MessageCircleIcon size={23}/>재능교환 요청하기
+                                <MessageCircleIcon size={20}/>재능교환 요청하기
                             </Button>
                         }
 
@@ -243,12 +280,21 @@ const ExchangeDetailPage = () => {
                         {/*    <EditButton onClick={()=>{alert('수정 버튼 클릭')}}/>}*/}
 
                         { (isMyPost && !isLoading && isPostUploaded) &&
-                            <DeleteButton onClick={() => handleDeletePost(postId)}/>}
+                            <DeleteButton onClick={() => handleDeletePostRequest(postId)}/>}
 
 
                     </div>
                 </div>
             </div>
+
+            {/* 게시글 정말 삭제할 것인지 컨펌 받는 모달창 */}
+            { isConfirmModalOpen &&
+                <ConfirmModal
+                    title={"정말 삭제하시겠습니까?"}
+                    onConfirm={() => {setDeleteConfirmFlag(true); }}
+                    onClose={() => {setIsConfirmModalOpen(false)}}
+                    isOpenModal={isOpenModal}
+            />}
 
             {/* 모든 컨텐츠 섹션 */}
             <div className={styles.contentSections}>

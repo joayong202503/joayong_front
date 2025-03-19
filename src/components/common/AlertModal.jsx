@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import styles from './AlertModal.module.scss'
 
 /* 확인버튼 모달
@@ -8,25 +8,39 @@ import styles from './AlertModal.module.scss'
 * pages-ModalTest 페이지 참고해주세요
 */
 
-const AlertModal = ({title,message,onClose}) => {
+const AlertModal = ({title,message,onClose,onPressEscapeOrEnter, preventEnterDefault=false}) => {
 
-    // useEffect를 사용하여 Esc 키 이벤트 처리
+    // Escape, 엔터 이벤트 리스너 등록
     useEffect(() => {
-        // Esc 키를 눌렀을 때 onClose를 호출하여 모달을 닫기
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
+        const handleEscapeOrEnter = (e) => {
+
+            e.preventDefault();
+
+            if (e.key === 'Escape' || e.key ==='Enter') {
+
+                if(preventEnterDefault) return;
+                console.log('엔터 키카 눌림');
                 onClose();
             }
         };
 
-        // 이벤트 리스너 추가
-        document.addEventListener('keydown', handleKeyDown);
+        // 키보드 이벤트 리스너 등록
+        window.addEventListener('keydown', handleEscapeOrEnter);
 
-        // 모달이 닫힐 때 이벤트 리스너 제거
+        // 컴포넌트 언마운트 시 이벤트 리스너 제거
         return () => {
-            document.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keydown', handleEscapeOrEnter);
         };
-    }, [onClose]);
+    }, [onClose, onPressEscapeOrEnter]);
+
+    // 모달 모달 열리면 자동으로 모달의 버튼에 포커스가 되어야, 모달이 생긴 페이지에서의 브라우저에 의한 오작용 방지할 수 있음
+    const ref = useRef();
+    useEffect(() => {
+        setTimeout(() => {
+            console.log("Button ref:", ref.current); // 버튼 요소 확인
+            ref.current?.focus();
+        }, 0);
+    }, []);
 
     return (
         <>
@@ -35,7 +49,11 @@ const AlertModal = ({title,message,onClose}) => {
                 <div className={styles.modal} onClick ={(e) =>e.stopPropagation()}>
                     <h2 className={styles.title}>{title}</h2>
                     <p className ={styles.message}>{message}</p>
-                    <button className={styles.button} onClick={onClose}>확인</button>
+                    <button
+                        ref={ref}
+                        className={styles.button}
+                        onClick={onClose}
+                        onKeyDown={onPressEscapeOrEnter}>확인</button>
                 </div>
 
             </div>

@@ -20,7 +20,7 @@ import {Search} from 'lucide-react';
 const InputBox
     = forwardRef(
     ({
-         searchIcon, type = 'text', placeHolder, fontSize, width, theme, height,
+         searchIcon, type = 'text', placeHolder, fontSize, width, theme, height, maxlength=5000,
          onClick, onHandleEnterKey, onFocus, onBlur, onChange, ...props
      }
         , ref
@@ -32,7 +32,6 @@ const InputBox
             }
         };
 
-
         return (
             <div
                 className={`${styles.inputBoxWrapper} ${theme ? styles[theme] : ''}`}
@@ -42,6 +41,7 @@ const InputBox
                     ref={ref} // 부모에서 전달받은 ref를 input에 연결
                     type={type}
                     name={name}
+                    maxLength={maxlength}
                     className={`${styles.inputBox} ${fontSize ? styles[fontSize] : ''}`}
                     placeholder={placeHolder}
                     onKeyDown={handleEnterKey}

@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './RegionSelectSection.module.scss';
-import DropDownSelect from "../common/DropDownSelect.jsx";
+import DropDownSelect from "../DropDownSelect.jsx";
 import { RiMapPinLine } from 'react-icons/ri';
 
 const RegionSelectSection = ({

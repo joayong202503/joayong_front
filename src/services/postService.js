@@ -82,6 +82,12 @@ export const useDeletePost = () => {
 };
 
 
+// 조회수만 따로 받아오기
+export const getPostViewCount = async (postId) => {
+    return await fetchWithAuth(`${postApi.viewCount}${postId}`);
+}
+
+
 export default useDeletePost;
 
 
