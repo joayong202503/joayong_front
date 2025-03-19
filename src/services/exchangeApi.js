@@ -7,10 +7,10 @@ const API_URL = 'http://localhost:8999'
 const AUTH_REQUIRED = '/api/joayong';
 
 // 최근 등록된 재능 교환 목록 가져오기
-export const fetchRecentExchanges = async (limit = 12) => {
+export const fetchRecentExchanges = async (limit = 12,page =0 ) => {
     try {
         // 기존 fetchWithAuth 함수를 사용하여 API 호출
-        const response = await fetchWithAuth(`${API_URL}${AUTH_REQUIRED}/post/main?size=${limit}&page=0`);
+        const response = await fetchWithAuth(`${API_URL}${AUTH_REQUIRED}/post/main?size=${limit}&page=${page}`);
 
         if (!response.ok) {
             throw new Error('API 호출 실패: ' + response.status);
