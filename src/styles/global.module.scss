@@ -8,10 +8,16 @@ html body[data-scroll-locked] {
 
 * {
   box-sizing: border-box;
-  margin: 0;
+  //margin: 0;
   padding: 0;
 }
 
 main {
   //width: 100vw;
+  margin-bottom: 80px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
 }

@@ -1,0 +1,46 @@
+.segmentControlContainer {
+  display: flex;
+  border-radius: 9px;
+  width: 60%;
+  max-width: 500px;
+  gap: 5px;
+  background-color: rgba(243, 244, 246, 0.8);
+  padding: 3px 10px;
+  position: relative;
+  margin: 0 auto;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 28px;
+  padding: 3px 15px;
+  border-radius: 9px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #64748b;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+  white-space: nowrap; // 텍스트 한 줄로
+
+  &.selected {
+    color: #334155;
+  }
+}
+
+.activeBackground {
+  position: absolute;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  top: 0;
+  left: 0;
+  transition: all 0.2s ease;
+  z-index: 0;
+}

@@ -1,0 +1,96 @@
+.matchesContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+// 세그먼트 컨트롤 컨테이너
+.segmentControlContainer {
+  margin-bottom: 24px;
+  padding: 0 16px;
+}
+
+// 매칭 리스트 컨테이너
+.matchesList {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+// 빈 상태 (메시지가 없을 때) 스타일
+.emptyStateContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background-color: white;
+  border-radius: 12px;
+  margin: 24px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+  .emptyStateIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .noResultsMessage {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+}
+
+// 검색 결과 관련 스타일
+.searchContainer {
+  margin-bottom: 24px;
+  padding: 0 16px;
+}
+
+.searchResultPreview {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  margin-top: 8px;
+  border-radius: 8px;
+
+  .matchLabel {
+    font-weight: 600;
+    color: #666;
+    margin-right: 8px;
+  }
+
+  .contentMatch, .titleMatch {
+    margin: 8px 0;
+  }
+
+  .contentPreview {
+    color: #666;
+    margin: 0;
+  }
+}
+
+// 하이라이트 스타일
+.highlight {
+  background-color: #fff3cd;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .matchesContainer {
+    padding: 16px 8px;
+  }
+
+  .segmentControlContainer,
+  .searchContainer {
+    padding: 0 8px;
+  }
+
+  .emptyStateContainer {
+    margin: 16px 8px;
+    padding: 32px 16px;
+  }
+}

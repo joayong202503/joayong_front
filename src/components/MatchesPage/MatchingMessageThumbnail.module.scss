@@ -1,0 +1,46 @@
+.divForLine {
+    border-bottom: 1px solid #E5E5E5;
+    padding: 16px 0;
+}
+
+.matchingMessageThumbnailWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.leftLayout {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profileWithIndicator {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.requestSummary {
+    .user {
+        font-weight: 600;
+    }
+
+    .skillText {
+        margin: 0 4px;
+        
+        &.give {
+            color: #2196F3;
+        }
+        
+        &.want {
+            color: #4CAF50;
+        }
+    }
+}
+
+.actionButtons {
+    display: flex;
+    gap: 8px;
+}

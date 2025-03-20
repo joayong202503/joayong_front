@@ -3,7 +3,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 8px 5px 8px;
+  padding: 16px 10px 16px 10px;
   font-family: inherit;
   font-weight: 500;
   cursor: pointer;
@@ -30,6 +30,23 @@
 
     &:hover:not(.disabled) {
       background-color: #2563eb;
+    }
+
+    &.disabled {
+      background-color: #f6f6f6;
+      color: #aaaaaa;
+      cursor: not-allowed;
+      border: 1px solid #dddddd;
+    }
+  }
+
+  &.greenTheme {
+    background-color: #179b17;
+    color: #FFFFFF;
+    border: transparent;
+
+    &:hover:not(.disabled) {
+      background-color: #0f770f;
     }
 
     &.disabled {
@@ -78,6 +95,9 @@
 }
 
 // 공통 : 폰트 사이즈별
+.extrasmall {
+  font-size: 0.9rem;
+}
 .small {
   font-size: 14px;
 }
