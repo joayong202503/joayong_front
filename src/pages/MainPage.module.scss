@@ -49,11 +49,15 @@
 .bottomContainer{
   width: 80%;
 }
+.titleContainer {
+  margin-bottom: 50px;
+}
 .cardContainer{
   display: flex;
   gap: 10px;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
 }
 .arrows{
   font-weight: bold;
