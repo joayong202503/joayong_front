@@ -45,7 +45,7 @@ const MiniAlert = ({
                             if (onClose) {
                                 setTimeout(() => {
                                     onClose();
-                                }, 300); // Wait for exit animation
+                                }, 300);
                             }
                         }}
                         aria-label="Close"

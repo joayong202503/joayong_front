@@ -6,7 +6,7 @@ const Categories = ({isLoading=false, isPostUploaded=true, label, labelHighlight
         <div className={`${styles.categoryGroup} ${styles[className]}`}>
             <div className={styles.flex}>
                 <span className={`${styles.categoryLabel} ${styles.labelHighlight}`}>{labelHighlight}</span>
-                <span className={styles.categoryLabel}>{label} </span>
+                <span className={styles.categoryLabel}>{label}   </span>
             </div>
             <div className={styles.flex}>
                 <div className={`${styles.categoryTag} ${styles.main} ${styles[theme]}`}>

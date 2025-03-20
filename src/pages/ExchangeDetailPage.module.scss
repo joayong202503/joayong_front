@@ -205,6 +205,11 @@
   color: #64748b;
 }
 
+.categories {
+  display: flex;
+  gap: 18px;
+}
+
 .cardCategoryTag.main {
   background-color: #dbeafe;
   color: #1e40af;
