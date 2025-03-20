@@ -34,8 +34,28 @@ export const postApi = {
   deletePost : `${POST_URL}/delete/`, // 게시글 삭제
 }
 
+const getMatchingRequestUrl = (filter, status) => {
+
+  // 선택 가능한 옵션 목록
+  const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND', 'NONE'];
+  const VALID_STATUS = ['N', 'M', 'D', 'NONE'];
+
+  // 준 옵션 값 중, 유효하지 않은 값은 기본값으로 설정
+  const validatedFilter = (filter === 'NONE' || !filter) ? 'ALL' : filter;
+  const validatedStatus = (status === 'NONE' || !status) ? false : status;
+
+  const fetchUrl = `${MESSAGE_URL}?filter=${validatedFilter}`; // 기본 url 설정
+  if (validatedStatus) {
+    // status가 있으면 url에 추가
+    return `${fetchUrl}&status=${validatedStatus}`;
+  }
+
+  return fetchUrl;
+}
+
 // 메시지 관련 api
 export const messageApi = {
   isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`,
   sendMatchingRequest : `${MESSAGE_URL}`,
+  getMatchingRequestsWithFilters : getMatchingRequestUrl, // 메시지 필터링 조회
 }
