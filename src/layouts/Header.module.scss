@@ -2,9 +2,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 20px 20px 20px;
+  padding: 0 20px;
   border-bottom: 1px solid lightgray;
-};
+  height: 80px; /* 명확한 높이 지정해야 body를 그 만큼 내려 줌 */
+  z-index: 1000; /* 겹침 방지 */
+  position: fixed;
+  width: 100%;
+  background: #ffffff;
+}
+
 .menuContainer{
   display: flex;
 };
