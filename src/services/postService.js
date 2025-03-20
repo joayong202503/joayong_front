@@ -32,8 +32,6 @@ export const increasePostViewCount = async (postId) => {
 // 캐싱 데이터 업데이트 하는 부분 제외한 게시물 삭제 로직
 const deletePost = async (postId) => {
 
-    console.log('2423423423423234', postId);
-
     try {
         const response = await fetchWithAuth(`${postApi.deletePost}${postId}`, {
             method: 'DELETE',
@@ -86,6 +84,8 @@ export const useDeletePost = () => {
 export const getPostViewCount = async (postId) => {
     return await fetchWithAuth(`${postApi.viewCount}${postId}`);
 }
+
+
 
 
 export default useDeletePost;

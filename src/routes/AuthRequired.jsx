@@ -5,8 +5,6 @@ const AuthRequired = ({ children }) => {
   // Redux 스토어에서 user 정보 가져오기
   const user = useSelector(state => state.auth.user);
 
-  console.log(user);
-
   const location = useLocation();
 
   // 로그인되지 않은 경우 로그인 페이지로 리다이렉트

@@ -1,7 +1,6 @@
 // 데이터 불러오기
 import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {increasePostViewCount} from "../../services/postService.js";
 import {dummyRelatedPosts, dummyUserPosts} from "../../dummyData/forPostDetailPage/dummyData.js";
 import {getRegionDetailsBySubRegionId, getTalentDetailsBySubTalentId} from "../../utils/sortAndGetCategories.js";
 import nullProfileImage from "../../assets/images/profile.png";
@@ -21,8 +20,6 @@ export const usePostData = (postId, data, isLoading, isError) => {
 
     useEffect(() => {
         if (!isLoading && !isError && data) {
-
-            console.log(data);
 
             const transformedPost = transformPostData(data, regionList, talentList);
             setPost(transformedPost);

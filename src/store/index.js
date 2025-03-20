@@ -11,7 +11,7 @@ const store = configureStore({
         talentCategory: talentCategorySlice.reducer,
         regionCategory: regionCategorySlice.reducer,
         auth: authSlice.reducer,
-        matchingMessage: matchingMessageSlice.reducer,
+        // matchingMessage: matchingMessageSlice.reducer,
     }
 })
 
