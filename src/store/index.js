@@ -10,7 +10,8 @@ const store = configureStore({
     reducer: {
         talentCategory: talentCategorySlice.reducer,
         regionCategory: regionCategorySlice.reducer,
-        auth: authSlice.reducer
+        auth: authSlice.reducer,
+        matchingMessage: matchingMessageSlice.reducer,
     }
 })
 

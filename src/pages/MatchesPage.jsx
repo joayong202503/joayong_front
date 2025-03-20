@@ -6,6 +6,8 @@ import SearchBar from "./testPages/SearchBar.jsx";
 import MessageBubbleIndicator from "./testPages/MessageBubbleIndicator.jsx";
 
 const MatchesPage = () => {
+
+    // 전체 메시지 가져오기
     const [searchQuery, setSearchQuery] = useState('');
     const [matchingRequests, setMatchingRequests] = useState([
         {
@@ -85,7 +87,6 @@ const MatchesPage = () => {
 
     return (
         <div className={styles.matchesContainer}>
-            <h1 className={styles.pageTitle}>매칭 요청</h1>
 
             <div className={styles.searchContainer}>
                 <SearchBar onSearch={handleSearch} />
