@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './MatchesPage.module.scss';
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import Button from "../components/common/Button.jsx";
@@ -8,6 +8,7 @@ import SegmentControl from "../components/common/SegmentControl.jsx";
 import {messageApi} from "../services/api.js";
 import fetchWithAuth from "../services/fetchWithAuth.js";
 import {useNavigate} from "react-router-dom";
+import MatchingMessageThumbnail from "../components/MatchesPage/MatchingMessageThumbnail.jsx";
 
 const MatchesPage = () => {
 
@@ -135,9 +136,9 @@ const MatchesPage = () => {
     const [selectedMenu, setSelectedMenu] = useState('전체보기');
     // 요청 메시지들
     const [matchingRequests, setMatchingRequests] = useState([]);
+    const navigate = useNavigate();
 
     // ======== 일반 변수 ======== //
-    const navigate = useNavigate();
     // 세그먼트 컨트롤의 메뉴 목록
     const menuOptions = ['전체보기', '보낸 요청', '받은 요청'];
 
@@ -181,67 +182,51 @@ const MatchesPage = () => {
                 }
             });
         }
-
     };
 
+    // ========= use 함수 ======= //
+    // 페이지 진입 시 전체보기 데이터 로드
+    useEffect(() => {
+        handleMenuChange('전체보기');
+    }, []); // 빈 배열을 넣어 컴포넌트 마운트 시 1회만 실행
+
     return (
-           <>
-                {/* 세그먼트 컨트롤*/}
+        <div className={styles.matchesContainer}>
+            <div className={styles.segmentControlContainer}>
                 <SegmentControl
-                    menuOptions={menuOptions} // 메뉴명
-                    defaultSelected={selectedMenu} // 초기 값 변경하려면 useState의 initial 값 변경하면 됨
+                    menuOptions={menuOptions}
+                    defaultSelected={selectedMenu}
                     onSelect={handleMenuChange}
                 />
+            </div>
 
-                {/* 매칭 요청 메시지 목록 */}
-               <div className={styles.matchesList}>
-                 {matchingRequests.map(request => (
-                    <div key={request.id} className={styles.divForLine}>
-                        <div className={styles.matchingMessageThumbnailWrapper}>
-                            <div className={styles.leftLayout}>
-                                <div className={styles.profileWithIndicator}>
-                                    <MessageBubbleIndicator type={request.type} />
-                                    <ProfileCircle
-                                        size={'sm'}
-                                        src={request.profileImage}
-                                    />
-                                </div>
+            {/* 조회 값이 없을 때 보여줄 문구 */}
+            {matchingRequests.length === 0 && (
+                <div className={styles.emptyStateContainer}>
+                    <span className={styles.emptyStateIcon}>📫</span>
+                    <p className={styles.noResultsMessage}>아직 메시지가 없습니다.</p>
+                    <Button 
+                        theme="blueTheme"
+                        onClick={() => navigate('/exchanges')}
+                    >
+                        재능 찾아보기
+                    </Button>
+                </div>
+            )}
 
-                                <p className={styles.requestSummary}>
-                                    <span className={styles.user}>{request.sender}님, 제가 </span>
-                                    <span className={`${styles.skillText} ${styles.give}`}>{request.talentGive} {`highlightText(request.giveSkill, searchQuery)`}</span>
-                                    를 가르쳐 드릴게요.
-                                    <span className={`${styles.skillText} ${styles.want}`}>{request.talentTake} {`highlightText(request.giveSkill, searchQuery)`}</span>
-                                    (을/를) 알려주실래요?
-                                </p>
-                            </div>
-
-                            <div className={styles.actionButtons}>
-                                <Button
-                                    theme={'blueTheme'}
-                                    fontSize={'extrasmall'}
-                                >수락하기
-                                </Button>
-                                <Button
-                                    fontSize={'extrasmall'}
-                                >거절하기
-                                </Button>
-                                <Button
-                                    theme={'greenTheme'}
-                                    fontSize={'extrasmall'}
-                                >채팅방 입장
-                                </Button>
-                                <Button
-                                    fontSize={'extrasmall'}
-                                >레슨 완료
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-               </div>
-            </>
-   );
+            {/* 매칭 요청 메시지 목록 */}
+            {matchingRequests.length > 0 && (
+                <div className={styles.matchesList}>
+                    {matchingRequests.map(request => (
+                        <MatchingMessageThumbnail
+                            key={request.id}
+                            request={request}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 
 };
 

@@ -1,144 +1,96 @@
 .matchesContainer {
-  width: 100%;
-  max-width: 70rem;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px 16px;
 }
 
-.searchContainer {
-  margin-bottom: 25px;
+// 세그먼트 컨트롤 컨테이너
+.segmentControlContainer {
+  margin-bottom: 24px;
+  padding: 0 16px;
 }
 
+// 매칭 리스트 컨테이너
 .matchesList {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+// 빈 상태 (메시지가 없을 때) 스타일
+.emptyStateContainer {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-}
-
-.matchingMessageThumbnailWrapper {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
   align-items: center;
-}
+  justify-content: center;
+  padding: 48px 24px;
+  background-color: white;
+  border-radius: 12px;
+  margin: 24px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
-.divForLine {
-  padding: 12px 0;
-  width: 100%;
-  border-bottom: 1px solid #cccccc;
-}
-
-.leftLayout {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.profileWithIndicator {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-p.requestSummary {
-  font-weight: 500;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  font-size: 1rem;
-  white-space: pre; // 띄어쓰기 무시하지 않도록
-}
-
-.skillText {
-  &.want {
-    color: #8c1a1a; /* 진한 적갈색 */
+  .emptyStateIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
   }
 
-  &.give {
-    color: #1b399b;
+  .noResultsMessage {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+    text-align: center;
   }
 }
 
-.actionButtons {
-  display: flex;
-  justify-content: space-between;
-  gap: 7px;
+// 검색 결과 관련 스타일
+.searchContainer {
+  margin-bottom: 24px;
+  padding: 0 16px;
 }
 
 .searchResultPreview {
-  margin-top: 12px;
-  margin-left: 60px;
-  padding: 12px 15px;
   background-color: #f8f9fa;
+  padding: 12px 16px;
+  margin-top: 8px;
   border-radius: 8px;
-  font-size: 0.9rem;
-  color: #555;
-  animation: fadeIn 0.3s ease-in-out;
-  border-left: 3px solid #4a5568;
-
-  p {
-    margin: 0;
-    line-height: 1.4;
-  }
-
-  .contentMatch, .titleMatch {
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
 
   .matchLabel {
     font-weight: 600;
-    font-size: 0.8rem;
-    color: #4a5568;
-    display: inline-block;
-    margin-bottom: 4px;
-    background-color: #e2e8f0;
-    padding: 2px 6px;
-    border-radius: 4px;
+    color: #666;
+    margin-right: 8px;
+  }
+
+  .contentMatch, .titleMatch {
+    margin: 8px 0;
   }
 
   .contentPreview {
-    font-style: italic;
-    color: #718096;
+    color: #666;
+    margin: 0;
   }
 }
 
+// 하이라이트 스타일
 .highlight {
-  background-color: #FFF3CD;
-  padding: 0 2px;
-  border-radius: 2px;
-  font-weight: 600;
+  background-color: #fff3cd;
+  padding: 2px 4px;
+  border-radius: 4px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-// 재능을 아이콘처럼 테두리 꾸며주기
-.skillWrapper {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  justify-content: center;
-
-  &.give {
-    background-color: #dbeafe;
-    border: 2px solid #183388;
+// 반응형 디자인
+@media (max-width: 768px) {
+  .matchesContainer {
+    padding: 16px 8px;
   }
 
-  &.want {
-    background-color: #fee2e2; /* 연한 핑크 */
-    color: #8c1a1a; /* 진한 적갈색 */
-    border: 2px solid #801818; /* 진한 적갈색 */
+  .segmentControlContainer,
+  .searchContainer {
+    padding: 0 8px;
   }
-}
 
-// 00님
-.user {
-  margin-right: 6px;
+  .emptyStateContainer {
+    margin: 16px 8px;
+    padding: 32px 16px;
+  }
 }
