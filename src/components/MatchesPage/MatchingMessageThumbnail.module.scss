@@ -1,46 +1,78 @@
 .divForLine {
-    border-bottom: 1px solid #E5E5E5;
-    padding: 16px 0;
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #f1f1f1;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        background-color: rgba(241, 239, 239, 0.2);
+    }
 }
 
 .matchingMessageThumbnailWrapper {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 16px;
+    padding: 8px 24px;
+    gap: 24px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-1px);
+    }
 }
 
 .leftLayout {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
 }
 
 .profileWithIndicator {
     position: relative;
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .requestSummary {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+    line-height: 1.5;
+
     .user {
         font-weight: 600;
+        color: #2d2d2d;
     }
 
     .skillText {
         margin: 0 4px;
+        font-weight: 600;
         
         &.give {
-            color: #2196F3;
+            color: #2563eb;
+            background: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
         
         &.want {
-            color: #4CAF50;
+            color: #16a34a;
+            background: #f0fdf4;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
     }
 }
 
 .actionButtons {
     display: flex;
-    gap: 8px;
+    gap: 12px;
+    flex-wrap: wrap;
 }

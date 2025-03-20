@@ -9,6 +9,15 @@ const GetCompleteImagePath = (imagePathServerResponse) => {
     if (!imagePathServerResponse) {
         return null;
     }
+
+    // 사진을 배열이 아닌 형태로 하나만 보냈을 때
+    if (!Array.isArray(imagePathServerResponse)) {
+        return {
+            imageUrl: `${API_URL}${imagePathServerResponse}`,
+        };
+    }
+
+    // 사진을 배열 형태로 여러 개 보냈을 때
     return imagePathServerResponse.map((item) => ({
         ...item,
         imageUrl: `${API_URL}${item.imageUrl}`,

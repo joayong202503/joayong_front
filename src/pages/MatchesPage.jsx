@@ -9,6 +9,9 @@ import {messageApi} from "../services/api.js";
 import fetchWithAuth from "../services/fetchWithAuth.js";
 import {useNavigate} from "react-router-dom";
 import MatchingMessageThumbnail from "../components/MatchesPage/MatchingMessageThumbnail.jsx";
+import Spinner from "../components/common/Spinner.jsx";
+import {fetchUserInfo} from "../services/userService.js";
+import getCompleteImagePath from "../utils/getCompleteImagePath.js";
 
 const MatchesPage = () => {
 
@@ -136,42 +139,66 @@ const MatchesPage = () => {
     const [selectedMenu, setSelectedMenu] = useState('전체보기');
     // 요청 메시지들
     const [matchingRequests, setMatchingRequests] = useState([]);
+    // 로딩 중
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+
 
     // ======== 일반 변수 ======== //
     // 세그먼트 컨트롤의 메뉴 목록
     const menuOptions = ['전체보기', '보낸 요청', '받은 요청'];
 
     // ====== 일반 함수 ====== //
+    // 선택된 메뉴에 따라 메시지 조회 시 filter 값을 정의 함수
+    const getFilterByMenu = (selectedMenu) => {
+        switch(selectedMenu) {
+            case '전체보기':
+                return 'ALL';
+            case '보낸 요청':
+                return 'SEND';
+            case '받은 요청':
+                return 'RECEIVE';
+            default:
+                return 'ALL';
+        }
+    };
+
+    // 매칭 요청들에 프로필 이미지 정보를 추가하는 함수
+    const addProfileImagesToRequests = async (requests) => {
+        // 각 요청에 대해 프로필 이미지 정보 추가(이미지 정보는 별도로 fetch하여야 함)
+        return Promise.all(
+            requests.map(async (request) => {
+                const userInfo = await fetchUserInfo(request.senderName);
+                return {
+                    // 기존 request 응답 받은 것에 sender의 profile image url 추가하여 반환
+                    ...request,
+                    profileImage: userInfo.profileImageUrl ? 
+                        getCompleteImagePath(userInfo.profileImageUrl).imageUrl : 
+                        null
+                };
+            })
+        );
+    };
+
     // 세그먼트 컨트롤에서 메뉴를 선택하면 일어나는 일
     const handleMenuChange = async (selectedMenu) => {
-
         // 선택 메뉴에 따라 filtering, status 바꿔서 서버에 fetch
         // filter - ALL, RECEIVE, SEND (기본값 : ALL)
         // status - N(아직 아무 반응 하지 않음), M(매칭됨), D(거절됨) / (기본값 : null)
         try {
-            let response = null; // 서버 응답 저장할 변수
-            switch(selectedMenu) {
-                case '전체보기':
-                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('ALL', null));
-                    break;
-                case '보낸 요청':
-                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('SEND', null));
-                    break;
-                case '받은 요청':
-                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('RECEIVE', null));
-                    break;
-                default:
-                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('ALL', null));
-                    break;
-            }
-
+            const filter = getFilterByMenu(selectedMenu);
+            const response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters(filter, null));
             const data = await response.json();
             console.log("서버 응답:", data);
 
+            const requestsWithProfiles = await addProfileImagesToRequests(data);
+            
             // 렌더링할 matchingRequests에 꽂아주기
             // 200 이외의 응답은 error 처리하였음
-            setMatchingRequests(data);
+            setMatchingRequests(requestsWithProfiles);
+
+            // 로딩 중 표시 해제
+            setIsLoading(false);
         } catch (error) {
             console.error("매칭 요청 조회 중 오류 발생:", error);
             navigate('/error', {
@@ -187,7 +214,13 @@ const MatchesPage = () => {
     // ========= use 함수 ======= //
     // 페이지 진입 시 전체보기 데이터 로드
     useEffect(() => {
-        handleMenuChange('전체보기');
+        setIsLoading(true);
+        
+        const timer = setTimeout(() => {
+            handleMenuChange('전체보기');
+        }, 1000); // 로딩 중 보여주는 용으로 1초 지연
+
+        return () => clearTimeout(timer);
     }, []); // 빈 배열을 넣어 컴포넌트 마운트 시 1회만 실행
 
     return (
@@ -200,8 +233,15 @@ const MatchesPage = () => {
                 />
             </div>
 
+            {/* 로딩 상태일 때 Spinner 표시 */}
+            {isLoading && (
+                <div className={styles.spinnerContainer}>
+                    <Spinner size="small" />
+                </div>
+            )}
+
             {/* 조회 값이 없을 때 보여줄 문구 */}
-            {matchingRequests.length === 0 && (
+            {!isLoading && matchingRequests.length === 0 && (
                 <div className={styles.emptyStateContainer}>
                     <span className={styles.emptyStateIcon}>📫</span>
                     <p className={styles.noResultsMessage}>아직 메시지가 없습니다.</p>
@@ -209,7 +249,7 @@ const MatchesPage = () => {
                         theme="blueTheme"
                         onClick={() => navigate('/exchanges')}
                     >
-                        재능 찾아보기
+                        재능 교환글 둘러보기
                     </Button>
                 </div>
             )}
@@ -219,7 +259,7 @@ const MatchesPage = () => {
                 <div className={styles.matchesList}>
                     {matchingRequests.map(request => (
                         <MatchingMessageThumbnail
-                            key={request.id}
+                            key={request.messageId}
                             request={request}
                         />
                     ))}

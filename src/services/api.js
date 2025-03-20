@@ -12,6 +12,7 @@ const AUTH_REQUIRED = '/api/joayong';
 // 주제 별 url 경로
 const POST_URL = `${API_URL}${AUTH_REQUIRED}/post`
 const MESSAGE_URL = `${API_URL}${AUTH_REQUIRED}/message`;
+const USER_URL = `${API_URL}${AUTH_REQUIRED}/user`;
 // ================================================================== //
 
 // 카테고리(지역, 재능) 관련 API
@@ -64,4 +65,11 @@ export const messageApi = {
   getMatchingRequestsWithFilters : function(filter, status) {
     return getMatchingRequestUrl(filter, status);
   } // 메시지 필터링 조회
+}
+
+// user 관련 api
+export const userApi = {
+  getUserInfo: function (username) {
+    return `${USER_URL}/profile/${username}`;
+  }
 }
