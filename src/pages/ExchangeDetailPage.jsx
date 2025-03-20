@@ -11,12 +11,13 @@ import PostDate from "../components/common/icons/PostDate.jsx";
 import ViewCount from "../components/common/icons/ViewCount.jsx";
 import Button from "../components/common/Button.jsx";
 import DetailPageDescription from "../components/ExchangeDetailPage/DetailPageDescription.jsx";
-import AlertModal from "../components/common/AlertModal.jsx";
+import MiniAlert from "../components/common/MiniAlert.jsx";
 import {checkMatchingRequestValidity} from "../services/matchingService.js";
 import {usePostData} from "../hooks/ExchangeDetailPage/usePostData.js";
 import {useSelector} from "react-redux";
 import DeleteButton from "../components/common/icons/DeleteButton.jsx";
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
+import AlertModal from "../components/common/AlertModal.jsx";
 
 const ExchangeDetailPage = () => {
 
@@ -35,6 +36,11 @@ const ExchangeDetailPage = () => {
     const myUsername = useSelector((state) => state.auth.user?.name); // 매칭 요청 버튼 숨기는 용
     // useMutation을 통해 삭제 후 캐싱 데이터 반환한 결과를 반환
     const { mutate, isLoading:isMutationLoading, error:deletePostError } = useDeletePost();
+
+    // 페이지 진입 시 스크롤 최상단으로 이동
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     // =============== useQuery를 이용한 fetch ====================== //
     const {exchangeId:postId} = useParams();  // postId 가져오기
@@ -82,16 +88,13 @@ const ExchangeDetailPage = () => {
             mutate(postId, {
                 onSuccess: () => {
                     setIsConfirmModalOpen(false); // 컨펌 모달 지우기
-                    setDeleteModalTitle("게시글이 정상적으로 삭제되었습니다. 메인 페이지로 이동합니다.");
-                    setIsOpenDeleteModal(true);
+                    setMiniAlertMessage("게시글이 정상적으로 삭제되었습니다.");
+                    setIsMiniAlertOpen(true);
 
+                    // 2초 후 메인 페이지로 이동
                     setTimeout(() => {
-                        setIsOpenDeleteModal(false);
-
-                        // 모달이 닫힌 후 페이지 이동을 실행
-                        setTimeout(() => {
-                            setShouldNavigate(true);  // 페이지 이동
-                        }, 300);
+                        setIsMiniAlertOpen(false);
+                        setShouldNavigate(true);  // 페이지 이동
                     }, 2000);
                 },
 
@@ -123,6 +126,8 @@ const ExchangeDetailPage = () => {
     const [isOpenDeleteModal, setIsOpenDeleteModal ] = useState(false); // 게시글 삭제
     const [deleteModalTitle, setDeleteModalTitle] = useState('');
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // 게시굴 삭제 컨펌 모달
+    const [isMiniAlertOpen, setIsMiniAlertOpen] = useState(false);
+    const [miniAlertMessage, setMiniAlertMessage] = useState('');
 
     // 로딩 완료되어서 post 까지 불러왔으면, 조회 수 올려주기
     useEffect(() => {
@@ -170,6 +175,16 @@ const ExchangeDetailPage = () => {
     return (
         // 전체에 대한 wrapper
         <div className={styles.talentExchangeDetail}>
+
+            {isMiniAlertOpen && (
+                <MiniAlert
+                    message={miniAlertMessage}
+                    onClose={() => {
+                        setIsMiniAlertOpen(false);
+                        navigate("/");
+                    }}
+                />
+            )}
 
             { isOpenModal &&
                 <AlertModal
