@@ -1,11 +1,25 @@
 .fullContainer{
-
+  width: 100%;
 }
+
 .ratingTitle{
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
 }
+
+.ratingTitle h2 {
+  margin-right: 10px;
+}
+
 .ratingBoxContainer{
-  margin-left: 50px;
-  margin-top: 40px;
+  width: 100%;
+}
+
+.loadingState, .errorState, .noRatings {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #757575;
+  text-align: center;
+  padding: 20px;
 }
