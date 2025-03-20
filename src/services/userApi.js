@@ -1,4 +1,4 @@
-// src/services/userApi.js
+// 사용자 프로필 정보 가져오는 api
 import fetchWithAuth from './fetchWithAuth';
 
 // API 기본 URL 설정
@@ -21,6 +21,23 @@ export const fetchUserProfile = async (name) => {
     return data;
   } catch (error) {
     console.error('사용자 프로필을 가져오는데 실패했습니다:', error);
+    throw error;
+  }
+};
+
+// 사용자가 작성한 게시물 가져오기
+export const fetchUserPosts = async (name) => {
+  try {
+    const response = await fetchWithAuth(`${API_URL}${AUTH_REQUIRED}/post/user/${name}`);
+
+    if (!response.ok) {
+      throw new Error('API 호출 실패: ' + response.status);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('사용자의 게시물을 가져오는데 실패했습니다:', error);
     throw error;
   }
 };
