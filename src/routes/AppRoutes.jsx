@@ -10,6 +10,7 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 import MainPage from "../pages/MainPage.jsx";
 import MainLayout from "../layouts/mainLayout.jsx";
+import ExchangeListPage from "../pages/ExchangeListPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
           // 전체 재능교환조회 페이지
           {
             index: true,
-            // element: <ExchangeListPage/>
+            element: <ExchangeListPage/>
           },
           // 새 재능교환 추가 페이지
           {
