@@ -19,6 +19,7 @@ const SegmentControl = ({menuOptions,
 
     const handleOptionSelect = (option) => {
         setSelectedOption(option);
+        onSelect && onSelect(option); // 만약 onSelect로 보낸 내용이 있으면 그 함수로 실행, 없다면 그냥 종료
     };
 
     // 흰색 버튼을 위치를 지정하는 함수

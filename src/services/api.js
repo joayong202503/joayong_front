@@ -37,12 +37,16 @@ export const postApi = {
 const getMatchingRequestUrl = (filter, status) => {
 
   // 선택 가능한 옵션 목록
-  const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND', 'NONE'];
-  const VALID_STATUS = ['N', 'M', 'D', 'NONE'];
+  const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND'];
+  const VALID_STATUS = ['N', 'M', 'D'];
 
-  // 준 옵션 값 중, 유효하지 않은 값은 기본값으로 설정
-  const validatedFilter = (filter === 'NONE' || !filter) ? 'ALL' : filter;
-  const validatedStatus = (status === 'NONE' || !status) ? false : status;
+  // 받은 filter 값을 대문자로 변환 -> filter 값이 없거나 유효하지 않으면 기본값으로 ALL 설정
+  const validatedFilter =
+      (!filter || !VALID_FILTERS.includes(filter.toUpperCase())) ? 'ALL' : filter.toUpperCase();
+
+  // 받은 status 값을 대문자로 변환 -> filter 값이 없거나 유효하지 않으면 기본값으로 ALL 설정
+  const validatedStatus =
+      (!status || !VALID_STATUS.includes(status.toUpperCase())) ? false : status.toUpperCase();
 
   const fetchUrl = `${MESSAGE_URL}?filter=${validatedFilter}`; // 기본 url 설정
   if (validatedStatus) {
@@ -57,5 +61,7 @@ const getMatchingRequestUrl = (filter, status) => {
 export const messageApi = {
   isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`,
   sendMatchingRequest : `${MESSAGE_URL}`,
-  getMatchingRequestsWithFilters : getMatchingRequestUrl, // 메시지 필터링 조회
+  getMatchingRequestsWithFilters : function(filter, status) {
+    return getMatchingRequestUrl(filter, status);
+  } // 메시지 필터링 조회
 }

@@ -1,0 +1,155 @@
+[33mcommit f6e1730ed02564c71c61e72a40226c2c880449c1[m
+Merge: 7253d73 d978674
+Author: futuredeveloper41 <mj10283@naver.com>
+Date:   Thu Mar 20 17:24:55 2025 +0900
+
+    WIP on feature/matchingManagement: 7253d73 [feature/matchingManagement] add segment control
+
+[1mdiff --cc src/components/common/SegmentControl.jsx[m
+[1mindex 0f98067,0f98067..dacfa77[m
+[1m--- a/src/components/common/SegmentControl.jsx[m
+[1m+++ b/src/components/common/SegmentControl.jsx[m
+[36m@@@ -19,6 -19,6 +19,8 @@@[m [mconst SegmentControl = ({menuOptions[m
+  [m
+      const handleOptionSelect = (option) => {[m
+          setSelectedOption(option);[m
+[32m++        // 만약 onSelect로 보낸 내용이 있으면 그 함수로 실행, 없다면 그냥 종료[m
+[32m++        onSelect && onSelect(option);[m
+      };[m
+  [m
+      // 흰색 버튼을 위치를 지정하는 함수[m
+[1mdiff --cc src/pages/MatchesPage.jsx[m
+[1mindex 37742ca,37742ca..8216205[m
+[1m--- a/src/pages/MatchesPage.jsx[m
+[1m+++ b/src/pages/MatchesPage.jsx[m
+[36m@@@ -1,4 -1,4 +1,4 @@@[m
+[31m--import React, { useState } from 'react';[m
+[32m++import React, {useEffect, useState} from 'react';[m
+  import styles from './MatchesPage.module.scss';[m
+  import ProfileCircle from "../components/common/ProfileCircle.jsx";[m
+  import Button from "../components/common/Button.jsx";[m
+[36m@@@ -8,6 -8,6 +8,24 @@@[m [mimport SegmentControl from "../componen[m
+  [m
+  const MatchesPage = () => {[m
+  [m
+[32m++    // ========= 세그먼트 컨트롤 관련 ========= //[m
+[32m++    // 세그먼트 컨트롤에서 선택된 값을 관리하는 상태값 (default : 전체보기)[m
+[32m++    const [selectedMenu, setSelectedMenu] = useState('전체보기');[m
+[32m++[m
+[32m++    // 선택한 메뉴가 달라질 때마다 그에 맞게 다른 fetching(전체보기/보낸요청/받은요청)[m
+[32m++    // 기본값 : 전체보기[m
+[32m++    useEffect(() => {[m
+[32m++[m
+[32m++        // 선택 메뉴 별 fetch 내용 정의[m
+[32m++        const fetchRequest = {[m
+[32m++            '전체보기': fetchAllMessages,[m
+[32m++            '보낸 요청': fetchSentRequests,[m
+[32m++            '받은 요청': fetchReceivedRequests,[m
+[32m++        }[m
+[32m++[m
+[32m++    }, [selectedMenu]); // selectedMenu는 useState로 관리하는 값으로, 세그먼트 컨트롤에서 버튼 클릭할 때 마다 값 변경됨[m
+[32m++[m
+[32m++[m
+  //     // 전체 메시지 가져오기[m
+  //     const [searchQuery, setSearchQuery] = useState('');[m
+  //     const [matchingRequests, setMatchingRequests] = useState([[m
+[36m@@@ -174,9 -174,9 +192,7 @@@[m
+  //     );[m
+  // };[m
+  [m
+[31m--    // ========= 세그먼트 컨트롤 관련 ========= //[m
+[31m--    // 세그먼트 컨트롤에서 선택된 값을 관리하는 상태값 (default : 전체보기)[m
+[31m--    const [selectedMenu, setSelectedMenu] = useState('전체보기');[m
+[32m++[m
+  [m
+      // ====== 세그먼트 컨트롤 관련 ======= //[m
+      // 메뉴 목록[m
+[1mdiff --cc src/services/api.js[m
+[1mindex 274bb77,274bb77..fda9cb7[m
+[1m--- a/src/services/api.js[m
+[1m+++ b/src/services/api.js[m
+[36m@@@ -34,8 -34,8 +34,58 @@@[m [mexport const postApi = [m
+    deletePost : `${POST_URL}/delete/`, // 게시글 삭제[m
+  }[m
+  [m
+[32m++// 매칭 요청 메시지 조회할 때, filter(ALL, RECEIVE, SEND) & status(N, M, D)에 따라 fetch 경로를 동적으로 생성[m
+[32m++const getMatchingRequestUrl = (filter, status) => {[m
+[32m++[m
+[32m++  // 허용되는 filter(ALL, RECEIVE, SEND)와 STATUS(N, M, D) 확인[m
+[32m++  const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND', 'NONE'];[m
+[32m++  const VALID_STATUS = ['N', 'M', 'D', 'NONE'];[m
+[32m++  [m
+[32m++  // 이상한 값으로 주면, 기본 값을 FILTER는 ALL, STATUS는 없는 것으로 설정[m
+[32m++  const validatedFilter = (filter === 'NONE' || !filter) ? 'ALL' : filter;[m
+[32m++  const validatedStatus = (status === 'NONE' || !status) ? false : status;[m
+[32m++  [m
+[32m++  // url 설정[m
+[32m++  const fetchUrl = `${MESSAGE_URL}?filter=${validatedFilter}}`; // 기본 URL[m
+[32m++  if (validatedStatus) return `${fetchUrl}&status=${validatedStatus}`; // status값이 &status={status} 추가[m
+[32m++[m
+[32m++  return fetchUrl; // 없으면 status 없이 보내기[m
+[32m++}[m
+[32m++[m
+  // 메시지 관련 api[m
+  export const messageApi = {[m
+    isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`,[m
+    sendMatchingRequest : `${MESSAGE_URL}`,[m
+[32m++  getMatchingRequestsWithFilters : getMatchingRequestUrl(), // 메시지 필터링 조회[m
+[32m++[m
+[32m++  // 메시지 목록을 가져오는 함수[m
+[32m++  const fetchMessages = async (filter, status) => {[m
+[32m++    let url = `/api/joayong/message?filter=${filter}`;[m
+[32m++[m
+[32m++    // status가 있으면 url에 추가[m
+[32m++    if (status) {[m
+[32m++      url += `&status=${status}`;[m
+[32m++    }[m
+[32m++[m
+[32m++    try {[m
+[32m++      const response = await fetch(url, {[m
+[32m++        method: 'GET',[m
+[32m++        headers: {[m
+[32m++          'Authorization': `Bearer ${getToken()}` // JWT 토큰[m
+[32m++        }[m
+[32m++      });[m
+[32m++[m
+[32m++      const data = await response.json();[m
+[32m++      return data;[m
+[32m++[m
+[32m++    } catch (error) {[m
+[32m++      console.error('메시지 가져오기 실패:', error);[m
+[32m++      throw error;[m
+[32m++    }[m
+[32m++  };[m
+[32m++[m
+[32m++  getMatchingRequests : ${MESSAGE_URL}[m
+[32m++  getAllMatchingRequests : `${MESSAGE_URL}/?filter=ALL&status=N`, // 전체 메세지 조회[m
+[32m++  getReceivedMatchingRequests : `${MESSAGE_URL}/received`, // 보낸 메시지 조회[m
+[32m++  getSentMatchingRequests : `${MESSAGE_URL}/received`, // 받은 메시지 조회[m
+  }[m
+[1mdiff --cc src/services/matchingService.js[m
+[1mindex aab2866,aab2866..dd419a7[m
+[1m--- a/src/services/matchingService.js[m
+[1m+++ b/src/services/matchingService.js[m
+[36m@@@ -9,6 -9,6 +9,21 @@@[m [mexport const checkMatchingRequestValidi[m
+              headers: { 'content-type': 'application/json' }[m
+          });[m
+  [m
+[32m++        return await response.json();[m
+[32m++    } catch (error) {[m
+[32m++        console.error("매칭 요청 유효성 확인 중 오류 발생:", error);[m
+[32m++        throw error;[m
+[32m++    }[m
+[32m++};[m
+[32m++[m
+[32m++// 보낸 매칭 메시지 확인[m
+[32m++export const fetchSentMatchingRequests  = async () => {[m
+[32m++    try {[m
+[32m++        const response = await fetchWithAuth(`${messageApi.getReceivedMatchingRequests}`, {[m
+[32m++            method: 'POST',[m
+[32m++            headers: { 'content-type': 'application/json' }[m
+[32m++        });[m
+[32m++[m
+          return await response.json();[m
+      } catch (error) {[m
+          console.error("매칭 요청 유효성 확인 중 오류 발생:", error);[m

@@ -5,6 +5,9 @@ import Button from "../components/common/Button.jsx";
 import SearchBar from "./testPages/SearchBar.jsx";
 import MessageBubbleIndicator from "./testPages/MessageBubbleIndicator.jsx";
 import SegmentControl from "../components/common/SegmentControl.jsx";
+import {messageApi} from "../services/api.js";
+import fetchWithAuth from "../services/fetchWithAuth.js";
+import {useNavigate} from "react-router-dom";
 
 const MatchesPage = () => {
 
@@ -95,54 +98,7 @@ const MatchesPage = () => {
 //
 //             <div className={styles.matchesList}>
 //
-//                 {matchingRequests.map(request => (
-//                     <div key={request.id} className={styles.divForLine}>
-//                         <div className={styles.matchingMessageThumbnailWrapper}>
-//                             <div className={styles.leftLayout}>
-//                                 <div className={styles.profileWithIndicator}>
-//                                     <MessageBubbleIndicator type={request.type} />
-//                                     <ProfileCircle
-//                                         size={'sm'}
-//                                         src={request.profileImage}
-//                                     />
-//                                 </div>
 //
-//                                 <p className={styles.requestSummary}>
-//                                     <span className={styles.user}>{request.sender}님, 제가 </span>
-//                                     <span className={`${styles.skillText} ${styles.give}`}>{highlightText(request.giveSkill, searchQuery)}</span>
-//                                     를 가르쳐 드릴게요.
-//                                     <span className={`${styles.skillText} ${styles.want}`}> {highlightText(request.wantSkill, searchQuery)}</span>
-//                                     (을/를) 알려주실래요?
-//                                 </p>
-//                             </div>
-//
-//                             <div className={styles.actionButtons}>
-//                                 {request.type === '받은 요청' && (
-//                                     <>
-//                                         <Button
-//                                             theme={'blueTheme'}
-//                                             fontSize={'extrasmall'}
-//                                         >수락하기
-//                                         </Button>
-//                                         <Button
-//                                             fontSize={'extrasmall'}
-//                                         >거절하기
-//                                         </Button>
-//                                     </>
-//                                 )}
-//                                 <Button
-//                                     theme={'greenTheme'}
-//                                     fontSize={'extrasmall'}
-//                                 >채팅방 입장
-//                                 </Button>
-//                                 {request.type === '받은 요청' && (
-//                                     <Button
-//                                         fontSize={'extrasmall'}
-//                                     >레슨 완료
-//                                     </Button>
-//                                 )}
-//                             </div>
-//                         </div>
 //
 //                         {/* 검색어가 있고, 검색 결과가 있을 때 검색 결과 프리뷰 표시 */}
 //                         {searchQuery && hasMatchingContent(request, searchQuery) && (
@@ -174,41 +130,120 @@ const MatchesPage = () => {
 //     );
 // };
 
-    // ========= 세그먼트 컨트롤 관련 ========= //
-    // 세그먼트 컨트롤에서 선택된 값을 관리하는 상태값 (default : 전체보기)
+    // ========= 상태값 관리 ========= //
+    // 세그먼트에서 선택된 값
     const [selectedMenu, setSelectedMenu] = useState('전체보기');
+    // 요청 메시지들
+    const [matchingRequests, setMatchingRequests] = useState([]);
 
-    // ====== 세그먼트 컨트롤 관련 ======= //
-    // 메뉴 목록
+    // ======== 일반 변수 ======== //
+    const navigate = useNavigate();
+    // 세그먼트 컨트롤의 메뉴 목록
     const menuOptions = ['전체보기', '보낸 요청', '받은 요청'];
 
+    // ====== 일반 함수 ====== //
     // 세그먼트 컨트롤에서 메뉴를 선택하면 일어나는 일
-    const handleMenuChange = (selectedMenu) => {
-        switch(selectedMenu) {
-            case '전체보기':
-                alert('전체보기');
-                break;
-            case '보낸 요청':
-                alert('보낸 요청');
-                break;
-            case '받은 요청':
-                alert('받은 요청');
-                break;
+    const handleMenuChange = async (selectedMenu) => {
+
+        // 선택 메뉴에 따라 filtering, status 바꿔서 서버에 fetch
+        // filter - ALL, RECEIVE, SEND (기본값 : ALL)
+        // status - N(아직 아무 반응 하지 않음), M(매칭됨), D(거절됨) / (기본값 : null)
+        try {
+            let response = null; // 서버 응답 저장할 변수
+            switch(selectedMenu) {
+                case '전체보기':
+                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('ALL', null));
+                    break;
+                case '보낸 요청':
+                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('SEND', null));
+                    break;
+                case '받은 요청':
+                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('RECEIVE', null));
+                    break;
+                default:
+                    response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters('ALL', null));
+                    break;
+            }
+
+            const data = await response.json();
+            console.log("서버 응답:", data);
+
+            // 렌더링할 matchingRequests에 꽂아주기
+            // 200 이외의 응답은 error 처리하였음
+            setMatchingRequests(data);
+        } catch (error) {
+            console.error("매칭 요청 조회 중 오류 발생:", error);
+            navigate('/error', {
+                state: {
+                    errorMessage: error.message || '매칭 요청 조회 중 오류가 발생했습니다.',
+                    errorCode: error.status || 500,
+                    errorPageUrl: window.location.pathname,
+                }
+            });
         }
+
     };
 
     return (
-            // 세그먼트 컨트롤
-            <SegmentControl
-                menuOptions={menuOptions} // 메뉴명
-                defaultSelected={selectedMenu} // 초기 값 변경하려면 useState의 initial 값 변경하면 됨
-                onSelect={handleMenuChange}
-            />
+           <>
+                {/* 세그먼트 컨트롤*/}
+                <SegmentControl
+                    menuOptions={menuOptions} // 메뉴명
+                    defaultSelected={selectedMenu} // 초기 값 변경하려면 useState의 initial 값 변경하면 됨
+                    onSelect={handleMenuChange}
+                />
 
+                {/* 매칭 요청 메시지 목록 */}
+               <div className={styles.matchesList}>
+                 {matchingRequests.map(request => (
+                    <div key={request.id} className={styles.divForLine}>
+                        <div className={styles.matchingMessageThumbnailWrapper}>
+                            <div className={styles.leftLayout}>
+                                <div className={styles.profileWithIndicator}>
+                                    <MessageBubbleIndicator type={request.type} />
+                                    <ProfileCircle
+                                        size={'sm'}
+                                        src={request.profileImage}
+                                    />
+                                </div>
 
-    );
+                                <p className={styles.requestSummary}>
+                                    <span className={styles.user}>{request.sender}님, 제가 </span>
+                                    <span className={`${styles.skillText} ${styles.give}`}>{request.talentGive} {`highlightText(request.giveSkill, searchQuery)`}</span>
+                                    를 가르쳐 드릴게요.
+                                    <span className={`${styles.skillText} ${styles.want}`}>{request.talentTake} {`highlightText(request.giveSkill, searchQuery)`}</span>
+                                    (을/를) 알려주실래요?
+                                </p>
+                            </div>
 
-}
+                            <div className={styles.actionButtons}>
+                                <Button
+                                    theme={'blueTheme'}
+                                    fontSize={'extrasmall'}
+                                >수락하기
+                                </Button>
+                                <Button
+                                    fontSize={'extrasmall'}
+                                >거절하기
+                                </Button>
+                                <Button
+                                    theme={'greenTheme'}
+                                    fontSize={'extrasmall'}
+                                >채팅방 입장
+                                </Button>
+                                <Button
+                                    fontSize={'extrasmall'}
+                                >레슨 완료
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+               </div>
+            </>
+   );
+
+};
 
 
 export default MatchesPage;
