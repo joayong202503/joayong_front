@@ -42,13 +42,15 @@ const ImageUploadSection = forwardRef(({ onFileSelect, name }, inputBoxRef) => {
             onKeyDown={handleKeyDown} // 엔터키 눌림 방지
         >
             <div className={styles.textContainer}>
-                <p className={styles.inputLabel}>능력을 한 눈에 보여줄 수 있는 사진을 첨부해보는 건 어떤신가요?</p>
+                <p className={styles.inputLabel}>능력을 한 눈에 보여줄 사진을 첨부해보시는 건 어떤신가요?</p>
                 <p className={styles.inputLabel}>매칭 확률을 높일 수 있어요.</p>
             </div>
-            <Button
-                theme={'blueTheme'}
-                fontSize={'small'}
-            >파일 첨부하기</Button>
+            <div className={styles.buttonContainer}>
+                <Button
+                    theme={'blueTheme'}
+                    fontSize={'small'}
+                >파일 첨부하기</Button>
+            </div>
             <input
                 ref={inputBoxRef}
                 type="file"
@@ -57,6 +59,7 @@ const ImageUploadSection = forwardRef(({ onFileSelect, name }, inputBoxRef) => {
                 id="fileInputBox"
                 accept="image/*"
                 onChange={onFileSelect}
+                style={{ display: 'none' }}
             />
         </div>
     );

@@ -46,14 +46,16 @@ const AlertModal = ({title,message,onClose,onPressEscapeOrEnter, preventEnterDef
         <>
             <div onClick={onClose} className={styles.backdrop}>
 
-                <div className={styles.modal} onClick ={(e) =>e.stopPropagation()}>
+                <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                     <h2 className={styles.title}>{title}</h2>
-                    <p className ={styles.message}>{message}</p>
-                    <button
-                        ref={ref}
-                        className={styles.button}
-                        onClick={onClose}
-                        onKeyDown={onPressEscapeOrEnter}>확인</button>
+                    <p className={styles.message}>{message}</p>
+                    <div className={styles.buttonContainer}>
+                        <button
+                            ref={ref}
+                            className={styles.button}
+                            onClick={onClose}
+                            onKeyDown={onPressEscapeOrEnter}>확인</button>
+                    </div>
                 </div>
 
             </div>

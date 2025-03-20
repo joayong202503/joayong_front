@@ -58,6 +58,7 @@ button {
   max-height: 300px; // 최대 높이
   padding: 5px 13px 5px 13px;
   background: #FFFFFF;
+  z-index: 1000; // 이 줄을 추가
 }
 
 // 드롭다운 메뉴에서 스크롤 버튼 빼고

@@ -32,10 +32,10 @@ const MiniAlert = ({
             {isVisible && <div className={styles.overlay} />}
             <div className={`${styles.alertContainer} ${visible ? styles.visible : styles.hidden}`}>
                 <div className={styles.alertContent}>
-                    <div className={styles.iconContainer}>
-                        <span className={styles.icon}>{icon}</span>
-                    </div>
-                    <div className={styles.messageContainer}>
+                    <div className={styles.leftContent}>
+                        <div className={styles.iconContainer}>
+                            <span className={styles.icon}>{icon}</span>
+                        </div>
                         <p className={styles.message}>{message}</p>
                     </div>
                     <button

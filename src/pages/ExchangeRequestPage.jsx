@@ -141,7 +141,7 @@ const ExchangeRequestPage = () => {
         setRequestConfirmHandler(() => () => {
             setIsMiniModalOpen(true);
             setMiniModalMessage('메시지 작성이 취소되었습니다.');
-            navigate(-1);
+            // navigate(-1);
         });
         setRequestCancelHandler(() => () => {
             setConfirmModalMessage('');

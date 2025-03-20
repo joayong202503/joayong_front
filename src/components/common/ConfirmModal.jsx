@@ -46,10 +46,11 @@ const ConfirmModal = ({title,message,
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <h2 className={styles.title}>{title}</h2>
                 <p className={styles.message}>{message}</p>
-                <button onClick={onConfirm} className={styles.confirmButton}>{confirmText}</button>
-                <button onClick={onClose} className={styles.closeButton}>{cancelText}</button>
+                <div className={styles.buttonContainer}>
+                    <button onClick={onConfirm} className={styles.confirmButton}>{confirmText}</button>
+                    <button onClick={onClose} className={styles.closeButton}>{cancelText}</button>
+                </div>
             </div>
-
 
         </div>
 
