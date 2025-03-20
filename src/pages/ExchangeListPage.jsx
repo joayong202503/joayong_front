@@ -164,7 +164,7 @@ const ExchangeListPage = () => {
                                     lessonImageSrc={exchange.imageSrc}
                                     imageSrc={exchange.imageSrc}
                                     profile={exchange.profile}
-                                    onDetailClick={handleDetailClick}
+                                    onDetailClick={() => handleDetailClick(exchange.id)}
                                 />
                             </div>
                         ))}
