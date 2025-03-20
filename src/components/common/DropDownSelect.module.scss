@@ -33,7 +33,7 @@ button {
   padding: 5px 13px 5px 13px;
   font-size: 13px;
   line-height: 1;
-  gap: 4px; // 드롭다운 버튼과 글자 사이 간격
+  gap: 4px;
 }
 
 // place holder글씨
@@ -58,7 +58,8 @@ button {
   max-height: 300px; // 최대 높이
   padding: 5px 13px 5px 13px;
   background: #FFFFFF;
-  z-index: 1000; // 이 줄을 추가
+  z-index: 1000;
+  
 }
 
 // 드롭다운 메뉴에서 스크롤 버튼 빼고

@@ -1,10 +1,4 @@
 // 모든 페이지 공통 적용 css를 작성하는 파일
-/* global.css */
-html body[data-scroll-locked] {
-  //overflow-y: scroll !important;
-  pointer-events: auto !important;
-  padding-right: calc(0 - var(--removed-body-scroll-bar-size)) !important;
-}
 
 * {
   box-sizing: border-box;
