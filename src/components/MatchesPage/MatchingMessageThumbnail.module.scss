@@ -1,5 +1,5 @@
 .divForLine {
-    width: 60%;
+    width: 65%;
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
@@ -74,7 +74,6 @@
 .actionButtons {
     display: flex;
     gap: 12px;
-    flex-wrap: wrap;
 }
 
 // 매칭 펜딩, 거절, 완료 시에 옆에 태그처럼 보여주기

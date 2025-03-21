@@ -66,10 +66,17 @@ const fetchCompletedStatus = async (filter) => {
 export const fetchMatchingRequestsWithFilters = async (filter = 'ALL', status = null) => {
     try {
         // 사용자에게 보여 줄 때는 1) 수업완료 했지만 리뷰는 안함 2) 수업완료하고 리뷰까지 완료함 <- 을 하나로 갑쳐서 보여줄 것임
-        // -> "이 때는 parameter를 "R+C"로 받아서, 두 번 패치할 것임. 따라서 따로 함수 분리해줌
-        return status === 'R+C'
-            ? await fetchCompletedStatus(filter) // STATUS는 자동으로 R과 c일ONTAL
-            : await fetchSingleStatus(filter, status);
+        // -> "이 때는 parameter를 "R+C"로 받아서, 두 번 패치할 것임
+
+        console.log('Status:', status);
+
+        if (status === 'R+C') {
+            return await fetchCompletedStatus(filter); // 이미 JSON으로 파싱된 데이터 반환
+        }
+
+        const responseData = await fetchSingleStatus(filter, status);
+        return await responseData; // Response 객체를 JSON으로 파싱 까지 되어 있음
+
     } catch (error) {
         // 서버에서 전달된 오류 메시지를 ApiError 객체로 만들어서 error로 던진 경우
         if (error.status && error.details) {

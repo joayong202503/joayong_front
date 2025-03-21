@@ -40,13 +40,15 @@ const getMatchingRequestUrl = (filter, status) => {
     const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND'];
     const VALID_STATUS = ['N', 'M', 'D', 'R', 'C'];
 
+    console.log(filter, status);
+
     // 받은 filter 값을 대문자로 변환 -> filter 값이 없거나 유효하지 않으면 기본값으로 ALL 설정
     const validatedFilter =
-        (!filter || !VALID_FILTERS.includes(filter.toUpperCase())) ? 'ALL' : filter.toUpperCase();
+        (!filter || !VALID_FILTERS.includes(filter?.toUpperCase())) ? 'ALL' : filter.toUpperCase();
 
     // 받은 status 값을 대문자로 변환 -> filter 값이 없거나 유효하지 않으면 기본값으로 ALL 설정
     const validatedStatus =
-        (!status || !VALID_STATUS.includes(status.toUpperCase())) ? false : status.toUpperCase();
+        (!status || !VALID_STATUS.includes(status?.toUpperCase())) ? false : status.toUpperCase();
 
     const fetchUrl = `${MESSAGE_URL}?filter=${validatedFilter}`; // 기본 url 설정
     if (validatedStatus) {

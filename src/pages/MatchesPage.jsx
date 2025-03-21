@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styles from './MatchesPage.module.scss';
-import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import Button from "../components/common/Button.jsx";
-import SearchBar from "./testPages/SearchBar.jsx";
-import MessageBubbleIndicator from "./testPages/MessageBubbleIndicator.jsx";
 import SegmentControl from "../components/common/SegmentControl.jsx";
 import {messageApi} from "../services/api.js";
 import fetchWithAuth from "../services/fetchWithAuth.js";
@@ -12,7 +9,6 @@ import MatchingMessageThumbnail from "../components/MatchesPage/MatchingMessageT
 import Spinner from "../components/common/Spinner.jsx";
 import {fetchUserInfo} from "../services/userService.js";
 import getCompleteImagePath from "../utils/getCompleteImagePath.js";
-import FilterControlButton from "../components/common/Tabs.jsx";
 import Tabs from "../components/common/Tabs.jsx";
 import {fetchMatchingRequestsWithFilters} from "../services/matchingService.js";
 
@@ -154,7 +150,7 @@ const MatchesPage = () => {
     // 세그먼트에서 선택된 값
     const [selectedSegmentControlMenu, setSelectedSegmentControlMenu] = useState('전체보기')
     // 탭 메뉴에서 선택된 값
-    const [selectedTabMenu, setSelectedTabMenu] = useState(statusOptions[0]); // { value: 'ALL', label: '전체보기' }
+    const [selectedTabMenu, setSelectedTabMenu] = useState(statusOptions[0].value); // { value: 'ALL', label: '전체보기' }
     // 요청 메시지들
     const [matchingRequests, setMatchingRequests] = useState([]);
     // 로딩 중
@@ -209,15 +205,16 @@ const MatchesPage = () => {
     const handleSegmentControlMenuChange = async (selectedMenu) => {
 
         setSelectedSegmentControlMenu(selectedMenu);
-        
+
+
         try {
             const filter = getMessageFilterBySender(selectedMenu);
-            const status = selectedTabMenu.value; // 이제 올바르게 value를 가져올 수 있음
-            const response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters(filter, status));
-            const data = await response.json();
-            console.log("서버 응답:", data);
+        console.log(selectedTabMenu);
+        console.log(messageApi.getMatchingRequestsWithFilters(filter, selectedTabMenu));
+            const responseData = await fetchMatchingRequestsWithFilters(filter, selectedTabMenu);
+            console.log("서버 응답:", responseData);
 
-            const requestsWithProfiles = await addProfileImagesToRequests(data);
+            const requestsWithProfiles = await addProfileImagesToRequests(responseData);
             setMatchingRequests(requestsWithProfiles);
             setIsLoading(false);
         } catch (error) {
