@@ -1,6 +1,6 @@
 .alertContainer {
   position: fixed;
-  top: 24px;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
   z-index: 9999;
@@ -22,7 +22,6 @@
 .alertContent {
   display: flex;
   align-items: center;
-  // justify-content: space-between; 제거
   padding: 12px 20px;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
@@ -31,7 +30,7 @@
   min-width: 50px;
   max-width: 70vw;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  animation: floatIn 0.3s ease forwards;
+  animation: floatIn 0.2s ease forwards;
 }
 
 .leftContent {
@@ -50,6 +49,11 @@
   border-radius: 4px;
   border: 1.5px solid rgba(72, 187, 120, 0.5);
   background-color: rgba(72, 187, 120, 0.1);
+
+  &.negative {
+    border: 1.5px solid rgba(239, 68, 68, 0.5);
+    background-color: rgba(239, 68, 68, 0.1);
+  }
 }
 
 .message {
@@ -72,7 +76,7 @@
   height: 24px;
   padding: 0;
   border-radius: 50%;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.1s ease;
   flex: 0 0 auto; // 자신의 크기만 차지하도록 수정
 
   &:hover {
@@ -89,7 +93,6 @@
   }
 }
 
-/* New overlay styles to block user interaction */
 .overlay {
   position: fixed;
   top: 0;

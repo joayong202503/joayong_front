@@ -83,3 +83,41 @@ export const fetchMatchingRequestsWithFilters = async (filter = 'ALL', status = 
         );
     }
 };
+
+
+/**
+ * 메시지 수락 요청하기
+ * @param messageId - 수락할 메시지의 ID
+ */
+export const acceptMatchingRequest = async (messageId) => {
+    try {
+        const response = await fetchWithAuth(messageApi.acceptMatchingRequest(messageId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            // 성공하지 않는 모든 경우는 백엔드에서 에러 반환
+            throw new ApiError(
+                response.status,
+                errorData.message || '메시지 수락 실패',
+                errorData
+            );
+        }
+        return await response.json(); // { isAccept: true }
+    } catch (error) {
+        // 백엔드에서 200 이외로 응답해서, 프론트에스 응답내용을 객체로 감아서 error를 던진 경우
+        if (error instanceof ApiError) {
+            throw error; // 이미 ApiError로 처리된 에러는 그대로 전달
+        }
+        // 기타 예상치 못한 에러는 기타 에러로 처리
+        throw new ApiError(
+            500,
+            '네크워크 오류가 발생했습니다',
+            error
+        );
+    }
+};

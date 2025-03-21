@@ -3,85 +3,181 @@ import styles from './MatchingMessageThumbnail.module.scss';
 import ProfileCircle from "../common/ProfileCircle.jsx";
 import Button from "../common/Button.jsx";
 import {useNavigate} from "react-router-dom";
+import ConfirmModal from "../common/ConfirmModal.jsx";
+import MiniAlert from "../common/MiniAlert.jsx";
+import {acceptMatchingRequest} from "../../services/matchingService.js";
+import {ApiError} from "../../utils/ApiError.js";
+import {useSelector} from "react-redux";
 
-const MatchingMessageThumbnail = ({ request }) => {
-
+const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     const navigate = useNavigate();
+
+    //  매칭 요청을 내가 보낸 사람인지 받는 사람인지를 확인
+    const loggedInUser = useSelector((state) => state.auth.user.name);
+    const [isSender, setIsSender] = useState(false);
+    const [isReceiver, setIsReceiver] = useState(false);
+
+    useEffect(() => {
+        setIsSender(loggedInUser === request.senderName);
+        setIsReceiver(loggedInUser === request.receiverName);
+    }, [request.senderName, request.receiverName, loggedInUser]);
+
+
+    // 모달 상태 관리
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [confirmModalMessage, setConfirmModalMessage] = useState('');
+    const [modalConfirmAction, setModalConfirmAction] = useState(null); // 확인 모달에서 컨펌하면 발생한 이벤트 정의
+    const [showMiniModal, setShowMiniModal] = useState(false);
+    const [miniModalMessage, setMiniModalMessage] = useState('');
+    const [isNegativeMiniModalMessage, setIsNegativeMiniModalMessage] = useState(false);
+
+    // 미니 모달 표시 관련 함수
+    const showSuccessMiniModal = () => {
+        setMiniModalMessage('성공적으로 처리되었습니다.');
+        setShowMiniModal(true);
+        setTimeout(() => setShowMiniModal(false), 1500);
+    };
+
+    // 미니 오달 에러 묘시 함수
+    const showErrorMiniModal = (errorMessage) => {
+        setIsNegativeMiniModalMessage(true);
+        setMiniModalMessage(errorMessage || '매칭 요청 처리 중 오류가 발생했습니다.');
+        setShowMiniModal(true);
+        setTimeout(() => {
+            setShowMiniModal(false);
+            setIsNegativeMiniModalMessage(false);
+        }, 1500);
+    };
+
+    // 매칭 수락 처리 함수
+    const processMatchAccept = async () => {
+        try {
+            // 1. 서버에 매칭 수락 요청
+            await acceptMatchingRequest(request.messageId);
+
+            // 2. 로컬 상태 업데이트
+            onRequestUpdate(request.messageId, 'M');
+
+            // 3. 성공 피드백 표시
+            showSuccessMiniModal();
+            setShowConfirmModal(false);
+        } catch (error) {
+            console.error("매칭 요청 수락 중 오류 발생:", error);
+            showErrorMiniModal(error.message);
+        }
+    };
+
+    // 매칭 수락 버튼을 클릭하면 모달 띄우기
+    const showAcceptConfirmModal = () => {
+        setConfirmModalMessage('매칭 요청을 수락하시겠습니까?');
+        setModalConfirmAction(() => processMatchAccept);
+        setShowConfirmModal(true);
+    };
+
 
     // 프로필 사진 클릭하면 프로필 페이지로 이동
     const handleProfileClick = () => {
         navigate(`/profile/${request.senderName}`);
     };
 
-    return (
 
-        <div key={request.messageId} className={styles.divForLine}>
-            <div className={styles.matchingMessageThumbnailWrapper}>
-                <div className={styles.leftLayout}>
-                    <div className={styles.profileWithIndicator} onClick={handleProfileClick}>
+    // 매칭 거절 버튼을 클릭하면 무달 달기
+    const handleMatchingRejectClick = () => {
+        setConfirmModalMessage('매칭 요청을 거절하시겠습니까?');
+        setShowConfirmModal(true);
+    };
+
+    return (
+        <>
+            <div key={request.messageId} className={styles.divForLine}>
+                <div className={styles.matchingMessageThumbnailWrapper}>
+                    <div className={styles.leftLayout}>
+                        <div className={styles.profileWithIndicator} onClick={handleProfileClick}>
                             <ProfileCircle
                                 size={'sm'}
                                 src={request.profileImage}
                                 username={request.senderName}
                             />
+                        </div>
+
+                        <p className={styles.requestSummary}>
+                            <span className={styles.user}>{request.receiverName}</span>
+                            <span>님, 제가</span>
+                            <span className={`${styles.skillText} ${styles.give}`}>{request.talentGive}</span>
+                            가르쳐 드릴게요.
+                            <span className={`${styles.skillText} ${styles.want}`}>{request.talentTake}</span>
+                            배우고 싶어요.
+                        </p>
                     </div>
 
-                    <p className={styles.requestSummary}>
-                        <span className={styles.user}>{request.receiverName}</span>
-                        <span>님, 제가</span>
-                        <span className={`${styles.skillText} ${styles.give}`}>{request.talentGive}</span>
-                        가르쳐 드릴게요.
-                        <span className={`${styles.skillText} ${styles.want}`}>{request.talentTake}</span>
-                        배우고 싶어요.
-                    </p>
-                </div>
 
 
+                    <div className={styles.actionButtons}>
+                        {/* matching status에 따라 버튼 보이게 */}
+                        {/* 버튼 status가 n이고 남이 보낸 메시지일때만 보임 */}
+                        {request.status === 'N' && isReceiver
+                            ? (
+                            <>
+                                <Button
+                                    theme={'blueTheme'}
+                                    fontSize={'extrasmall'}
+                                    onClick={showAcceptConfirmModal}
+                                >수락하기
+                                </Button>
+                                <Button
+                                    fontSize={'extrasmall'}
+                                    onClick={handleMatchingRejectClick}
+                                >거절하기
+                                </Button>
+                            </>
+                        ) : null}
+                        {/* 버튼 status가 m일 때만 보임 */}
+                        {request.status === 'M' && (
+                            <>
+                                <Button
+                                    theme={'greenTheme'}
+                                    fontSize={'extrasmall'}
+                                    onClick={() => alert('채팅방 입장 버튼 클릭')}
+                                >채팅방 입장
+                                </Button>
+                                <Button
+                                    fontSize={'extrasmall'}
+                                    onClick={() => alert('레슨 완료 버튼 클릭')}
+                                >레슨 완료
+                                </Button>
+                            </>
+                        )}
+                        {request.status === 'R' && (
+                            <Button
+                                fontSize={'small'}
+                            >리뷰 남기기
+                            </Button>
+                        )}
 
-                <div className={styles.actionButtons}>
-                    {/* matching status에 따라 버튼 보이게 */}
-                    {/* 버튼 status가 n일 때만 보임 */}
-                    {request.status === 'N' && (
-                        <>
-                            <Button
-                                theme={'blueTheme'}
-                                fontSize={'extrasmall'}
-                                onClick={() => alert('수락하기 버튼 클릭')}>
-                            수락하기
-                            </Button>
-                            <Button
-                            fontSize={'extrasmall'}
-                            onClick={() => alert('거절하기 버튼 클릭')}
-                            >거절하기
-                            </Button>
-                        </>
-                    )}
-                    {/* 버튼 status가 m일 때만 보임 */}
-                    {request.status === 'M' && (
-                        <>
-                            <Button
-                                theme={'greenTheme'}
-                                fontSize={'extrasmall'}
-                                onClick={() => alert('채팅방 입장 버튼 클릭')}
-                            >채팅방 입장
-                            </Button>
-                            <Button
-                                fontSize={'extrasmall'}
-                                onClick={() => alert('레슨 완료 버튼 클릭')}
-                            >레슨 완료
-                            </Button>
-                        </>
-                    )}
-                    {request.status === 'R' && (
-                        <Button
-                            fontSize={'small'}
-                        >리뷰 남기기
-                        </Button>
-                    )}
-
+                    </div>
                 </div>
             </div>
-        </div>
+
+
+            {/* 컨펌용 모달 */}
+            {showConfirmModal && (
+                <ConfirmModal
+                    message={confirmModalMessage}
+                    onConfirm={modalConfirmAction}
+                    onClose={() => {
+                        setShowConfirmModal(false);
+                    }}
+                />
+            )}
+
+            {/* 컨펌 모달에서 확인 누르면 처리 완료 알리는 모달 */}
+            {showMiniModal && (
+                <MiniAlert
+                    message={miniModalMessage}
+                    isNegative={isNegativeMiniModalMessage}
+                />
+            )}
+        </>
     );
 };
 

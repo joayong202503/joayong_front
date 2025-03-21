@@ -57,13 +57,21 @@ const getMatchingRequestUrl = (filter, status) => {
     return fetchUrl;
 }
 
+const getMatchingAcceptUrl = (messageId) => {
+    console.log(messageId);
+    return `${MESSAGE_URL}/accept/${messageId}`;
+}
+
 // 메시지 관련 api
 export const messageApi = {
-  isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`,
-  sendMatchingRequest : `${MESSAGE_URL}`,
-  getMatchingRequestsWithFilters : function(filter, status) {
+  isMatchingRequestValid: `${MESSAGE_URL}/available?postId=`,
+  sendMatchingRequest: `${MESSAGE_URL}`,
+  getMatchingRequestsWithFilters: function(filter, status) {
     return getMatchingRequestUrl(filter, status);
-  }
+  },
+  acceptMatchingRequest: function(messageId) {
+      return getMatchingAcceptUrl(messageId);
+  },
 }
 
 // user 관련 api

@@ -162,6 +162,18 @@ const MatchesPage = () => {
     const navigate = useNavigate();
 
     // ====== 일반 함수 ====== //
+    // 게시글의 status 가 변경되었을 시, 성능 최적화를 위해
+    // 다시 모든 데이터를 불러오지 않고 useState로 관리하는 값만 바꿈
+    const updateMatchingRequest = (messageId, newStatus) => {
+        setMatchingRequests(prevRequests =>
+            prevRequests.map(request =>
+                request.messageId === messageId
+                    ? { ...request, status: newStatus }
+                    : request
+            )
+        );
+    };
+
     // 선택된 세크먼트 컨트롤 메뉴에 따라 메시지 조회 시 filter 값을 정의하는 함수
     const getMessageFilterBySender = (selectedSegmentControlMenu) => {
         switch(selectedSegmentControlMenu) {
@@ -266,7 +278,7 @@ const MatchesPage = () => {
 
         <div className={styles.matchesContainer}>
 
-            {isLoading ? null :
+            {!isLoading &&
                 // 컨트롤 영역
                 <div className={styles.controlsContainer}>
                     {/* 세그먼트 컨틀트롤 */}
@@ -325,6 +337,7 @@ const MatchesPage = () => {
                         <MatchingMessageThumbnail
                             key={request.messageId}
                             request={request}
+                            onRequestUpdate={updateMatchingRequest}
                         />
                     ))}
                 </div>

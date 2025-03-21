@@ -2,13 +2,35 @@ import React, { useState, useEffect } from 'react';
 import styles from './MiniAlert.module.scss';
 
 const MiniAlert = ({
-                   message = "매칭 요청 발송됨",
-                   icon = "✅",
-                   duration = 3000,
-                   onClose,
-                   isVisible = true
-               }) => {
+    message = "성공적으로 처리되었습니다.",
+    isNegative = false, // 부정적인 메시지인지 확인(아이콘 다르게)
+    duration = 3000,
+    onClose,
+    isVisible = true
+}) => {
     const [visible, setVisible] = useState(false);
+
+    // 아이콘 결정
+    const icon = isNegative ? "❌" : "✅";
+
+    useEffect(() => {
+        // 키보드 이벤트 핸들러
+        const handleKeyDown = (event) => {
+            if (event.key === 'Enter' || event.key === 'Escape') {
+                setVisible(false);
+                if (onClose) {
+                    onClose();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        // 클린업 함수에서 이벤트 리스너 제거
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [onClose]); // onClose가 변경될 때만 실행
 
     useEffect(() => {
         if (isVisible) {
@@ -19,7 +41,7 @@ const MiniAlert = ({
                 if (onClose) {
                     setTimeout(() => {
                         onClose();
-                    }, 300); // Wait for exit animation
+                    }, 300);
                 }
             }, duration);
 
@@ -33,7 +55,7 @@ const MiniAlert = ({
             <div className={`${styles.alertContainer} ${visible ? styles.visible : styles.hidden}`}>
                 <div className={styles.alertContent}>
                     <div className={styles.leftContent}>
-                        <div className={styles.iconContainer}>
+                        <div className={`${styles.iconContainer} ${isNegative ? styles.negative : ''}`}>
                             <span className={styles.icon}>{icon}</span>
                         </div>
                         <p className={styles.message}>{message}</p>
