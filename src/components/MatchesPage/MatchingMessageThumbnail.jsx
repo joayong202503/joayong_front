@@ -39,24 +39,46 @@ const MatchingMessageThumbnail = ({ request }) => {
 
 
                 <div className={styles.actionButtons}>
-                    {/*<Button*/}
-                    {/*    theme={'blueTheme'}*/}
-                    {/*    fontSize={'extrasmall'}*/}
-                    {/*>수락하기*/}
-                    {/*</Button>*/}
-                    {/*<Button*/}
-                    {/*    fontSize={'extrasmall'}*/}
-                    {/*>거절하기*/}
-                    {/*</Button>*/}
-                    <Button
-                        theme={'greenTheme'}
-                        fontSize={'small'}
-                    >채팅방 입장
-                    </Button>
-                    <Button
-                        fontSize={'small'}
-                    >레슨 완료
-                    </Button>
+                    {/* matching status에 따라 버튼 보이게 */}
+                    {/* 버튼 status가 n일 때만 보임 */}
+                    {request.status === 'N' && (
+                        <>
+                            <Button
+                                theme={'blueTheme'}
+                                fontSize={'extrasmall'}
+                                onClick={() => alert('수락하기 버튼 클릭')}>
+                            수락하기
+                            </Button>
+                            <Button
+                            fontSize={'extrasmall'}
+                            onClick={() => alert('거절하기 버튼 클릭')}
+                            >거절하기
+                            </Button>
+                        </>
+                    )}
+                    {/* 버튼 status가 m일 때만 보임 */}
+                    {request.status === 'M' && (
+                        <>
+                            <Button
+                                theme={'greenTheme'}
+                                fontSize={'extrasmall'}
+                                onClick={() => alert('채팅방 입장 버튼 클릭')}
+                            >채팅방 입장
+                            </Button>
+                            <Button
+                                fontSize={'extrasmall'}
+                                onClick={() => alert('레슨 완료 버튼 클릭')}
+                            >레슨 완료
+                            </Button>
+                        </>
+                    )}
+                    {request.status === 'R' && (
+                        <Button
+                            fontSize={'small'}
+                        >리뷰 남기기
+                        </Button>
+                    )}
+
                 </div>
             </div>
         </div>

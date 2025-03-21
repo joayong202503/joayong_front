@@ -13,6 +13,8 @@ import Spinner from "../components/common/Spinner.jsx";
 import {fetchUserInfo} from "../services/userService.js";
 import getCompleteImagePath from "../utils/getCompleteImagePath.js";
 import FilterControlButton from "../components/common/Tabs.jsx";
+import Tabs from "../components/common/Tabs.jsx";
+import {fetchMatchingRequestsWithFilters} from "../services/matchingService.js";
 
 const MatchesPage = () => {
 
@@ -135,17 +137,6 @@ const MatchesPage = () => {
 //     );
 // };
 
-    // ========= 상태값 관리 ========= //
-    // 세그먼트에서 선택된 값
-    const [selectedSegmentControlMenu, setSelectedSegmentControlMenu] = useState('전체보기')
-    // 탭 메뉴에서 선택된 값
-    const [selectedTabMenu, setSelectedTabMenu] = useState('전체보기');
-    // 요청 메시지들
-    const [matchingRequests, setMatchingRequests] = useState([]);
-    // 로딩 중
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
-
 
     // ======== 일반 변수 ======== //
     // 세그먼트 컨트롤의 메뉴 목록
@@ -154,10 +145,21 @@ const MatchesPage = () => {
     const statusOptions = [
         { value: 'ALL', label: '전체보기' },
         { value: 'N', label: '대기 중' },
-        { value: 'C', label: '수락됨' },
-        { value: 'D', label: '거절됨' }
+        { value: 'M', label: '수락됨' },
+        { value: 'D', label: '거절됨' },
+        { value: 'R+C', label: '완료됨' }, // 리뷰 안한 R + 리뷰 한 c,
     ];
 
+    // ========= 상태값 관리 ========= //
+    // 세그먼트에서 선택된 값
+    const [selectedSegmentControlMenu, setSelectedSegmentControlMenu] = useState('전체보기')
+    // 탭 메뉴에서 선택된 값
+    const [selectedTabMenu, setSelectedTabMenu] = useState(statusOptions[0]); // { value: 'ALL', label: '전체보기' }
+    // 요청 메시지들
+    const [matchingRequests, setMatchingRequests] = useState([]);
+    // 로딩 중
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     // ====== 일반 함수 ====== //
     // 선택된 세크먼트 컨트롤 메뉴에 따라 메시지 조회 시 filter 값을 정의하는 함수
@@ -169,22 +171,6 @@ const MatchesPage = () => {
                 return 'SEND';
             case '받은 요청':
                 return 'RECEIVE';
-            default:
-                return 'ALL';
-        }
-    };
-
-    // 선택된 탭 메뉴 필터링 옵션에 따라 메시지 조회 시 status 값을 정의하는 함수
-    const getMessageFilterByStatus = (selectedTabMenu) => {
-        switch(selectedTabMenu) {
-            case '전체보기':
-                return 'ALL';
-            case '대기 중':
-                return 'N';
-            case '수락 됨':
-                return 'C';
-            case '거절 됨':
-                return 'D';
             default:
                 return 'ALL';
         }
@@ -209,23 +195,18 @@ const MatchesPage = () => {
 
     // 세그먼트 컨트롤에서 메뉴를 선택하면 일어나는 일
     const handleSegmentControlMenuChange = async (selectedMenu) => {
-        // 선택 메뉴에 따라 filtering, status 바꿔서 서버에 fetch
-        // filter - ALL, RECEIVE, SEND (기본값 : ALL)
-        // status - N(아직 아무 반응 하지 않음), M(매칭됨), D(거절됨) / (기본값 : null)
+
+        setSelectedSegmentControlMenu(selectedMenu);
+        
         try {
             const filter = getMessageFilterBySender(selectedMenu);
-            const status = getMessageFilterByStatus(selectedTabMenu); // 현재 상태값으로 저장되어 있는 status
+            const status = selectedTabMenu.value; // 이제 올바르게 value를 가져올 수 있음
             const response = await fetchWithAuth(messageApi.getMatchingRequestsWithFilters(filter, status));
             const data = await response.json();
             console.log("서버 응답:", data);
 
             const requestsWithProfiles = await addProfileImagesToRequests(data);
-            
-            // 렌더링할 matchingRequests에 꽂아주기
-            // 200 이외의 응답은 error 처리하였음
             setMatchingRequests(requestsWithProfiles);
-
-            // 로딩 중 표시 해제
             setIsLoading(false);
         } catch (error) {
             console.error("매칭 요청 조회 중 오류 발생:", error);
@@ -238,6 +219,35 @@ const MatchesPage = () => {
             });
         }
     };
+
+    // 탭 메뉴에서 필터링을 하면 일어나는 일
+    const handleTabMenuChange = async (selectedStatus) => {
+
+        try {
+            const filter = getMessageFilterBySender(selectedSegmentControlMenu);
+            const status = selectedStatus;
+            setSelectedTabMenu(status);
+
+            console.log('status', status);
+            console.log('filter', filter);
+
+            const responseData = await fetchMatchingRequestsWithFilters(filter, status);
+            console.log(responseData);
+
+            const requestsWithProfiles = await addProfileImagesToRequests(responseData);
+            setMatchingRequests(requestsWithProfiles);
+            setIsLoading(false);
+        } catch (error) {
+            console.error("매칭 요청 조회 중 오류 발생:", error);
+            navigate('/error', {
+                state: {
+                    message: error.message || '매칭 요청 조회 중 오류가 발생했습니다.',
+                    status: error.status || 500,
+                    errorPageUrl: window.location.pathname,
+                }
+            });
+        }
+    }
 
     // ========= use 함수 ======= //
     // 페이지 진입 시 전체보기 데이터 로드
@@ -270,13 +280,10 @@ const MatchesPage = () => {
 
                     {/* 탭으로 선택하는 메뉴 */}
                     <div className={styles.tabsMenuContainer}>
-                        <FilterControlButton
+                        <Tabs
                             options={statusOptions}
                             defaultFilter={statusOptions[0]}
-                            onFilterChange={(filter) => {
-                                console.log('Selected filter:', filter);
-                                // 필터 처리 로직
-                            }}
+                            onFilterChange={handleTabMenuChange}
                         />
                     </div>
                 </div>
