@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProfileExchanges.module.scss';
 import Card from "../common/Card.jsx";
-import { fetchUserPosts } from "../../services/userApi.js";
+import { fetchUserPosts } from "../../services/profileApi.js";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import profileImage from '../../assets/images/profile.png';
@@ -14,7 +14,7 @@ const ProfileExchanges = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   // URL에서 사용자 이름 파라미터 가져오기
-  const { name } = useParams();
+  const { username } = useParams();
 
   // 한 페이지당 표시할 게시물 수
   const itemsPerPage = 5;
@@ -98,7 +98,7 @@ const ProfileExchanges = () => {
   useEffect(() => {
     const getUserPosts = async () => {
       try {
-        const userName = name || '조아용';
+        const userName =username;
         const postsData = await fetchUserPosts(userName);
         processPostsData(postsData);
       } catch (err) {
@@ -115,7 +115,7 @@ const ProfileExchanges = () => {
       // 카테고리 데이터가 없는 경우(Redux 초기화 전)
       getUserPosts(); // 일단 데이터를 가져옴 (카테고리명은 placeholder로 표시됨)
     }
-  }, [name, talentCategories, regionCategories]);
+  }, [username, talentCategories, regionCategories]);
 
   // 상세보기 페이지로 이동
   const handleDetailClick = (exchangeId) => {

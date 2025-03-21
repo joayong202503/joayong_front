@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProfilePage.module.scss'
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
-import Card from "../components/common/Card.jsx";
 import Button from "../components/common/Button.jsx";
-import RatingBox from "../components/common/RatingBox.jsx";
-import { fetchUserProfile } from "../services/userApi.js";
+import { fetchUserProfile } from "../services/profileApi.js";
 import { useParams } from 'react-router-dom';
 import ProfileExchanges from "../components/ProfilePage/ProfileExchanges.jsx";
 import ProfileRating from "../components/ProfilePage/ProfileRating.jsx";
@@ -20,12 +18,12 @@ const ProfilePage = () => {
   const [error, setError] = useState(null);
 
   // URL에서 사용자 이름 파라미터 가져오기
-  const { name } = useParams();
+  const { username } = useParams();
 
   useEffect(() => {
     const getUserProfile = async () => {
       try {
-        const userName = name || '조아용';
+        const userName = username;
         const userData = await fetchUserProfile(userName);
         setProfileData(userData);
       } catch (err) {
@@ -35,10 +33,7 @@ const ProfilePage = () => {
     };
 
     getUserProfile();
-  }, [name]);
-
-  // 프로필 페이지 URL 예시: /profile/조아용
-  // 이 경우 useParams()를 통해 { name: '조아용' }을 받아옵니다
+  }, [username]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
