@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';  // Redux 추가
 import styles from './ProfilePage.module.scss'
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import Button from "../components/common/Button.jsx";
@@ -6,6 +7,7 @@ import { fetchUserProfile } from "../services/profileApi.js";
 import { useParams } from 'react-router-dom';
 import ProfileExchanges from "../components/ProfilePage/ProfileExchanges.jsx";
 import ProfileRating from "../components/ProfilePage/ProfileRating.jsx";
+
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('ratings');
@@ -15,7 +17,11 @@ const ProfilePage = () => {
     profileImageUrl: null,
     totalRating: 0.0
   });
+
   const [error, setError] = useState(null);
+  // 내 프로필인지 아닌지 구분해주는 상태변수
+  const [isMyProfile, setIsMyProfile] = useState(false);
+  const currentUser = useSelector((state) => state.auth.user);
 
   // URL에서 사용자 이름 파라미터 가져오기
   const { username } = useParams();
@@ -26,6 +32,14 @@ const ProfilePage = () => {
         const userName = username;
         const userData = await fetchUserProfile(userName);
         setProfileData(userData);
+        console.log(currentUser);
+
+        // Redux에서 가져온 사용자 정보와 현재 프로필 비교
+        if (currentUser) {
+          setIsMyProfile(currentUser.name === userName);
+        } else {
+          setIsMyProfile(false);
+        }
       } catch (err) {
         console.error('프로필 정보를 불러오는데 실패했습니다:', err);
         setError('프로필 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
@@ -33,7 +47,7 @@ const ProfilePage = () => {
     };
 
     getUserProfile();
-  }, [username]);
+  }, [username, currentUser]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -48,7 +62,9 @@ const ProfilePage = () => {
       <section className={styles.topContainer}>
         <div className={styles.profileContainer}>
           <ProfileCircle size="llg" imageUrl={profileData.profileImageUrl} />
-          <Button theme="blackTheme" fontSize="large">edit profile</Button>
+          {isMyProfile && (
+            <Button theme="blackTheme" fontSize="large">edit profile</Button>
+          )}
         </div>
         <div className={styles.profileContentContainer}>
           <h2 className={styles.nameText}>{profileData.name}</h2>
@@ -85,7 +101,6 @@ const ProfilePage = () => {
           {activeTab === 'ratings' && (
             <div className={styles.ratingContainer}>
               <ProfileRating />
-
             </div>
           )}
 
