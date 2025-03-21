@@ -19,11 +19,11 @@ export const categoryApi = {
   getRegionAndTalentCategory : `${API_URL}${AUTH_REQUIRED}/category`
 };
 
-// 로그인, 로그아웃 관련 API
-export const authApi = {
-  login : `${API_URL}${AUTH_NOT_REQUIRED}/login`, // 로그인(유저 + 로그인 여부 반환)
-  me : `${API_URL}${AUTH_REQUIRED}/user/me` // 유저 정보 반환(자동 로그인인 경우 이 api로 user정보 조회함)
-};
+// // 로그인, 로그아웃 관련 API
+// export const authApi = {
+//   login : `${API_URL}${AUTH_NOT_REQUIRED}/login`, // 로그인(유저 + 로그인 여부 반환)
+//   me : `${API_URL}${AUTH_REQUIRED}/user/me` // 유저 정보 반환(자동 로그인인 경우 이 api로 user정보 조회함)
+// };
 
 // 게시글 관련 API
 export const postApi = {
@@ -36,3 +36,47 @@ export const postApi = {
 export const messageApi = {
   isMatchingRequestValid : `${MESSAGE_URL}/available?postId=`
 }
+// 📌 **회원가입 및 로그인 API 추가**
+export const authApi = {
+  signup: async (email, name, password) => {
+    const response = await fetch(`${API_URL}${AUTH_NOT_REQUIRED}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, name, password }),
+    });
+    return response.json();
+  },
+
+  duplicateCheck: async (type, value) => {
+    const response = await fetch(`${API_URL}${AUTH_NOT_REQUIRED}/duplicate-check?type=${type}&value=${value}`);
+    return response.json();
+  },
+
+  login: async (email, password) => {
+    const response = await fetch(`${API_URL}${AUTH_NOT_REQUIRED}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    return response.json();
+  },
+
+  logout: async (token) => {
+    const response = await fetch(`${API_URL}${AUTH_REQUIRED}/logout`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.json();
+  },
+
+  getUserInfo: async (token) => {
+    const response = await fetch(`${API_URL}${AUTH_REQUIRED}/user/me`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.json();
+  },
+};

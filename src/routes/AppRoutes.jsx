@@ -20,13 +20,17 @@ const router = createBrowserRouter([
   }
   ,
   // 회원가입 페이지
+
   {
     path: '/signup',
     // element: <AuthLayout isLoginPage={false}/>,
     children: [
       {
         index: true,
-        element: <SignUp/>
+        element: 
+       
+          <SignUp/>
+        
       }
     ]
   },
@@ -37,7 +41,9 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <LoginPage />
+        element:
+          <LoginPage />
+           
       }
     ]
 

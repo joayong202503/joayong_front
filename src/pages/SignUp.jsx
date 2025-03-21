@@ -1,13 +1,8 @@
-
-import { useState } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthLayout from '@/components/AuthLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
+import { authApi } from '../services/api'; // API 호출을 위한 import
+import '../pages/LoginPage.css';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -19,8 +14,7 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const { signup, error } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate()
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,23 +48,21 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     
-    // 유효성 검사
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword();
     
-    if (!isEmailValid || !isPasswordValid) {
-      return;
-    }
-    
-    if (!username) {
+    if (!isEmailValid || !isPasswordValid || !username) {
       return;
     }
     
     setIsSubmitting(true);
     
     try {
-      await signup(email, username, password, confirmPassword);
-      navigate('/home');
+      const response = await authApi.signup(email, username, password);
+      console.log('회원가입 성공:', response);
+      
+      // 회원가입 성공 시 로그인 페이지로 이동
+      navigate('/login');
     } catch (error) {
       console.error('Signup error:', error);
     } finally {
@@ -79,48 +71,43 @@ const SignUp = () => {
   };
 
   return (
-    <AuthLayout title="회원가입" authType="signup" class="wrapp">
-      <form onSubmit={handleSignUp} className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="email">이메일</Label>
-          <div className="relative">
-            <Input
-              id="email"
-              type="text"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (emailError) validateEmail(e.target.value);
-              }}
-              className="form-input"
-              placeholder="이메일 주소를 입력하세요"
-              required
-            />
-          </div>
-          {emailError && (
-            <p className="text-sm text-red-500 mt-1">{emailError}</p>
-          )}
+    <div className="container">
+      <h2 className="title">회원가입</h2>
+      <form onSubmit={handleSignUp} className="form">
+        <div>
+          <label htmlFor="email">이메일</label>
+          <input
+            id="email"
+            type="text"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (emailError) validateEmail(e.target.value);
+            }}
+            className="input-box"
+            placeholder="이메일 주소를 입력하세요"
+            required
+          />
+          {emailError && <p className="error-text">{emailError}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="username">사용자 이름</Label>
-          <div className="relative">
-            <Input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="form-input"
-              placeholder="사용자 이름을 입력하세요"
-              required
-            />
-          </div>
+        <div>
+          <label htmlFor="username">사용자 이름</label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="input-box"
+            placeholder="사용자 이름을 입력하세요"
+            required
+          />
         </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="password">비밀번호</Label>
-          <div className="relative">
-            <Input
+
+        <div>
+          <label htmlFor="password">비밀번호</label>
+          <div className="password-container">
+            <input
               id="password"
               type={showPassword ? 'text' : 'password'}
               value={password}
@@ -128,24 +115,24 @@ const SignUp = () => {
                 setPassword(e.target.value);
                 if (passwordError) validatePassword();
               }}
-              className="form-input pr-10"
+              className="input-box"
               placeholder="비밀번호를 입력하세요"
               required
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="toggle-icon"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
         </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">비밀번호 확인</Label>
-          <div className="relative">
-            <Input
+
+        <div>
+          <label htmlFor="confirmPassword">비밀번호 확인</label>
+          <div className="password-container">
+            <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
@@ -153,40 +140,33 @@ const SignUp = () => {
                 setConfirmPassword(e.target.value);
                 if (passwordError) validatePassword();
               }}
-              className="form-input pr-10"
+              className="input-box"
               placeholder="비밀번호를 다시 입력하세요"
               required
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="toggle-icon"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {passwordError && (
-            <p className="text-sm text-red-500 mt-1">{passwordError}</p>
-          )}
+          {passwordError && <p className="error-text">{passwordError}</p>}
         </div>
-        
-        <div className="pt-2">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="auth-button w-full h-11 font-medium bg-brand-blue hover:bg-brand-lightBlue"
-          >
-            {isSubmitting ? '가입 중...' : '회원가입'}
-          </Button>
+
+        <button type="submit" disabled={isSubmitting} className="btn-primary">
+          {isSubmitting ? '가입 중...' : '회원가입'}
+        </button>
+
+        <div className="text-center">
+          <p>이미 계정이 있으신가요?</p>
+          <button type="button" className="link" onClick={() => navigate('/login')}>
+            로그인
+          </button>
         </div>
-        
-        {error && (
-          <div className="text-center">
-            <p className="text-red-500 text-sm">{error}</p>
-          </div>
-        )}
       </form>
-    </AuthLayout>
+    </div>
   );
 };
 
