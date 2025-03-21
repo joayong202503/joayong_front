@@ -121,3 +121,36 @@ export const acceptMatchingRequest = async (messageId) => {
         );
     }
 };
+
+// 매칭 요청을 거절
+export const rejectMatchingRequest = async (messageId) => {
+    try {
+        const response = await fetchWithAuth(messageApi.rejectMatchingRequest(messageId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            // 성공하지 않는 모든 경우는 백엔드에서 에러 반환
+            throw new ApiError(
+                response.status,
+                errorData.message || '매칭 거절 실패',
+                errorData
+            );
+        }
+
+        return await response.json(); // { isReject: true }
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(
+            500,
+            '네트워크 오류가 발생했습니다',
+            error
+        );
+    }
+};

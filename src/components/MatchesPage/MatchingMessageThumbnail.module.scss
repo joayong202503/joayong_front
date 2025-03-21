@@ -76,3 +76,29 @@
     gap: 12px;
     flex-wrap: wrap;
 }
+
+// 매칭 펜딩, 거절, 완료 시에 옆에 태그처럼 보여주기
+.messageStatus {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #555;
+
+    &.pending {
+        background-color: #FEF7CD;
+        color: #927400;
+    }
+
+    &.accepted  {
+        background-color: #F2FCE2;
+        color: #3b7a17;
+    }
+
+    &.rejected {
+     background-color: #FFDEE2;
+        color: #a12940;
+    }
+}

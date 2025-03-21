@@ -5,7 +5,7 @@ import Button from "../common/Button.jsx";
 import {useNavigate} from "react-router-dom";
 import ConfirmModal from "../common/ConfirmModal.jsx";
 import MiniAlert from "../common/MiniAlert.jsx";
-import {acceptMatchingRequest} from "../../services/matchingService.js";
+import {acceptMatchingRequest, rejectMatchingRequest} from "../../services/matchingService.js";
 import {ApiError} from "../../utils/ApiError.js";
 import {useSelector} from "react-redux";
 
@@ -67,6 +67,26 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
         }
     };
 
+    // 매칭 거절 처리 함수
+    const processMatchReject = async () => {
+        try {
+            // 1. 서버에 매칭 거절 요청
+            await rejectMatchingRequest(request.messageId);
+
+            console.log(request.messageId);
+
+            // 2. 로컬 상태 업데이트(성능을 위해서 전체  데이터 다시 fetch 하지 않고 일단 local 에서 보이는 것 바꿔줌)
+            onRequestUpdate(request.messageId, 'D');
+
+            // 3. 성공했다는 모달 띄우기
+            showSuccessMiniModal();
+            setShowConfirmModal(false);
+        } catch (error) {
+            console.error("매칭 요청 거절 중 오류 발생:", error);
+            showErrorMiniModal(error.message);
+        }
+    };
+
     // 매칭 수락 버튼을 클릭하면 모달 띄우기
     const showAcceptConfirmModal = () => {
         setConfirmModalMessage('매칭 요청을 수락하시겠습니까?');
@@ -74,18 +94,18 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
         setShowConfirmModal(true);
     };
 
+    // 매칭 거절 버튼을 클릭하면 모달 열기
+    const showRejectConfirmModal = () => {
+        setConfirmModalMessage('매칭 요청을 거절하시겠습니까?');
+        setModalConfirmAction(() => processMatchReject);
+        setShowConfirmModal(true);
+    };
 
     // 프로필 사진 클릭하면 프로필 페이지로 이동
     const handleProfileClick = () => {
         navigate(`/profile/${request.senderName}`);
     };
 
-
-    // 매칭 거절 버튼을 클릭하면 무달 달기
-    const handleMatchingRejectClick = () => {
-        setConfirmModalMessage('매칭 요청을 거절하시겠습니까?');
-        setShowConfirmModal(true);
-    };
 
     return (
         <>
@@ -113,6 +133,14 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
 
 
                     <div className={styles.actionButtons}>
+                        {/* 펜딩, 거절, 완료 후 리뷰까지 담겼을  시에는 옆에 태그처럼 상태 보여주기 */}
+                        { request.status === 'N' && isSender &&
+                            <span className={`${styles.messageStatus} ${styles.pending}`}>대기 중</span>}
+                        { request.status ===
+                            'C' && <span className={`${styles.messageStatus} ${styles.accepted}`}>완료됨</span>}
+                        { request.status ===
+                            'D' && <span className={`${styles.messageStatus} ${styles.rejected}`}>거절됨</span>}
+
                         {/* matching status에 따라 버튼 보이게 */}
                         {/* 버튼 status가 n이고 남이 보낸 메시지일때만 보임 */}
                         {request.status === 'N' && isReceiver
@@ -126,7 +154,7 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                                 </Button>
                                 <Button
                                     fontSize={'extrasmall'}
-                                    onClick={handleMatchingRejectClick}
+                                    onClick={showRejectConfirmModal}
                                 >거절하기
                                 </Button>
                             </>
