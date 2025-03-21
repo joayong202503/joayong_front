@@ -13,6 +13,7 @@ import MainLayout from "../layouts/mainLayout.jsx";
 import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
+import ChatPage from "../pages/ChatPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -124,9 +125,9 @@ const router = createBrowserRouter([
       },
       // WRTC & 채팅 페이지
       {
-        path: 'chat/:matchId',
+        path: 'chat/:messageId',
         element: <AuthRequired>
-          {/*<ChatPage/>*/}
+          <ChatPage/>
         </AuthRequired>
 
       },

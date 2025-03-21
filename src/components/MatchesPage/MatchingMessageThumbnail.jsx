@@ -107,6 +107,10 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     };
 
 
+    const handleRedirectToChatRoom = () => {
+        navigate(`/chat/${request.messageId}`);
+    };
+
     return (
         <>
             <div key={request.messageId} className={styles.divForLine}>
@@ -165,7 +169,7 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                                 <Button
                                     theme={'greenTheme'}
                                     fontSize={'extrasmall'}
-                                    onClick={() => alert('채팅방 입장 버튼 클릭')}
+                                    onClick={handleRedirectToChatRoom}
                                 >채팅방 입장
                                 </Button>
                                 <Button
