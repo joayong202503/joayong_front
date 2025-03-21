@@ -13,9 +13,11 @@
 
 }
 .profileContainer{
+  height: 100px;
+  gap: 30px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+
 }
 
 .profileContentContainer{
@@ -23,16 +25,17 @@
   flex-direction: column;
   justify-content: center;
   margin-left: 300px;
+  height: 200px;
 
 }
-.profileContentContainer h2{
+.nameText{
+  padding-top: 40px;
   font-size: 45px;
+  font-weight: bold;
 }
 .emailText{
   color: #909196;
   font-size: 20px;
-  margin-top: 10px;
-  margin-left: 10px;
 }
 .fullTalentContainer{
   display: flex;
@@ -41,9 +44,11 @@
 }
 .talentContainer{
   background: rgba(227, 217, 217, 0.5);
-  width: 200px;
+  width: 180px;
   border-radius: 10px;
-  padding: 10px 20px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
 }
 .talentTitle{
   font-size: 15px;
@@ -51,6 +56,7 @@
 }
 .talentText{
   margin-top: 10px;
+  margin-left: 20px;
   font-size: 20px;
 }
 
@@ -61,6 +67,7 @@
 }
 .menuContainer{
   display: flex;
+  width: 100px;
   gap: 10px;
   margin-bottom: 20px;
 }
@@ -92,4 +99,9 @@
 .myExchangesContainer h2{
   margin-bottom: 40px;
   font-size: 40px;
+}
+.editBtn{
+  background: #000;
+  height: 50px;
+  z-index: 100;
 }

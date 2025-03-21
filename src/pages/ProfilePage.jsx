@@ -63,20 +63,20 @@ const ProfilePage = () => {
         <div className={styles.profileContainer}>
           <ProfileCircle size="llg" imageUrl={profileData.profileImageUrl} />
           {isMyProfile && (
-            <Button theme="blackTheme" fontSize="large">edit profile</Button>
+            <Button theme="blackTheme" fontSize="large" height="50%">edit profile</Button>
           )}
         </div>
         <div className={styles.profileContentContainer}>
-          <h2 className={styles.nameText}>{profileData.name}</h2>
+          <span className={styles.nameText}>{profileData.name}</span>
           <p className={styles.emailText}>{profileData.email}</p>
           <div className={styles.fullTalentContainer}>
             <div className={styles.talentContainer}>
-              <p className={styles.talentTitle}>Teaching</p>
-              <p className={styles.talentText}>웹개발</p>
+              <span className={styles.talentTitle}>Teaching</span>
+              <span className={styles.talentText}>웹개발</span>
             </div>
             <div className={styles.talentContainer}>
-              <p className={styles.talentTitle}>Learning</p>
-              <p className={styles.talentText}>영어회화</p>
+              <span className={styles.talentTitle}>Learning</span>
+              <span className={styles.talentText}>영어회화</span>
             </div>
           </div>
         </div>

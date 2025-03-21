@@ -35,7 +35,7 @@ const Header = () => {
   //프로필을 클릭했을때 해당 프로필 페이지로 이동할 수 있도록
   const handleProfileClick =() =>{
     if(user){
-      navigate(`/profile/${user.username}`)
+      navigate(`/profile/${user.name}`)
     }else{
       navigate('/login')
     }

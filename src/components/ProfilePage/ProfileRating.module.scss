@@ -14,7 +14,7 @@
 
 .ratingBoxContainer{
   width: 100%;
-  padding-left: 10rem;
+
 
 }
 
@@ -26,11 +26,14 @@
   padding: 20px;
 }
 .pagination {
+  position: absolute;
+  width: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  margin-bottom: 50px;
+  margin-top: 60px;
+  padding-bottom: 50px;
+  left: 45%;
 }
 
 .pageButton {
@@ -52,8 +55,8 @@
   }
 
   &.active {
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
-    border-color: #007bff;
+    border-color: #000000;
   }
 }
