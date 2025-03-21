@@ -3,11 +3,11 @@
     display: flex;
     justify-content: space-between;
     padding: 5px 0;
-    border-bottom: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f5f9;
     transition: all 0.2s ease;
     
     &:hover {
-        background-color: rgba(241, 239, 239, 0.2);
+        background-color: #f8fafc;
     }
 }
 
@@ -19,7 +19,7 @@
     padding: 8px 24px;
     gap: 24px;
     background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     transition: all 0.2s ease;
     
     &:hover {
@@ -43,28 +43,28 @@
 .requestSummary {
     margin: 0;
     font-size: 0.95rem;
-    color: #4a4a4a;
+    color: #64748b;
     line-height: 1.5;
 
     .user {
         font-weight: 600;
-        color: #2d2d2d;
+        color: #334155;
     }
 
     .skillText {
         margin: 0 4px;
         font-weight: 600;
-        
+
         &.give {
-            color: #2563eb;
-            background: #eff6ff;
+            color: #475569;
+            background: #f8fafc;
             padding: 2px 8px;
             border-radius: 6px;
         }
         
         &.want {
-            color: #16a34a;
-            background: #f0fdf4;
+            color: #475569;
+            background: #f8fafc;
             padding: 2px 8px;
             border-radius: 6px;
         }

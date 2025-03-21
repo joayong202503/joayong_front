@@ -6,14 +6,10 @@ import {useNavigate} from "react-router-dom";
 
 const MatchingMessageThumbnail = ({ request }) => {
 
-    // 프로필 사진 div
-    const profileImageRef = useRef();
-
     const navigate = useNavigate();
 
     // 프로필 사진 클릭하면 프로필 페이지로 이동
     const handleProfileClick = () => {
-        alert('dfd');
         navigate(`/profile/${request.senderName}`);
     };
 
@@ -39,6 +35,8 @@ const MatchingMessageThumbnail = ({ request }) => {
                         배우고 싶어요.
                     </p>
                 </div>
+
+
 
                 <div className={styles.actionButtons}>
                     {/*<Button*/}
