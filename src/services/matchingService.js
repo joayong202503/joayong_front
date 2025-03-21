@@ -161,3 +161,36 @@ export const rejectMatchingRequest = async (messageId) => {
         );
     }
 };
+
+
+// 매칭 레슨 완료(리뷰 쓰기 전)
+export const fetchCompleteLesson = async (messageId) => {
+    try {
+        const response = await fetchWithAuth(messageApi.completeLesson(messageId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new ApiError(
+                response.status,
+                errorData.message || '레슨 완료 처리 실패',
+                errorData
+            );
+        }
+
+        return await response.json(); // { isCompleted: true } 반환
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(
+            500,
+            '기타 네트워크 오류가 발생했습니다',
+            error
+        );
+    }
+};

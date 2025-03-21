@@ -72,7 +72,11 @@ export const messageApi = {
     },
     rejectMatchingRequest: function (messageId) {
         return `${MESSAGE_URL}/reject/${messageId}`;
-    }
+    },
+    // 레슨 완료만 하기(리뷰 등록 전)
+    completeLesson: function(messageId) {
+        return `${MESSAGE_URL}/complete/${messageId}`;
+    },
 }
 
 // user 관련 api

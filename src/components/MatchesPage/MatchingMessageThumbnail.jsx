@@ -5,7 +5,7 @@ import Button from "../common/Button.jsx";
 import {useNavigate} from "react-router-dom";
 import ConfirmModal from "../common/ConfirmModal.jsx";
 import MiniAlert from "../common/MiniAlert.jsx";
-import {acceptMatchingRequest, rejectMatchingRequest} from "../../services/matchingService.js";
+import {acceptMatchingRequest, fetchCompleteLesson, rejectMatchingRequest} from "../../services/matchingService.js";
 import {ApiError} from "../../utils/ApiError.js";
 import {useSelector} from "react-redux";
 
@@ -73,8 +73,6 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
             // 1. 서버에 매칭 거절 요청
             await rejectMatchingRequest(request.messageId);
 
-            console.log(request.messageId);
-
             // 2. 로컬 상태 업데이트(성능을 위해서 전체  데이터 다시 fetch 하지 않고 일단 local 에서 보이는 것 바꿔줌)
             onRequestUpdate(request.messageId, 'D');
 
@@ -86,6 +84,29 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
             showErrorMiniModal(error.message);
         }
     };
+
+    // 레슨 완료 처리
+    const processLessonComplete = async () => {
+        try {
+            // 1. 서버에 fetch
+            await fetchCompleteLesson(request.messageId);
+
+            // 2. 로컬 상태 업데이트(성능을 위해서 전체  데이터 다시 fetch 하지 않고 일단 local 에서 보이는 것 바꿔줌)
+            onRequestUpdate(request.messageId, 'R');
+
+            // 3. 성공했다는 모달 띄우기
+            setMiniModalMessage('성공적으로 재능 교환이 완료되었습니다. 리뷰 페이지로 이동합니다');
+            setShowMiniModal(true);
+            setTimeout(() => {
+                setShowMiniModal(false);
+                handleRedirectToReviewPage();
+            }, 2000);
+        } catch (error) {
+            console.error("레슨 완리 쳐리 중 오류 발생:", error);
+            showErrorMiniModal(error.message);
+        }
+    };
+
 
     // 매칭 수락 버튼을 클릭하면 모달 띄우기
     const showAcceptConfirmModal = () => {
@@ -109,6 +130,18 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
 
     const handleRedirectToChatRoom = () => {
         navigate(`/chat/${request.messageId}`);
+    };
+
+    const handleRedirectToReviewPage = () => {
+        navigate(`/matches/${request.messageId}/rating`);
+    };
+
+    // 레슨 완료 버튼 누르면 레슨 완료 등록 후 리뷰 페이지로 이동
+    const handleLessonComplete = () => {
+        // 정말 완료 하시겠습니까?
+        setConfirmModalMessage('레슨을 완료하시겠습니까?');
+        setShowConfirmModal(true);
+        setModalConfirmAction(() => processLessonComplete);
     };
 
     return (
@@ -170,19 +203,21 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                                     theme={'greenTheme'}
                                     fontSize={'extrasmall'}
                                     onClick={handleRedirectToChatRoom}
-                                >채팅방 입장
+                                >채팅입장
                                 </Button>
                                 <Button
                                     fontSize={'extrasmall'}
-                                    onClick={() => alert('레슨 완료 버튼 클릭')}
-                                >레슨 완료
+                                    onClick={handleLessonComplete}
+                                >레슨완료
                                 </Button>
                             </>
                         )}
+                        {/* 버튼 status가 r 일때만 보임*/}
                         {request.status === 'R' && (
                             <Button
-                                fontSize={'small'}
-                            >리뷰 남기기
+                                fontSize={'extrasmall'}
+                                onClick={handleRedirectToReviewPage}
+                            >리뷰하기
                             </Button>
                         )}
 

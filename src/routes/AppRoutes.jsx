@@ -13,7 +13,6 @@ import MainLayout from "../layouts/mainLayout.jsx";
 import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
-import ChatPage from "../pages/ChatPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -115,7 +114,7 @@ const router = createBrowserRouter([
           },
           // 매칭 후 리뷰작성 사이트
           {
-            path: ':matchId/rating',
+            path: ':messageId/rating', // matchid -> messageId로 수정
             element: <AuthRequired>
               {/*<MatchRatingPage/>*/}
             </AuthRequired>
@@ -125,9 +124,9 @@ const router = createBrowserRouter([
       },
       // WRTC & 채팅 페이지
       {
-        path: 'chat/:messageId',
+        path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
-          <ChatPage/>
+          {/*<ChatPage/>*/}
         </AuthRequired>
 
       },
