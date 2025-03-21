@@ -47,14 +47,17 @@
   opacity: 30%;
 }
 .bottomContainer{
-  height: 50%;
   width: 80%;
+}
+.titleContainer {
+  margin-bottom: 50px;
 }
 .cardContainer{
   display: flex;
   gap: 10px;
   justify-content: center;
   align-items: center;
+  margin-top: 10px;
 }
 .arrows{
   font-weight: bold;
@@ -107,6 +110,7 @@
   flex: 0 0 25%; // 4개의 카드가 보이도록 25% 너비 설정
   padding: 0 5px; // 카드 사이의 간격
   box-sizing: border-box;
+  height: 410px;
 }
 
 .arrows {
@@ -117,9 +121,9 @@
   box-shadow: 0.5px 0.5px 1px 1px #bdbdbd;
   border: 1px solid gray;
   height: 30px;
-  z-index: 10; // 화살표를 카드 위에 보이도록
-  cursor: pointer; // 포인터 커서 추가
-  transition: all 0.3s ease; // 버튼 호버 애니메이션
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: #f0f0f0;
