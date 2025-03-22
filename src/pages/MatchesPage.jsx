@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
+import { debounce } from 'lodash';
 import styles from './MatchesPage.module.scss';
 import Button from "../components/common/Button.jsx";
 import SegmentControl from "../components/common/SegmentControl.jsx";
-import {messageApi} from "../services/api.js";
-import fetchWithAuth from "../services/fetchWithAuth.js";
 import {useNavigate} from "react-router-dom";
 import MatchingMessageThumbnail from "../components/MatchesPage/MatchingMessageThumbnail.jsx";
 import Spinner from "../components/common/Spinner.jsx";
@@ -11,128 +10,12 @@ import {fetchUserInfo} from "../services/userService.js";
 import getCompleteImagePath from "../utils/getCompleteImagePath.js";
 import Tabs from "../components/common/Tabs.jsx";
 import {fetchMatchingRequestsWithFilters} from "../services/matchingService.js";
+import InputBox from "../components/common/InputBox.jsx";
 
 const MatchesPage = () => {
 
-//     // 전체 메시지 가져오기
-//     const [searchQuery, setSearchQuery] = useState('');
-//     const [matchingRequests, setMatchingRequests] = useState([
-//         {
-//             id: 1,
-//             type: '받은 요청',
-//             sender: 'SY',
-//             profileImage: 'https://sitem.ssgcdn.com/39/66/61/item/0000007616639_i1_750.jpg',
-//             giveSkill: '스페인어',
-//             wantSkill: '인싸 되는 법',
-//             content: '안녕하세요, 스페인어를 배우고 싶어요. 인싸 되는 법을 알려드릴게요. 서울 지역에서 만나면 좋겠어요.'
-//         },
-//         {
-//             id: 2,
-//             type: '보낸 요청',
-//             sender: 'JH',
-//             profileImage: 'https://via.placeholder.com/150',
-//             giveSkill: '프로그래밍',
-//             wantSkill: '요리',
-//             content: '프로그래밍을 알려드릴게요. 대신 요리를 배우고 싶어요. 지역은 상관없어요.'
-//         },
-//         {
-//             id: 3,
-//             type: '받은 요청',
-//             sender: 'MK',
-//             profileImage: 'https://via.placeholder.com/150',
-//             giveSkill: '영어',
-//             wantSkill: '그림',
-//             content: '영어 회화를 도와드릴 수 있어요. 그림 그리는 법을 배우고 싶어요. 부산 지역입니다.'
-//         }
-//     ]);
-//
-//     const handleSearch = (query) => {
-//         setSearchQuery(query);
-//     };
-//
-//     const highlightText = (text, query) => {
-//         if (!query || query.trim() === '') return text;
-//
-//         const parts = text.split(new RegExp(`(${query})`, 'gi'));
-//         return parts.map((part, index) =>
-//             part.toLowerCase() === query.toLowerCase()
-//                 ? <span key={index} className={styles.highlight}>{part}</span>
-//                 : part
-//         );
-//     };
-//
-//     // 검색어와 일치하는 내용이 있는지 확인하는 함수
-//     const hasMatchingContent = (request, query) => {
-//         if (!query || query.trim() === '') return false;
-//
-//         // 제목(스킬), 내용, 이름 등에서 검색어 포함 여부 확인
-//         return (
-//             request.giveSkill.toLowerCase().includes(query.toLowerCase()) ||
-//             request.wantSkill.toLowerCase().includes(query.toLowerCase()) ||
-//             request.sender.toLowerCase().includes(query.toLowerCase()) ||
-//             request.content.toLowerCase().includes(query.toLowerCase())
-//         );
-//     };
-//
-//     // 검색어가 포함된 내용 부분 추출하는 함수
-//     const extractMatchingContent = (content, query) => {
-//         if (!query || query.trim() === '' || !content.toLowerCase().includes(query.toLowerCase())) {
-//             return null;
-//         }
-//
-//         // 검색어를 포함한 문장 추출 로직
-//         const sentences = content.split(/[.!?]+/).filter(s => s.trim() !== '');
-//         const matchingSentences = sentences.filter(s =>
-//             s.toLowerCase().includes(query.toLowerCase())
-//         );
-//
-//         if (matchingSentences.length === 0) return null;
-//
-//         // 검색어를 포함한 문장들을 ... 으로 연결
-//         return matchingSentences.join('. ') + '.';
-//     };
-//
-//     return (
-//         <div className={styles.matchesContainer}>
-//
-//             <div className={styles.searchContainer}>
-//                 <SearchBar onSearch={handleSearch} />
-//             </div>
-//
-//             <div className={styles.matchesList}>
-//
-//
-//
-//                         {/* 검색어가 있고, 검색 결과가 있을 때 검색 결과 프리뷰 표시 */}
-//                         {searchQuery && hasMatchingContent(request, searchQuery) && (
-//                             <div className={styles.searchResultPreview}>
-//                                 {/* 내용에서 검색어가 있는 경우에는 문장 추출하여 표시 */}
-//                                 {request.content.toLowerCase().includes(searchQuery.toLowerCase()) && (
-//                                     <div className={styles.contentMatch}>
-//                                         <span className={styles.matchLabel}>내용 일치: </span>
-//                                         <p>{highlightText(extractMatchingContent(request.content, searchQuery) || request.content, searchQuery)}</p>
-//                                     </div>
-//                                 )}
-//
-//                                 {/* 제목이나 이름에서만 검색어가 있는 경우에는 전체 내용 일부 표시 */}
-//                                 {!request.content.toLowerCase().includes(searchQuery.toLowerCase()) &&
-//                                     (request.giveSkill.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//                                         request.wantSkill.toLowerCase().includes(searchQuery.toLowerCase()) ||
-//                                         request.sender.toLowerCase().includes(searchQuery.toLowerCase())) && (
-//                                         <div className={styles.titleMatch}>
-//                                             <span className={styles.matchLabel}>제목 일치: </span>
-//                                             <p className={styles.contentPreview}>{request.content.substring(0, 50)}...</p>
-//                                         </div>
-//                                     )}
-//                             </div>
-//                         )}
-//                     </div>
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// };
-
+    // ### matchingRequests vs FilteredRequests
+    //  - matchingReques는 fetch 된 값, filteredRequests는 fetch된 검색어로 필터링한 값
 
     // ======== 일반 변수 ======== //
     // 세그먼트 컨트롤의 메뉴 목록
@@ -156,6 +39,15 @@ const MatchesPage = () => {
     // 로딩 중
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    //  검색 관련
+    const [searchQuery, setSearchQuery] = useState(''); // 검색어
+    const [debouncedQuery, setDebouncedQuery] = useState(''); // 디바운스된 검색어
+    const [filteredRequests, setFilteredRequests] = useState([]); // 검색 결과로 필터링한 값
+
+    // matchingRequests가 업데이트될 때마다 filteredRequests도 업데이트
+    useEffect(() => {
+        setFilteredRequests(matchingRequests);
+    }, [matchingRequests]);
 
     // ====== 일반 함수 ====== //
     // 게시글의 status 가 변경되었을 시, 성능 최적화를 위해
@@ -193,8 +85,8 @@ const MatchesPage = () => {
                 return {
                     // 기존 request 응답 받은 것에 sender의 profile image url 추가하여 반환
                     ...request,
-                    profileImage: userInfo.profileImageUrl ? 
-                        getCompleteImagePath(userInfo.profileImageUrl).imageUrl : 
+                    profileImage: userInfo.profileImageUrl ?
+                        getCompleteImagePath(userInfo.profileImageUrl).imageUrl :
                         null
                 };
             })
@@ -264,11 +156,63 @@ const MatchesPage = () => {
         }
     }
 
+    // 검색어 처리 : 검색어가 없을때는 filteredRequest는 fetch된 값 그대로
+    //             검색값이 있으면 fetch된 데이터를 필터링한 값으로
+    const filteredResults = useMemo(() => {
+        if (!debouncedQuery.trim()) return matchingRequests;
+
+        return matchingRequests.filter(request =>
+            request.content?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            request.senderName?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            request.receiverName?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            request.talentGive?.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+            request.talentTake?.toLowerCase().includes(debouncedQuery.toLowerCase())
+        );
+    }, [debouncedQuery, matchingRequests]);
+
+    // 검색어 디바운스 처리
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedQuery(searchQuery);
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // 검색어 변경 핸들러
+    const handleSearchEvent = (value) => {
+        setSearchQuery(value);
+    };
+
+    useEffect(() => {
+        setFilteredRequests(filteredResults);
+    }, [filteredResults]);
+
+    // 검색어가 요청 메시지 내용에 포함되는 경우, 메시지의 앞뒤 긁어서 반환해주는 함수
+    const extractMatchingContent = (messageContent, searchQuery) => {
+
+        // 검색어가 없거나 메시지 내용이 없는 경우에는 그대로 반환
+        if (!searchQuery || !messageContent) return messageContent;
+
+        // 검색어가 messageContent에서 위치한 위치를 찾아냄
+        const index = messageContent.toLowerCase().indexOf(searchQuery.toLowerCase());
+
+        // content substring 기준을 갖기 위해, content에서 검색어가 위치한 위치(index)르 기준으로 앞뒤 substring 기준 설정
+        const start = Math.max(0, index - 20);
+        const end = Math.min(messageContent.length, index + searchQuery.length + 20);
+
+        // 앞뒤로 잘랐다면 ... 표시
+        const prefix = start > 0 ? '...' : '';
+        const suffix = end < messageContent.length ? '...' : '';
+
+        return prefix + messageContent.substring(start, end) + suffix;
+    };
+
     // ========= use 함수 ======= //
     // 페이지 진입 시 전체보기 데이터 로드
     useEffect(() => {
         setIsLoading(true);
-        
+
         const timer = setTimeout(() => {
             handleSegmentControlMenuChange('전체보기');
         }, 1000); // 로딩 중 보여주는 용으로 1초 지연
@@ -293,6 +237,19 @@ const MatchesPage = () => {
                         />
                     </div>
 
+
+                    {/* 검색 바 */}
+                    <div className={styles.searchContainer}>
+                        <InputBox
+                            type="search"
+                            // 값이 변경될때마다 matchespage 재렌더링 되어야 하므로, 상태갑으로 관리
+                            value={searchQuery}
+                            onChange={(e) => handleSearchEvent(e.target.value)}
+                            placeholder="검색어를 입력하세요"
+                        />
+                    </div>
+
+
                     {/* 탭으로 선택하는 메뉴 */}
                     <div className={styles.tabsMenuContainer}>
                         <Tabs
@@ -304,14 +261,6 @@ const MatchesPage = () => {
                 </div>
             }
 
-
-            {/*/!* 나머지 컨텐츠 *!/*/}
-            {/*{isLoading ? null :*/}
-            {/*    <div className={styles.searchContainer}>*/}
-            {/*        /!*<SearchBar onSearch={handleSearch} />*!/*/}
-            {/*    </div>*/}
-            {/*}*/}
-
             {/* 로딩 상태일 때 Spinner 표시 */}
             {isLoading && (
                 <div className={styles.spinnerContainer}>
@@ -320,11 +269,14 @@ const MatchesPage = () => {
             )}
 
             {/* 조회 값이 없을 때 보여줄 문구 */}
-            {!isLoading && matchingRequests.length === 0 && (
+            {!isLoading && filteredRequests.length === 0 && (
                 <div className={styles.emptyStateContainer}>
                     <span className={styles.emptyStateIcon}>📫</span>
-                    <p className={styles.noResultsMessage}>아직 메시지가 없습니다.</p>
-                    <Button 
+                    <p className={styles.noResultsMessage}>
+                        {/* 검색어 searchQury(검색값)이 없어서, 아니면  */}
+                        {searchQuery ? '검색 결과가 없습니다.' : '아직 메시지가 없습니다.'}
+                    </p>
+                    <Button
                         theme="blueTheme"
                         onClick={() => navigate('/exchanges')}
                     >
@@ -333,15 +285,28 @@ const MatchesPage = () => {
                 </div>
             )}
 
-            {/* 매칭 요청 메시지 목록 */}
-            {matchingRequests.length > 0 && (
+            {/* 필터링 된 매칭 요청 메시지 목록 */}
+            {filteredRequests.length > 0 && (
                 <div className={styles.matchesList}>
-                    {matchingRequests.map(request => (
-                        <MatchingMessageThumbnail
-                            key={request.messageId}
-                            request={request}
-                            onRequestUpdate={updateMatchingRequest}
-                        />
+                    {filteredRequests.map(request => (
+                        <>
+                            <MatchingMessageThumbnail
+                                key={request.messageId}
+                                request={request}
+                                onRequestUpdate={updateMatchingRequest}
+                            />
+
+                            {/* 검색어 미리보기도 debouncedQuery 사용 */}
+                            {debouncedQuery && request.content &&
+                                request.content.toLowerCase().includes(debouncedQuery.toLowerCase()) && (
+                                    <div className={styles.searchResultPreview}>
+                                        <div className={styles.contentMatch}>
+                                            <span className={styles.matchLabel}>내용 일치: </span>
+                                            <p>{extractMatchingContent(request.content, debouncedQuery) || request.content}</p>
+                                        </div>
+                                    </div>
+                                )}
+                        </>
                     ))}
                 </div>
             )}
