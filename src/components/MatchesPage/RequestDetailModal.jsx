@@ -178,16 +178,14 @@ const RequestDetailModal = ({
                         </div>
                     </div>
 
-                    {/* 지역 */}
-                    <div className={`${styles.sectionBox}`}>
-                        <span className={styles.title}>{}님의 재능을 어필해보세요</span>
-                        <ToolTip content={'DFDDF'} title={'DFDF'} 님은 이런 사람을 찾고 있어요/>
-                        <ContentInputSection
-                            placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
-                            // isTitleNecessary={false}
-                            name={'content'}
-                            // ref={contentInputRef}
-                        />
+                    {/* 메시지 내용 */}
+                    <div className={`${styles.sectionBox} ${styles.half}`}>
+                        <span className={styles.title}>요청 메시지</span>
+                        <div className={styles.contentBox}>
+                            <span className={styles.contentText}>
+                                {requestDetail.content}
+                            </span>
+                        </div>
                     </div>
 
 
