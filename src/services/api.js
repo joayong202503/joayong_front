@@ -40,7 +40,6 @@ const getMatchingRequestUrl = (filter, status) => {
     const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND'];
     const VALID_STATUS = ['N', 'M', 'D', 'R', 'C'];
 
-    console.log(filter, status);
 
     // 받은 filter 값을 대문자로 변환 -> filter 값이 없거나 유효하지 않으면 기본값으로 ALL 설정
     const validatedFilter =
@@ -77,6 +76,10 @@ export const messageApi = {
     completeLesson: function(messageId) {
         return `${MESSAGE_URL}/complete/${messageId}`;
     },
+    // 매칭 요처 메시지 이미지
+    getMatchingRequestMessageImages: function(messageId) {
+        return `${MESSAGE_URL}/${messageId}`;
+    }
 }
 
 // user 관련 api

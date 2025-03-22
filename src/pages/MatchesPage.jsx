@@ -187,7 +187,7 @@ const MatchesPage = () => {
     // 매칭 요청들에 프로필 이미지 정보를 추가하는 함수
     const addProfileImagesToRequests = async (requests) => {
         // 각 요청에 대해 프로필 이미지 정보 추가(이미지 정보는 별도로 fetch하여야 함)
-        return Promise.all(
+        const requestsWithProfiles = await Promise.all(
             requests.map(async (request) => {
                 const userInfo = await fetchUserInfo(request.senderName);
                 return {
@@ -198,7 +198,15 @@ const MatchesPage = () => {
                         null
                 };
             })
+
         );
+
+        // 날짜순으로 정렬 (최신순)
+        const sortedRequests = requestsWithProfiles.sort((a, b) =>
+            new Date(b.sentAt) - new Date(a.sentAt)
+        );
+        console.log('프로필 이미지 추가 fetch한 후 최신순으로 데이터 정렬',sortedRequests);
+        return sortedRequests;
     };
 
     // 세그먼트 컨트롤에서 메뉴를 선택하면 일어나는 일
@@ -209,10 +217,9 @@ const MatchesPage = () => {
 
         try {
             const filter = getMessageFilterBySender(selectedMenu);
-        console.log(selectedTabMenu);
-        console.log(messageApi.getMatchingRequestsWithFilters(filter, selectedTabMenu));
+
+            console.log('필터링 조건 : filter', filter, 'status', selectedTabMenu);
             const responseData = await fetchMatchingRequestsWithFilters(filter, selectedTabMenu);
-            console.log("서버 응답:", responseData);
 
             const requestsWithProfiles = await addProfileImagesToRequests(responseData);
             setMatchingRequests(requestsWithProfiles);
@@ -229,6 +236,7 @@ const MatchesPage = () => {
         }
     };
 
+
     // 탭 메뉴에서 필터링을 하면 일어나는 일
     const handleTabMenuChange = async (selectedStatus) => {
 
@@ -236,12 +244,10 @@ const MatchesPage = () => {
             const filter = getMessageFilterBySender(selectedSegmentControlMenu);
             const status = selectedStatus;
             setSelectedTabMenu(status);
-
-            console.log('status', status);
-            console.log('filter', filter);
+//
+            console.log('필터링 조건 : filter', filter, 'status', status);
 
             const responseData = await fetchMatchingRequestsWithFilters(filter, status);
-            console.log(responseData);
 
             const requestsWithProfiles = await addProfileImagesToRequests(responseData);
             setMatchingRequests(requestsWithProfiles);

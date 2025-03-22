@@ -2,7 +2,7 @@ import React, {forwardRef, useState} from 'react';
 import styles from './ContentInputSection.module.scss';
 
 const ContentInputSection
-    = forwardRef(({ onKeyDown, isTitleNecessary=true, onChange }, ref) => {
+    = forwardRef(({ onKeyDown, isTitleNecessary=true, onChange, maxlength=2200 }, ref) => {
 
     // 글자 수 관리
     const [charCount, setCharCount] = useState(0);
@@ -22,7 +22,7 @@ const ContentInputSection
                 placeholder={'가르칠 내용과 이 재능에 대한 경험을 설명해주세요'}
                 ref={ref}
                 id={'content'}
-                maxLength={2200}
+                maxLength={maxlength}
                 onChange={(e) => {
                     // 부모에서 전달된 onChange를 호출
                     if (onChange) onChange(e);
@@ -33,7 +33,7 @@ const ContentInputSection
             </textarea>
 
             <div className={styles.charCount}>
-                {charCount} / 2200
+                {charCount} / {maxlength}
             </div>
 
         </div>

@@ -8,6 +8,7 @@ import MiniAlert from "../common/MiniAlert.jsx";
 import {acceptMatchingRequest, fetchCompleteLesson, rejectMatchingRequest} from "../../services/matchingService.js";
 import {ApiError} from "../../utils/ApiError.js";
 import {useSelector} from "react-redux";
+import RequestDetailModal from './RequestDetailModal';
 
 const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     const [showMiniModal, setShowMiniModal] = useState(false);
     const [miniModalMessage, setMiniModalMessage] = useState('');
     const [isNegativeMiniModalMessage, setIsNegativeMiniModalMessage] = useState(false);
+    const [showRequestDetail, setShowRequestDetail] = useState(false); // 요청 메시지 디테일 보여주는 모달
 
     // 미니 모달 표시 관련 함수
     const showSuccessMiniModal = () => {
@@ -144,10 +146,22 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
         setModalConfirmAction(() => processLessonComplete);
     };
 
+    // 메시지 리스트를 클릭하면 요청 메시지 상세 내용 있는 모달 뜨도록함
+    const handleMessageClick = (e) => {
+        // 프로필 영역과 버튼 영역 클릭은 제외
+        if (!e.target.closest(`.${styles.profileWithIndicator}`) &&
+            !e.target.closest(`.${styles.actionButtons}`)) {
+            setShowRequestDetail(true);
+        }
+    };
+
     return (
         <>
             <div key={request.messageId} className={styles.divForLine}>
-                <div className={styles.matchingMessageThumbnailWrapper}>
+                <div
+                    className={styles.matchingMessageThumbnailWrapper}
+                    onClick={handleMessageClick}
+                >
                     <div className={styles.leftLayout}>
                         <div className={styles.profileWithIndicator} onClick={handleProfileClick}>
                             <ProfileCircle
@@ -157,14 +171,22 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                             />
                         </div>
 
-                        <p className={styles.requestSummary}>
-                            <span className={styles.user}>{request.receiverName}</span>
-                            <span>님, 제가</span>
-                            <span className={`${styles.skillText} ${styles.give}`}>{request.talentGive}</span>
-                            가르쳐 드릴게요.
-                            <span className={`${styles.skillText} ${styles.want}`}>{request.talentTake}</span>
-                            배우고 싶어요.
-                        </p>
+                        <div className={styles.messageContent}>
+                            <div className={styles.messageHeader}>
+                                <span className={styles.senderName}>{request.senderName}</span>
+                                <span className={styles.sentDate}>
+                                    {new Date(request.sentAt).toLocaleDateString()}
+                                </span>
+                            </div>
+                            <p className={styles.requestSummary}>
+                                <span className={styles.user}>{request.receiverName}</span>
+                                <span>님, 제가</span>
+                                <span className={`${styles.skillText} ${styles.give}`}>{request.talentGive}</span>
+                                가르쳐 드릴게요.
+                                <span className={`${styles.skillText} ${styles.want}`}>{request.talentTake}</span>
+                                배우고 싶어요.
+                            </p>
+                        </div>
                     </div>
 
 
@@ -244,6 +266,15 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                     isNegative={isNegativeMiniModalMessage}
                 />
             )}
+
+            {/* 요청 상세 모달 */}
+            {showRequestDetail && (
+                <RequestDetailModal
+                    request={request}
+                    onClose={() => setShowRequestDetail(false)}
+                />
+            )}
+
         </>
     );
 };

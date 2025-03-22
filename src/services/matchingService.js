@@ -42,8 +42,6 @@ const fetchCompletedStatus = async (filter) => {
     try {
         const urlForStatusR = messageApi.getMatchingRequestsWithFilters(filter, 'R');
         const urlForStatusC = messageApi.getMatchingRequestsWithFilters(filter, 'C');
-        console.log(urlForStatusR);
-        console.log(urlForStatusC);
 
         const [statusRData, statusCData] = await Promise.all([
             fetchWithAuth(urlForStatusR).then(res => res.json()),
@@ -67,8 +65,6 @@ export const fetchMatchingRequestsWithFilters = async (filter = 'ALL', status = 
     try {
         // 사용자에게 보여 줄 때는 1) 수업완료 했지만 리뷰는 안함 2) 수업완료하고 리뷰까지 완료함 <- 을 하나로 갑쳐서 보여줄 것임
         // -> "이 때는 parameter를 "R+C"로 받아서, 두 번 패치할 것임
-
-        console.log('Status:', status);
 
         if (status === 'R+C') {
             return await fetchCompletedStatus(filter); // 이미 JSON으로 파싱된 데이터 반환
@@ -190,6 +186,35 @@ export const fetchCompleteLesson = async (messageId) => {
         throw new ApiError(
             500,
             '기타 네트워크 오류가 발생했습니다',
+            error
+        );
+    }
+};
+
+
+
+// 매칭 요청 메시지의 이미지를 조회
+export const fetchMatchingRequestMessageImages = async (messageId) => {
+    try {
+        const response = await fetchWithAuth(`${messageApi.getMatchingRequestMessageImages(messageId)}`);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new ApiError(
+                response.status,
+                errorData.message || '메시지 이미지 조회 실패',
+                errorData
+            );
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(
+            500,
+            '네트워크 오류가 발생했습니다',
             error
         );
     }
