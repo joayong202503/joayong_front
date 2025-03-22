@@ -80,24 +80,17 @@ const RequestDetailModal = ({
     // 모달 여닫기 관련 끝
 
     // '게시물 보기' 클릭하면 해당 게시물로 이동
-    const handlePostClick = () => {
-        // navigate(`/exchanges/${request.postId}`);
-        onClose();
+    const handlePostClick = (e) => {
+        e.preventDefault(); // 기본 동작 방지
+        window.open(`/exchanges/${request.postId}`, '_blank'); // 새 창으로 열기
     };
 
     return (
         <div className={styles.modalOverlay} onClick={handleOverlayClick}>
             <div className={styles.modalContent}>
-                <div className={styles.modalHeader}>
-                    <h2>요청 상세 내용</h2>
+                <div className={styles.modalHeader} onClick={handlePostClick}>
+                    <h2>관련 재능 교환 게시글 보기 → </h2>
                     <button className={styles.closeButton} onClick={onClose}>×</button>
-                </div>
-
-                <div className={styles.relatedPostSection}>
-                    <div className={styles.postLink} onClick={handlePostClick}>
-                        <span className={styles.linkText}>관련 게시물 보기</span>
-                        <span className={styles.arrow}>→</span>
-                    </div>
                 </div>
 
                 <div className={styles.divider} />
