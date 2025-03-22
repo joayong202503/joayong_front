@@ -107,7 +107,8 @@ const ExchangeListPage = () => {
                     profile: {
                         name: post.name,
                         imageSrc: profileImage,
-                        size: 'xs'
+                        size: 'xs',
+                        username: post.name,
                     },
                     content: post.content,
                     createdAt: post.createdAt

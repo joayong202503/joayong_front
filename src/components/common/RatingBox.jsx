@@ -56,7 +56,7 @@ const RatingBox = ({ reviewerName, reviewList, createAt }) => {
       <div className={styles.nameContainer}>
         <div className={styles.reviewerInfo}>
           <p className={styles.reviewer}>작성자 : {reviewerName}</p>
-          <p className={styles.reviewDate}>{formatDate(createAt)}</p>
+
         </div>
         <div className={styles.ratingResultContainer}>
           {reviewList && reviewList.length > 0 && (
@@ -86,6 +86,7 @@ const RatingBox = ({ reviewerName, reviewList, createAt }) => {
             </>
           )}
         </div>
+                <p className={styles.reviewDate}>리뷰작성일: {formatDate(createAt)}</p>
       </div>
     </div>
   );
