@@ -1,0 +1,67 @@
+.fullContainer{
+  display: flex;
+  flex-direction: column;
+  background: rgba(224, 239, 255, 0.9);
+  min-height: 100vh;
+  width: 100%;
+}
+.headerTitle{
+  padding-top: 30px;
+  text-align: center;
+  font-size: 40px;
+}
+.CardContainer{
+  display: flex;
+  justify-content: center;
+}
+.innerCardContainer{
+  margin-top: 70px;
+  width: 60%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+.titleContainer{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+.title{
+  font-size: 35px;
+  font-weight: bold;
+}
+.content{
+  margin-top: 5px;
+  font-size: 20px;
+  color: gray;
+}
+.reviewContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px dotted #adadad;
+}
+.question{
+  display: flex;
+  flex-direction: column;
+}
+.questionTitle{
+  font-size: 25px;
+}
+.questionContent{
+  margin-top: 3px;
+  color: gray;
+  margin-bottom: 10px;
+}
+.stars{
+  display: flex;
+  gap:3px;
+  margin-left: 100px;
+}
+.submitBtn{
+  margin-top: 80px;
+  width: 100%;
+}
+
+
