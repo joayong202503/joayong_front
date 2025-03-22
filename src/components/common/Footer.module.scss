@@ -1,0 +1,158 @@
+.footer {
+  background-color: #f8f9fa;
+  color: #333;
+  padding: 1.5rem 1rem;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  border-top: 1px solid #eaeaea;
+}
+
+.footerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  gap: 70px;
+}
+
+.footerSection {
+  flex: 1;
+}
+
+.footerTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  position: relative;
+  display: inline-block;
+
+  &:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 1.5rem;
+    height: 2px;
+    background-color: #3182ce;
+  }
+}
+
+.footerTitleSub {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  position: relative;
+  display: inline-block;
+}
+
+// 프로젝트 섹션 디자인
+.sectionProjects {
+  margin-bottom: 0.5rem;
+}
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  display: flex;
+}
+
+.projectLink {
+  flex: 1;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background-color: #f1f3f5;
+
+  &:hover {
+    color: #3182ce;
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+  }
+}
+
+.projectIcon {
+  font-size: 1rem;
+  color: #3182ce;
+}
+
+// 팀원 섹션 디자인
+.sectionTeam {
+  margin-top: 0.5rem;
+}
+
+.teamRow {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+
+}
+
+.memberCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+.memberLink {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  &:hover {
+    color: #3182ce;
+  }
+}
+
+.memberIcon {
+  font-size: 0.9rem;
+}
+
+.memberName {
+  font-weight: 500;
+}
+
+.memberRole {
+  font-size: 0.75rem;
+  color: #888;
+  padding-left: 1.2rem;
+}
+
+.copyright {
+  text-align: center;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  color: #888;
+  font-size: 0.75rem;
+  border-top: 1px solid #eaeaea;
+}
+
+// 반응형 설계
+@media (max-width: 768px) {
+  .projectGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .projectGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .teamRow {
+    padding-bottom: 0.75rem;
+  }
+}

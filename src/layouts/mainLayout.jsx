@@ -2,6 +2,7 @@ import React from 'react';
 import Header from "./Header.jsx";
 import {Outlet} from "react-router-dom";
 import styles from  "./mainLayout.module.scss"
+import Footer from "../components/common/Footer.jsx";
 
 const MainLayout = () => {
     return (
@@ -10,8 +11,7 @@ const MainLayout = () => {
             <main className={styles.mainContainer}>
                 <Outlet/>
             </main>
-            {/*시간 가능하면 Footer 만들기*/}
-            {/*<Footer />*/}
+            <Footer />
         </div>
     );
 };
