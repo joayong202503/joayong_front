@@ -24,6 +24,7 @@
 
 .modalHeader {
   position: sticky;
+  z-index: 1000;
   top: 0;
   background: white;
   padding: 15px 24px;
@@ -40,6 +41,7 @@
 }
 
 .categoriesSection {
+  margin-top: 20px;
   width: 100%;
   display: flex;
   gap: 30px;
@@ -98,7 +100,10 @@ h2 {
   cursor: pointer;
 }
 .requestContent {
-  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  gap: 20px;
 }
 
 .messageDetails {

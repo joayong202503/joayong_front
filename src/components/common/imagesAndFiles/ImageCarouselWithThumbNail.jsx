@@ -9,16 +9,6 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, wi
                                     initialIndex=0, setCurrentIndex,
                                     isOpenModal, setIsOpenModal}) => {
 
-    console.log('ImageCarousel props:', {
-        imagesObject,
-        isLoading,
-        isPostUploaded,
-        width,
-        height
-    });
-
-
-
     const [currentIndex, setCurrentIndexLocal] = useState(initialIndex);
 
     // 큰 이미지 담는 박스

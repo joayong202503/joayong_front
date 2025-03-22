@@ -9,10 +9,14 @@ const Categories = ({isLoading=false, isPostUploaded=true, label, labelHighlight
                 <span className={styles.categoryLabel}>{label}   </span>
             </div>
             <div className={styles.flex}>
-                <div className={`${styles.categoryTag} ${styles.main} ${styles[theme]}`}>
-                    {!isLoading && isPostUploaded ? mainCategory : ''}
-                </div>
-                <span>></span>
+                {mainCategory &&
+                <>
+                    <div className={`${styles.categoryTag} ${styles.main} ${styles[theme]}`}>
+                        {!isLoading && isPostUploaded ? mainCategory : ''}
+                    </div>
+                    <span>›</span>
+                </>
+                }
                 <div
                     className={`${styles.categoryTag} ${styles.sub} ${styles[theme]}`}
                     id={subCategoryId}

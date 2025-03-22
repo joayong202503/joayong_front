@@ -85,9 +85,37 @@ export const getPostViewCount = async (postId) => {
     return await fetchWithAuth(`${postApi.viewCount}${postId}`);
 }
 
+// postId로 게시글 조회
+export const fetchPostDetailById = async (postId) => {
 
+    try {
+        const response = await fetchWithAuth(`${postApi.specificPost}/${postId}`);
 
+        if (!response.ok) {
+            const data = await response.json();
+            // 서버 내부 오류일 때
+            if (response.status === 500) {
+                // 에러에 여러 값 반환하기 위해, ApiError라는 클래스를 만들어 객체로 전달
+                throw new ApiError(data.status, '서버 오류 발생', data?.message); // ApiError로 구조화된 에러 던지기
+            } else if (response.status !== 500) {
+                throw new ApiError(response.status, '기타 오류 발생', data?.message); // 다른 상태 코드 에러 처리
+            }
+        }
 
+        // 성공: 삭제 결과 반환
+        return await response.json();
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(
+            500,
+            '네트워크 오류가 발생했습니다',
+            error
+        );
+    }
+
+}
 export default useDeletePost;
 
 
