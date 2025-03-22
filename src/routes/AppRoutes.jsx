@@ -114,7 +114,7 @@ const router = createBrowserRouter([
           },
           // 매칭 후 리뷰작성 사이트
           {
-            path: ':matchId/rating',
+            path: ':messageId/rating', // matchid -> messageId로 수정
             element: <AuthRequired>
               {/*<MatchRatingPage/>*/}
             </AuthRequired>
@@ -124,7 +124,7 @@ const router = createBrowserRouter([
       },
       // WRTC & 채팅 페이지
       {
-        path: 'chat/:matchId',
+        path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
           {/*<ChatPage/>*/}
         </AuthRequired>

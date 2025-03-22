@@ -6,8 +6,8 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Feather 아�
 // isLoading : useQuery에서 fetch 완료 여부
 // isPostUploaded : 로딩 완료 후 post 까지 업데이트 되었는지
 const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, width, height,
-                                        initialIndex=0, setCurrentIndex,
-                                        isOpenModal, setIsOpenModal}) => {
+                                    initialIndex=0, setCurrentIndex,
+                                    isOpenModal, setIsOpenModal}) => {
 
     const [currentIndex, setCurrentIndexLocal] = useState(initialIndex);
 
