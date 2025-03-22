@@ -9,8 +9,10 @@ import {acceptMatchingRequest, fetchCompleteLesson, rejectMatchingRequest} from 
 import {ApiError} from "../../utils/ApiError.js";
 import {useSelector} from "react-redux";
 import RequestDetailModal from './RequestDetailModal';
+import {Dot} from "lucide-react";
 
 const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
+
     const navigate = useNavigate();
 
     //  매칭 요청을 내가 보낸 사람인지 받는 사람인지를 확인
@@ -176,6 +178,8 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                                 <span className={styles.senderName}>{request.senderName}</span>
                                 <span className={styles.sentDate}>
                                     {new Date(request.sentAt).toLocaleDateString()}
+                                    {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
+                                    { request.status === 'N' && !isSender && <Dot size={14} color={'red'}/>}
                                 </span>
                             </div>
                             <p className={styles.requestSummary}>

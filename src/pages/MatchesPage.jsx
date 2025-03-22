@@ -11,6 +11,7 @@ import getCompleteImagePath from "../utils/getCompleteImagePath.js";
 import Tabs from "../components/common/Tabs.jsx";
 import {fetchMatchingRequestsWithFilters} from "../services/matchingService.js";
 import InputBox from "../components/common/InputBox.jsx";
+import {useSelector} from "react-redux";
 
 const MatchesPage = () => {
 
@@ -43,11 +44,37 @@ const MatchesPage = () => {
     const [searchQuery, setSearchQuery] = useState(''); // 검색어
     const [debouncedQuery, setDebouncedQuery] = useState(''); // 디바운스된 검색어
     const [filteredRequests, setFilteredRequests] = useState([]); // 검색 결과로 필터링한 값
+    // 알림 관련
+    // 맨 처음에 불러온 값을 계속 보관
+    const [initialRequests, setInitialRequests] = useState([]); // 최초 데이터를 보관할 상태
+    const [hasPendingRequests, setHasPendingRequests] = useState(false);  // 내가 받은 메시지이며 동시에 status가 N인 메시지가 있는지 확인
+    // 내 이름
+    const myUsername = useSelector((state) => state.auth.user.name);
 
     // matchingRequests가 업데이트될 때마다 filteredRequests도 업데이트
     useEffect(() => {
         setFilteredRequests(matchingRequests);
     }, [matchingRequests]);
+
+    // 내가 받은 메시지이며 동시에 status가 N인 메시지가 있는지 확인
+    useEffect(() => {
+
+        // 필터링하여 값이 바뀐 경우, status가 r+c, d, m, 이거나, filter가 send인 경우는 initialrequests 업데이트 하면 안됨
+        // (그러면 당연히내가 받은 status 가 n인 메시지는 0이 됨)
+        if (selectedTabMenu === 'R+C' || selectedTabMenu === 'D' || selectedTabMenu === 'M' || selectedSegmentControlMenu === '보낸 요청') {
+            return;
+        }
+
+        if (initialRequests.length === 0) return;
+
+        if (matchingRequests.length > 0) {
+            setInitialRequests(matchingRequests);
+        }
+
+        const flag = initialRequests.some(request => request.status === 'N' && request.receiverName === myUsername);
+        setHasPendingRequests(flag);
+    }, [initialRequests, myUsername, matchingRequests]);
+
 
     // ====== 일반 함수 ====== //
     // 게시글의 status 가 변경되었을 시, 성능 최적화를 위해
@@ -114,6 +141,12 @@ const MatchesPage = () => {
             const responseData = await fetchMatchingRequestsWithFilters(filter, selectedTabMenu);
 
             const requestsWithProfiles = await addProfileImagesToRequests(responseData);
+
+            // 제일 처음 화면 진입 시 실행될 떄는, 알림 설정용으로 값을 초기 응답값 저장해놓은 상태변수에 저장
+            if (initialRequests.length === 0) {
+                setInitialRequests(requestsWithProfiles);
+            }
+
             setMatchingRequests(requestsWithProfiles);
             setIsLoading(false);
         } catch (error) {
@@ -253,6 +286,7 @@ const MatchesPage = () => {
                     {/* 탭으로 선택하는 메뉴 */}
                     <div className={styles.tabsMenuContainer}>
                         <Tabs
+                            isNewPendingReceived={hasPendingRequests} // status ==== n, isRecepient인 메시지 있는지 여부
                             options={statusOptions}
                             defaultFilter={statusOptions[0]}
                             onFilterChange={handleTabMenuChange}
