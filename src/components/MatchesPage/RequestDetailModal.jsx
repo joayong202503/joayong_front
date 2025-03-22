@@ -13,8 +13,11 @@ import {getRegionDetailsBySubRegionId} from "../../utils/sortAndGetCategories.js
 import {useSelector} from "react-redux";
 
 const RequestDetailModal = ({
-                                // 이 모달이 열리는 매칭 관리 페이지에서 전달
-                                request, onClose
+                                // 모달 관련
+                                request, onClose,
+                                // 모달의 액션버튼 관련
+                                isSender, isReceiver,
+                                onAccept, onReject, onChatEnter, onLessonComplete, onReviewClick
                             }) => {
 
     const navigate = useNavigate();
@@ -115,108 +118,130 @@ const RequestDetailModal = ({
     };
 
     return (<div className={styles.modalOverlay} onClick={handleOverlayClick}>
-            <div className={styles.modalContent}>
-                <div className={styles.modalHeader}>
-                    <button className={styles.closeButton} onClick={onClose}>×</button>
-                    <h2 onClick={handlePostClick}>관련 재능 교환 게시글 보기 → </h2>
-                </div>
+        <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+                <button className={styles.closeButton} onClick={onClose}>×</button>
+                <h2 onClick={handlePostClick}>관련 재능 교환 게시글 보기 → </h2>
+            </div>
 
-                <div className={styles.divider}/>
+            <div className={styles.divider}/>
 
-                {/* 내용 */}
-                <div className={styles.requestContent}>
-                    {/* 이미지 갤러리 */}
-                    {requestDetail.images?.length > 0 && (<div className={styles.imageGallery}>
-                        <ImageCarouselWithThumbNail
-                            imagesObject={requestDetail.images.map(url => ({imageUrl: url}))}
-                            isLoading={false}
-                            isPostUploaded={true}
-                            isOpenModal={showImageModal}
-                            setIsOpenModal={setShowImageModal}
-                            initialIndex={currentImageIndex}
-                            setCurrentIndex={setCurrentImageIndex}
-                        />
-                    </div>)}
+            {/* 내용 */}
+            <div className={styles.requestContent}>
+                {/* 이미지 갤러리 */}
+                {requestDetail.images?.length > 0 && (<div className={styles.imageGallery}>
+                    <ImageCarouselWithThumbNail
+                        imagesObject={requestDetail.images.map(url => ({imageUrl: url}))}
+                        isLoading={false}
+                        isPostUploaded={true}
+                        isOpenModal={showImageModal}
+                        setIsOpenModal={setShowImageModal}
+                        initialIndex={currentImageIndex}
+                        setCurrentIndex={setCurrentImageIndex}
+                    />
+                </div>)}
 
-                    {/*재능*/}
-                    <div className={styles.categoriesSection}>
-                        {/* 메시지 보낸 사람이 주는 카테고리 */}
-                        <div className={`${styles.sectionBox} ${styles.half}`}>
+                {/*재능*/}
+                <div className={styles.categoriesSection}>
+                    {/* 메시지 보낸 사람이 주는 카테고리 */}
+                    <div className={`${styles.sectionBox} ${styles.half}`}>
                             <span className={styles.title}><span
                                 className={styles.highlight}>{requestDetail.senderName}</span>님이 알려줄 수 있어요</span>
-                            <div className={styles.contentBox}>
-                                <Categories
-                                    subCategory={requestDetail.talentGive || '정보 없음'}
-                                    theme={'give'}
-                                    className={'column'}
-                                    size={'large'}
-                                />
-                            </div>
-                        </div>
-                        {/* 받는 카테고리 */}
-                        <div className={`${styles.sectionBox} ${styles.half}`}>
-                            <span className={styles.title}><span
-                                className={styles.highlight}>{requestDetail.receiverName}</span>님이 알려줄 수 있어요</span>
-                            <div className={styles.contentBox}>
-                                <Categories
-                                    subCategory={requestDetail.talentTake || '정보 없음'}
-                                    theme={'want'}
-                                    className={'column'}
-                                    size={'large'}
-                                />
-                            </div>
+                        <div className={styles.contentBox}>
+                            <Categories
+                                subCategory={requestDetail.talentGive || '정보 없음'}
+                                theme={'give'}
+                                className={'column'}
+                                size={'large'}
+                            />
                         </div>
                     </div>
-
-                    {/* 지역 */}
+                    {/* 받는 카테고리 */}
                     <div className={`${styles.sectionBox} ${styles.half}`}>
-                        <span className={styles.title}>여기서 만날 수 있어요</span>
+                            <span className={styles.title}><span
+                                className={styles.highlight}>{requestDetail.receiverName}</span>님이 알려줄 수 있어요</span>
                         <div className={styles.contentBox}>
+                            <Categories
+                                subCategory={requestDetail.talentTake || '정보 없음'}
+                                theme={'want'}
+                                className={'column'}
+                                size={'large'}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* 지역 */}
+                <div className={`${styles.sectionBox} ${styles.half}`}>
+                    <span className={styles.title}>여기서 만날 수 있어요</span>
+                    <div className={styles.contentBox}>
                             <span className={styles.contentText}>
                                 <MapPinnedIcon size={16}/>{requestDetail.location || '정보없음'}
                             </span>
-                        </div>
                     </div>
+                </div>
 
-                    {/* 메시지 내용 */}
-                    <div className={`${styles.sectionBox} ${styles.half}`}>
-                        <span className={styles.title}>요청 메시지</span>
-                        <div className={styles.contentBox}>
+                {/* 메시지 내용 */}
+                <div className={`${styles.sectionBox} ${styles.half}`}>
+                    <span className={styles.title}>요청 메시지</span>
+                    <div className={styles.contentBox}>
                             <span className={styles.contentText}>
                                 {requestDetail.content}
                             </span>
-                        </div>
                     </div>
-
-
                 </div>
 
+            </div>
+            {/*  end of requestContent */}
 
+            <div className={styles.buttonsContainer}>
+                {/* 상태 표시 태그 */}
+                {request.status === 'N' && isSender && (
+                    <span className={`${styles.messageStatus} ${styles.pending}`}>대기 중</span>
+                )}
+                {request.status === 'C' && (
+                    <span className={`${styles.messageStatus} ${styles.accepted}`}>완료됨</span>
+                )}
+                {request.status === 'D' && (
+                    <span className={`${styles.messageStatus} ${styles.rejected}`}>거절됨</span>
+                )}
+
+                {/* 액션 버튼들 */}
+                {request.status === 'N' && isReceiver && (
+                    <>
+                        <Button
+                            theme={'blueTheme'}
+                            fontSize={'extrasmall'}
+                            onClick={onAccept}
+                        >수락하기</Button>
+                        <Button
+                            fontSize={'extrasmall'}
+                            onClick={onReject}
+                        >거절하기</Button>
+                    </>
+                )}
+                {request.status === 'M' && (
+                    <>
+                        <Button
+                            theme={'greenTheme'}
+                            fontSize={'extrasmall'}
+                            onClick={onChatEnter}
+                        >채팅입장</Button>
+                        <Button
+                            fontSize={'extrasmall'}
+                            onClick={onLessonComplete}
+                        >레슨완료</Button>
+                    </>
+                )}
+                {request.status === 'R' && (
+                    <Button
+                        fontSize={'extrasmall'}
+                        onClick={onReviewClick}
+                    >리뷰하기</Button>
+                )}
             </div>
         </div>
-
-        //
-        // {/*                <div className={styles.buttonsContainer}>*/}
-        // {/*                    <Button*/}
-        // {/*                        theme={'whiteTheme'}*/}
-        // {/*                        fontSize={'medium'}*/}
-        // {/*                        className={'fill'}*/}
-        // {/*                        // onClick={handleRequestCancel}*/}
-        // {/*                    >취소하기</Button>*/}
-        //
-        // {/*                    <Button*/}
-        // {/*                        theme={'blueTheme'}*/}
-        // {/*                        fontSize={'medium'}*/}
-        // {/*                        className={'fill'}*/}
-        // {/*                        // onClick={handleSubmit}*/}
-        // {/*                        type={'button'}*/}
-        // {/*                    >제출하기</Button>*/}
-        // {/*                </div>*/}
-        //
-        // {/*            </div>*/}
-        // {/*        </div>*/}
-
-
+    </div>
     );
 };
 

@@ -272,6 +272,13 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                 <RequestDetailModal
                     request={request}
                     onClose={() => setShowRequestDetail(false)}
+                    isSender={isSender}
+                    isReceiver={isReceiver}
+                    onAccept={processMatchAccept}
+                    onReject={processMatchReject}
+                    onChatEnter={handleRedirectToChatRoom}
+                    onLessonComplete={processLessonComplete}
+                    onReviewClick={handleRedirectToReviewPage}
                 />
             )}
 

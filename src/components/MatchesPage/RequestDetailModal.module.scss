@@ -159,3 +159,19 @@ h2 {
   white-space: pre-wrap;
   min-height: 100px;
 }
+
+.contentText {
+  color: #334155;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.buttonsContainer {
+  padding: 0 20px;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
