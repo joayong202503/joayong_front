@@ -82,11 +82,11 @@ const RatingBox = ({ reviewerName, reviewList, createAt }) => {
                     {renderStars(review.rating)}
                   </div>
                 ))}
-                <p className={styles.reviewDate}>{formatDate(createAt)}</p>
               </div>
             </>
           )}
         </div>
+                <p className={styles.reviewDate}>리뷰작성일: {formatDate(createAt)}</p>
       </div>
     </div>
   );

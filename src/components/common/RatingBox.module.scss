@@ -19,9 +19,11 @@
 }
 
 .reviewDate {
-  margin-left: 350px;
+  display: flex;
+  justify-content: flex-end;
   margin-top: 20px;
   font-size: 14px;
+  margin-right: 10px;
   color: #757575;
 }
 
