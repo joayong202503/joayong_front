@@ -1,15 +1,57 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './Header.module.scss'
 import logoImage from '../assets/images/logo.png'
 import ProfileCircle from '../components/common/ProfileCircle.jsx';
 import Button from "../components/common/Button.jsx";
-import {NavLink, useNavigate} from 'react-router-dom'
+import {NavLink, useLocation, useNavigate} from 'react-router-dom'
 import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../store/slices/authSlice.js";
+import {fetchMatchingRequestsWithFilters} from "../services/matchingService.js";
+import {BellDot, BellIcon, BellRing, Dot} from "lucide-react";
 
 const Header = () => {
-  // 스토어에서 사용자 정보 가져오기
+
+  // 스토어에서 유저 정보 가져오기
   const user = useSelector(state => state.auth.user);
+
+  // ========= 매칭관리 : 내가 수신인이고 아직 수락/거절여부 결정하지 않은 내역 있으면 빨간점으로 알림 표시  ===== //
+  const location = useLocation(); // 매 페이지마다 새로 fetch 되게 하려고 useLocation 사용
+  const [hasReceivedPendingRequests, setHasReceviedPendingRequests] = useState(false);
+
+  useEffect(() => {
+    const fetchPendingRequests = async () => {
+      // 로그인 안했으면 return
+      if (!user) {
+        setHasReceviedPendingRequests(false);
+        return;
+      }
+
+      try {
+        // 내가 받은 펜딩 메시지 확인
+        const data = await fetchMatchingRequestsWithFilters('RECEIVE', 'N');
+        
+        // data가 없거나 배열이 아닌 경우 return
+        if (!data || !Array.isArray(data)) {
+          setHasReceviedPendingRequests(false);
+          return;
+        }
+
+        // 내가 받은 메시지인지 다시 한번 검증
+        const hasPending = data.some(request => request.receiverName === user.name);
+        
+        // 있을 경우 알람 설정하기 위해 hasReceivedPendingRequests의 값을 true로 전환
+        setHasReceviedPendingRequests(hasPending);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchPendingRequests();
+  }, [location]);
+
+  // ============== 매칭 관리 끝 =============== //
+
+  // 스토어에서 사용자 정보 가져오기
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -53,6 +95,10 @@ const Header = () => {
           </li>
           <li className={styles.menuItem}>
             <NavLink to="/matches" className={getLinkClassName} >매칭 관리</NavLink>
+            {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
+            <div className={styles.dotContainer}>
+              { hasReceivedPendingRequests && <BellDot size={14} color={'blue'} strokeWidth={1.5} style={{ fill: 'white' }}/>}
+            </div>
           </li>
           <li className={styles.menuItem}>
             <NavLink to ="/about" className={getLinkClassName}>알아보기</NavLink>
