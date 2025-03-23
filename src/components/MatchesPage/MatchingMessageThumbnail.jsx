@@ -176,7 +176,7 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                         <div className={styles.messageContent}>
                             <div className={styles.messageHeader}>
                                 {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
-                                { request.status === 'N' && !isSender && <Dot size={14} color={'#ff0000'}/>}
+                                { request.status === 'N' && !isSender && <Dot className={styles.dot} size={14} color={'#ff0000'}/>}
                                 <span className={styles.senderName}>{request.senderName}</span>
                                 <span className={styles.sentDate}>
                                     {new Date(request.sentAt).toLocaleDateString()}

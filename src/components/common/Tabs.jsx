@@ -33,8 +33,10 @@ const Tabs = ({
                             onClick={() => handleFilterClick(option.value)}
                         >
                              {/* 받았고 응답안한 요청 매시지 있는지 확인 */}
-                            {isNewPendingReceived && option.value === 'N' && (<Dot size={16} color={'red'}/>)}
-                              {option.label}
+                            <div className={styles.buttonText}>
+                                {isNewPendingReceived && option.value === 'N' && (<Dot className={styles.dot} size={16} color={'red'}/>)}
+                                {option.label}
+                            </div>
                         </button>
                         {index < options.length - 1 && <div className={styles.separator}></div>}
                     </React.Fragment>

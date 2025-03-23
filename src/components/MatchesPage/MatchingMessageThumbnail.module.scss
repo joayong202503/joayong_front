@@ -51,6 +51,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    position: relative;
     
     .senderName {
         font-size: 0.75rem;
@@ -124,4 +125,10 @@
      background-color: #FFDEE2;
         color: #a12940;
     }
+}
+
+.dot {
+    position: absolute;
+    left: -10px;
+    top: -2px;
 }

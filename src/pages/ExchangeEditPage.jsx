@@ -31,11 +31,6 @@ const ExchangeEditPage = () => {
 
     // ======= 내용 값 상태관리
 
-    // ========== 없는 게시글인지 확인
-    const isValidPostId = () => {
-
-    }
-
     // ======== 캐싱 게시글 상세내용 데이터 불러오기
     // useQuery를 통해 5분 간격으로 리패칭하여 fetch. useQuery반환 값 중 data(response), isLoading(useQuery 진행중 여부), isError(에러 발생여부), error(에러값) 반환
     const { data:postDetail, isLoading:isPostDetailLoading, isError:isPostDetailError, error: postDetailError } = usePostDetailFetchWithUseQuery(postId);
@@ -55,11 +50,9 @@ const ExchangeEditPage = () => {
         const redirectIfNotMyPost = () => {
             // useQuery에서 데이터를 다 불러온 후에 내 게시물 인지 확인해야 함
             if (isPostUploaded && !isMyPost) {
-                console.log('내꺼 아님');
                 navigate('/error', {
                     state: {
                         errorPageUrl: window.location.pathname,
-                        // status: 500,
                         message: "내 게시글만 수정 가능합니다."
                     }
                 });

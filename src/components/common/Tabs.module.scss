@@ -54,3 +54,13 @@
     background-color: #ddd;
   }
 }
+
+.buttonText {
+  position: relative;
+}
+
+.dot {
+  position: absolute;
+  top: -7px;
+  left: -12px;
+}
