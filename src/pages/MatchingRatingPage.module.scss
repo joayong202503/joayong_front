@@ -1,12 +1,18 @@
 .fullContainer{
   display: flex;
   flex-direction: column;
-  background: rgba(224, 239, 255, 0.9);
+  background: rgba(231, 243, 255, 0.9);
   min-height: 100vh;
   width: 100%;
+  padding-bottom: 100px;
 }
 .headerTitle{
+  background: linear-gradient(to right, #3b82f6, #06b6d4);
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
   padding-top: 30px;
+  font-weight: bold;
   text-align: center;
   font-size: 40px;
 }
@@ -15,11 +21,11 @@
   justify-content: center;
 }
 .innerCardContainer{
-  margin-top: 70px;
-  width: 60%;
+  margin-top: 50px;
+  width: 50%;
   background: white;
   border-radius: 10px;
-  padding: 20px;
+  padding: 40px 50px;
 }
 .titleContainer{
   display: flex;

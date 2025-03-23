@@ -13,6 +13,7 @@ import MainLayout from "../layouts/mainLayout.jsx";
 import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
+import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -116,7 +117,7 @@ const router = createBrowserRouter([
           {
             path: ':messageId/rating', // matchid -> messageId로 수정
             element: <AuthRequired>
-              {/*<MatchRatingPage/>*/}
+              <MatchingRatingPage/>
             </AuthRequired>
           }
         ]
