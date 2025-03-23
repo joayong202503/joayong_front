@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import Button from "../components/common/Button.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import { submitReview } from "../services/reviewApi.js";
+import AlertModal from "../components/common/AlertModal.jsx";
 
 const MatchingRatingPage = () => {
 
@@ -11,6 +12,10 @@ const MatchingRatingPage = () => {
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
+    const [modalTitle, setModalTitle] = useState('');
+    const [redirectUrl, setRedirectUrl] = useState(null);
 
     // 디버그를 위해 messageId 출력
     useEffect(() => {
@@ -35,13 +40,32 @@ const MatchingRatingPage = () => {
         console.log(`Selected Rating for ${category}:`, rating);
     };
 
+    // 모달 닫기 핸들러
+    const handleCloseModal = () => {
+        setShowModal(false);
+
+        // 리다이렉트 URL이 있으면 페이지 이동
+        if (redirectUrl) {
+            navigate(redirectUrl);
+            setRedirectUrl(null);
+        }
+    };
+
+    // 오류 모달 표시 함수
+    const showErrorModal = (title, message, redirectPath = null) => {
+        setModalTitle(title);
+        setModalMessage(message);
+        setRedirectUrl(redirectPath);
+        setShowModal(true);
+    };
+
     // 리뷰 제출 함수
     const handleSubmitReview = async () => {
         // 모든 항목에 별점이 매겨졌는지 확인
         const allRated = Object.values(ratings).every(rating => rating > 0);
 
         if (!allRated) {
-            setError('모든 항목에 별점을 매겨주세요.');
+            showErrorModal('별점 입력 필요', '모든 항목에 별점을 매겨주세요.');
             return;
         }
 
@@ -59,23 +83,20 @@ const MatchingRatingPage = () => {
             await submitReview(messageId, ratingDetailtList);
 
             console.log('Review submitted successfully');
-            // 리뷰 제출 후 이동할 페이지 (예: 홈페이지 또는 감사 페이지)
-            navigate('/matches'); // 필요에 따라 경로 변경
+
+            // 성공 모달 표시 후 이동
+            showErrorModal('리뷰 제출 완료', '성공적으로 리뷰가 제출되었습니다.', '/matches');
         } catch (err) {
             console.error('Error submitting review:', err);
 
             // 인증 오류 처리
             if (err.message.includes('401') || err.message.includes('403') ||
                 err.message.includes('404')) {
-                setError('로그인이 필요하거나 권한이 없습니다.');
-                // 3초 후 로그인 페이지로 이동
-                setTimeout(() => {
-                    navigate('/login', { state: { returnUrl: window.location.pathname } });
-                }, 3000);
+                showErrorModal('인증 필요', '로그인이 필요하거나 권한이 없습니다.', '/login');
                 return;
             }
 
-            setError('리뷰 제출 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            showErrorModal('오류 발생', '리뷰 제출 중 오류가 발생했습니다. 다시 시도해 주세요.');
         }
         finally {
             setIsSubmitting(false);
@@ -157,7 +178,6 @@ const MatchingRatingPage = () => {
                                 theme="blueTheme"
                                 className="fill"
                                 fontSize="large"
-                                height="100px"
                                 onClick={handleSubmitReview}
                                 disabled={isSubmitting}
                             >
@@ -167,6 +187,15 @@ const MatchingRatingPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* 오류 모달 */}
+            {showModal && (
+                <AlertModal
+                    title={modalTitle}
+                    message={modalMessage}
+                    onClose={handleCloseModal}
+                />
+            )}
         </div>
     );
 };

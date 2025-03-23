@@ -8,6 +8,7 @@
 }
 .headerTitle{
   background: linear-gradient(to right, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   display: inline-block;
@@ -33,7 +34,7 @@
   margin-bottom: 30px;
 }
 .title{
-  font-size: 35px;
+  font-size: 30px;
   font-weight: bold;
 }
 .content{
