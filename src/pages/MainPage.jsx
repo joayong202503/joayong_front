@@ -76,6 +76,7 @@ const MainPage = () => {
                 ? `http://localhost:8999${post.images[0].imageUrl}` : undefined,
               profile: {
                 name: post.name,
+                username: post.name,
                 imageSrc: profileImage,
                 size: 'xs'
               },

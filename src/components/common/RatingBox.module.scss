@@ -3,7 +3,7 @@
   box-shadow: 5px 5px 5px 5px rgba(110, 110, 110, 0.1);
   border-radius: 20px;
   width: 80%;
-  padding: 20px;
+  padding: 15px;
   margin-bottom: 20px;
 }
 
@@ -19,7 +19,11 @@
 }
 
 .reviewDate {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
   font-size: 14px;
+  margin-right: 10px;
   color: #757575;
 }
 
