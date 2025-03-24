@@ -10,6 +10,7 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 import MainPage from "../pages/MainPage.jsx";
 import MainLayout from "../layouts/mainLayout.jsx";
+import ChatRoom from "../components/chat/ChatRoom.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -117,11 +118,19 @@ const router = createBrowserRouter([
 
       },
       // WRTC & 채팅 페이지
+      // {
+      //   path: 'chat/:matchId',
+      //   element: <AuthRequired>
+      //     {/*<ChatPage/>*/}
+      //   </AuthRequired>
+
+      // },
       {
-        path: 'chat/:matchId',
+        path: 'chat',
         element: <AuthRequired>
-          {/*<ChatPage/>*/}
+          <ChatRoom />
         </AuthRequired>
+        
 
       },
       // 프로필 페이지
