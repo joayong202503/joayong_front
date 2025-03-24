@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from './ExchangeEditPage.module.scss';
 import AdvancedImageCarousel from "../components/common/imagesAndFiles/AdvancedImageCarousel.jsx";
 import {useNavigate, useParams} from "react-router-dom";
@@ -7,8 +7,10 @@ import {useSelector} from "react-redux";
 import TitleInputSection from "../components/ExchangeCreatePage/TitleInputSection.jsx";
 import DropDownBasic from "../components/common/DropDownBasic.jsx";
 import {
-    getRegionDetailsBySubRegionId,
+    getRegionDetailsBySubRegionId, getSortedTalentCategories,
 } from "../utils/sortAndGetCategories.js";
+import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSecition.jsx";
+
 
 const ExchangeEditPage = () => {
 
@@ -16,6 +18,11 @@ const ExchangeEditPage = () => {
     // ref
     const secondRegionDropDownRef = useRef();
     const thirdRegionDropDownRef = useRef();
+    const talentGiveMainRef = useRef();
+    const talentGiveSubRef = useRef();
+    const talentTakeMainRef = useRef();
+    const talentTakeSubRef = useRef();
+    const contentInputRef = useRef();
 
     const {exchangeId: postId} = useParams();
     const navigate = useNavigate();
@@ -151,7 +158,9 @@ const ExchangeEditPage = () => {
     // 소분류 값 변하면, 부모에게 최종 선택 값 전달
     const handleRegionLastCategoryChange = (selectedOptionObject) => {
         setSelectedRegionLastCategories(selectedOptionObject);
-    console.log('최종 선택값', selectedRegionLastCategories);
+        // 소분류 드롭다운으로 포커스 이동
+        setTimeout(() => {talentGiveMainRef.current?.focus();
+        }, 0);
     };
 
     // 처음 렌더링 할 때에는, 소분류는 fetch 값 가져오고, 이를 바탕으로 시작 선택 값을 넣어줘야 함
@@ -166,6 +175,7 @@ const ExchangeEditPage = () => {
     // 처음 데이터 불러올 시 이에 상응하는 카테고리만 가져오기
     // const {regionMiddleCategoreisdfdfdf, regionLastCategoriesdfdfdf} = getRegionDetailsBySubRegionId(post?.['regionId'], regionCategories);
     // 윗 분류 선택에 따른 아랫 분류 필터링
+    // const handleRegionMainCategoryChange = (value) => {
     // const handleRegionMainCategoryChange = (value) => {
     //     const selectedItem = regionCategories.find(category => category.name === value);
     //     if (selectedItem) {
@@ -183,6 +193,134 @@ const ExchangeEditPage = () => {
     }
 
 
+    // ############################## 재능 ######################## //
+    // 원본 데이터에서 전체 가나다 순 정렬
+    // 탤런드 정렬 함수
+    const getSortedCategories = (categories) => {
+        if (!categories) return [];
+        return [...categories].sort((a, b) => a.name.localeCompare(b.name));
+    };
+
+    const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
+    const sortedTalentCategories = useMemo(() => getSortedCategories(talentCategories), [talentCategories]);
+    const [defaultTalentMainGive, setDefaultTalentMainGive] = useState(null);// 디폴트 값
+    const [defaultTalentMainTake, setDefaultTalentMainTake] = useState(null);
+
+    console.log('sortedTalent:', sortedTalentCategories);
+
+    // 소분류 : 필터링 된 소분류 목록, 선택된 값, default 값
+    const [selectedTalentMainGive, setSelectedTalentMainGive] = useState([]);
+    const [selectedTalentMainTake, setSelectedTalentMainTake] = useState([]);
+    const [filteredTalentSubGive, setFilteredTalentSubGive] = useState([]);
+    const [filteredTalentSubTake, setFilteredTalentSubTake] = useState([]);
+    const [selectedTalentSubGive, setSelectedTalentSubGive] = useState([])
+    const [selectedTalentSubTake, setSelectedTalentSubTake] = useState([])
+    const [defaultTalentSubGive, setDefaultTalentSubGive] = useState(null);
+    const [defaultTalentSubTake, setDefaultTalentSubTake] = useState(null);
+
+    // 초기에 선택된 재능 값 바탕으로 초기 값 가져오기
+    const setupDefaultRegionCategoriesGive = useCallback((initialOptionGive) => {
+        if (!talentCategories?.length || !initialOptionGive) return;
+
+        const foundTalentMainGive = sortedTalentCategories.find(category =>
+            category.subTalentList.some(sub => sub.id === initialOptionGive)
+        );
+
+        if (!foundTalentMainGive) return;
+
+        const filteredTalentSubGive = foundTalentMainGive.subTalentList;
+        const foundSubTalent = filteredTalentSubGive.find(sub => sub.id === initialOptionGive);
+
+        console.log(foundSubTalent);
+        console.log(foundSubTalent);
+        console.log(foundSubTalent);
+        console.log(foundSubTalent);
+        setDefaultTalentMainGive(foundTalentMainGive);
+        setDefaultTalentSubGive(foundSubTalent);
+        // setSelectedTalentMainGive(foundTalentMainGive);
+        setFilteredTalentSubGive(filteredTalentSubGive);
+        setSelectedTalentSubGive(foundSubTalent);
+    }, [talentCategories]);
+
+    // 초기에 선택된 재능 값 바탕으로 초기 값 가져오기
+    const setupDefaultRegionCategoriesTake = (initialOption) => {
+        if (!sortedTalentCategories) return;
+        // sortedTalentCategories 배열 중 subTalent의  id 값 = post['post-talent-t-id'] 인 것 찾기
+        const foundTalentMainTake = sortedTalentCategories.find(category => category.subTalentList.find(sub => sub.id === initialOption));
+        const fondTalentSubTake = foundTalentMainTake.subTalentList;
+        setDefaultTalentMainTake(foundTalentMainTake);
+        setFilteredTalentSubTake(fondTalentSubTake);
+        setDefaultTalentSubTake(fondTalentSubTake.find(sub => sub.id === initialOption));
+    }
+
+    // 초기 값 설정
+    useEffect(() => {
+        if (post && talentCategories?.length > 0) {
+            setupDefaultRegionCategoriesGive(post['talent-g-id']);
+            setupDefaultRegionCategoriesTake(post['talent-t-id']);
+        }
+    }, [post, talentCategories, setupDefaultRegionCategoriesGive]);
+
+    const handleTalentGiveMainCategoryChange = (selectedItem) => {
+
+        if (!selectedItem) return;
+
+        // 기존 선택 값 초기화
+        setSelectedTalentMainGive(selectedItem);
+        setSelectedTalentSubGive(null);
+        // 필터링 값 변경
+        setFilteredTalentSubGive(selectedItem.subTalentList);
+        // 중분류 드롭다운으로 포커스 이동
+        setTimeout(() => {
+            talentGiveSubRef.current?.focus();
+        }, 0);
+    };
+
+    const handleTalentGiveSubCategoryChange = (selectedItem) => {
+
+        if (!selectedItem) return;
+
+        setSelectedTalentSubGive(selectedItem);
+
+        setTimeout(() => {
+            talentTakeMainRef.current?.focus();
+        }, 0);
+    };
+
+    const handleTalentTakeMainCategoryChange = (selectedItem) => {
+
+        if (!selectedItem) return;
+
+        // 기존 선택 값 초기화
+        setSelectedTalentMainTake(selectedItem);
+        setSelectedTalentSubTake(null);
+        // 필터링 값 변경
+        setFilteredTalentSubTake(selectedItem.subTalentList);
+        // 중분류 드롭다운으로 포커스 이동
+        setTimeout(() => {
+            talentTakeSubRef.current?.focus();
+        }, 0);
+    };
+
+    const handleTalentTakeSubCategoryChange = (selectedItem) => {
+
+        if (!selectedItem) return;
+
+        setSelectedTalentSubTake(selectedItem);
+
+        setTimeout(() => {
+            if (contentInputRef.current) {
+                const length = contentInputRef.current.value.length;
+                contentInputRef.current.focus();
+                contentInputRef.current.setSelectionRange(length, length);
+            }
+        }, 0);
+    };
+
+
+    console.log('##################################################selected 지역###', selectedRegionLastCategories);
+    console.log('##################################################selected 줄 재능###', selectedTalentSubGive);
+    console.log('##################################################selected 받을 재능###', selectedTalentSubTake);
 
 
     return (
@@ -234,6 +372,82 @@ const ExchangeEditPage = () => {
                     </div>
                 </div>
                 {/*{* end of location container *}*/}
+
+
+
+                <div className={`${styles.bothTalentsContainer}`}>
+
+                    {/*줄 재능*/}
+                    <div className={`${styles.talentSection} ${styles.contentBox} ${styles.half}`}>
+                        <span className={`${styles.title}`}>내가 줄 재능</span>
+                        <div className={styles.locationContainer}>
+                            <DropDownBasic
+                                ref={talentGiveMainRef}
+                                options={sortedTalentCategories}
+                                defaultOption={defaultTalentMainGive}
+                                onChange={handleTalentGiveMainCategoryChange}
+                                selectedOption={selectedTalentMainGive}
+                                width={135}
+                                placeholder={'대분류'}
+                            />
+
+                            <DropDownBasic
+                                ref={talentGiveSubRef}
+                                options={filteredTalentSubGive}
+                                defaultOption={defaultTalentSubGive}
+                                onChange={handleTalentGiveSubCategoryChange}
+                                selectedOption={selectedTalentSubGive}
+                                width={135}
+                                placeholder={'대분류'}
+                                disabled={!selectedTalentMainGive}
+                            />
+                        </div>
+                    </div>
+
+                    {/* 받을 재능 */}
+                    <div className={`${styles.talentSection} ${styles.contentBox} ${styles.half}`}>
+                        <span className={`${styles.title}`}>내가 받을 재능</span>
+                        <div className={styles.locationContainer}>
+                            <DropDownBasic
+                                ref={talentTakeMainRef}
+                                options={sortedTalentCategories}
+                                defaultOption={defaultTalentMainTake}
+                                onChange={handleTalentTakeMainCategoryChange}
+                                selectedOption={selectedTalentMainTake}
+                                width={135}
+                                ref={talentTakeMainRef}
+                                placeholder={'대분류'}
+                            />
+                            <DropDownBasic
+                                options={filteredTalentSubTake}
+                                defaultOption={defaultTalentSubTake}
+                                onChange={handleTalentTakeSubCategoryChange}
+                                selectedOption={selectedTalentSubTake}
+                                width={135}
+                                ref={talentTakeSubRef}
+                                disabled={!selectedTalentMainTake} // 첫번째가 선택되지 않으면 비활성화
+                                placeholder={'소분류'}
+                            />
+                        </div>
+                    </div>
+                    {/*{* end of 받을 talent *}*/}
+                </div>
+                {/* {* end of talent section *}*/}
+
+
+                {/* 내용 */}
+                <ContentInputSection
+                    maxlength={2200}
+                    placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
+                    isTitleNecessary={false}
+                    name={'content'}
+                    ref={contentInputRef}
+                    defaultValue={post.content}
+                />
+
+
+
+
 
             </dlv>
         )
