@@ -18,6 +18,7 @@ import {useSelector} from "react-redux";
 import DeleteButton from "../components/common/icons/DeleteButton.jsx";
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
+import EditButton from "../components/common/icons/EditButton.jsx";
 
 const ExchangeDetailPage = () => {
 
@@ -292,10 +293,13 @@ const ExchangeDetailPage = () => {
                         }
 
                         {/*{ (isMyPost && !isLoading && isPostUploaded) &&*/}
-                        {/*    <EditButton onClick={()=>{alert('수정 버튼 클릭')}}/>}*/}
 
-                        { (isMyPost && !isLoading && isPostUploaded) &&
-                            <DeleteButton onClick={() => handleDeletePostRequest(postId)}/>}
+                        { (isMyPost && !isLoading && isPostUploaded) && (
+                            <div className={styles.actionButtons}>
+                                <EditButton onClick={()=>{navigate(`/exchanges/${postId}/edit`)}}/>
+                                <DeleteButton onClick={() => handleDeletePostRequest(postId)}/>
+                            </div>
+                        )}
 
 
                     </div>

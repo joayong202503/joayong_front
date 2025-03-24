@@ -15,12 +15,6 @@ import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
 
 const router = createBrowserRouter([
-  // status 500 에러 페이지
-  {
-    path: '/error',
-    element: <ErrorPage />
-  }
-  ,
   // 회원가입 페이지
   {
     path: '/signup',
@@ -49,6 +43,11 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout/>,
     children: [
+      // 에러 페이지
+      {
+        path: 'error',
+        element: <ErrorPage/>
+      },
       // 메인페이지
       {
         index: true,
