@@ -60,6 +60,10 @@ const SignUp = () => {
     try {
       const response = await authApi.signup(email, username, password);
       console.log('회원가입 성공:', response);
+
+      // ✅ 회원가입 성공 메시지 표시
+    alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+
       
       // 회원가입 성공 시 로그인 페이지로 이동
       navigate('/login');

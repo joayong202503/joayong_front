@@ -37,31 +37,32 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     if (!validateEmail(email) || !password) return;
-    
+  
     setIsSubmitting(true);
     setError('');
-
+  
     try {
       // ✅ 실제 로그인 API 호출
       const response = await authApi.login(email, password);
-
+  
+      // ✅ 회원 정보가 없을 경우 오류 발생
       if (!response || !response.token) {
-        throw new Error('로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.');
+        throw new Error('존재하지 않는 회원입니다. 회원가입을 진행해주세요.');
       }
-
+  
       // ✅ 토큰 저장 (인증 유지)
       localStorage.setItem('user', JSON.stringify(response.user));
       localStorage.setItem('token', response.token);
-
+  
       // ✅ "로그인 정보 기억하기" 체크 시 이메일 저장
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', email);
       } else {
         localStorage.removeItem('rememberedEmail');
       }
-
+  
       navigate('/home'); // 로그인 성공 시 홈으로 이동
     } catch (err) {
       setError(err.message || '로그인 실패. 다시 시도해주세요.');
