@@ -1,9 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import styles from './ExchangeEditPage.module.scss';
 import AdvancedImageCarousel from "../components/common/imagesAndFiles/AdvancedImageCarousel.jsx";
 import {useNavigate, useParams} from "react-router-dom";
 import {fetchPostDetail} from "../services/postService.js";
 import {useSelector} from "react-redux";
+import TitleInputSection from "../components/ExchangeCreatePage/TitleInputSection.jsx";
+import RegionSelectSection from "../components/common/categories/RegionSelectSection.jsx";
+import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.js";
 
 const ExchangeEditPage = () => {
 
@@ -46,8 +49,34 @@ const ExchangeEditPage = () => {
     // 초기 데이터 로드
     useEffect(() => {
         getPostDetail();
+        // useRef 적용되고 난 후, 제목 란에 focus
+        if(!titleInputRef.current) return;
+        titleInputRef.current.focus();
     }, [postId]);
+
+    useEffect(() => {
+        if(!titleInputRef.current) return;
+        titleInputRef.current.focus();
+    }, [post]);
+
     // ==== 게시글 정보 불러오기 끝 ====== //
+
+    // 제목
+    const titleInputRef = useRef();
+
+    // 지역
+    const regionCategories = useSelector((state) => state.regionCategory.regionCategories); // Redux에서 카테고리 값 가져오기
+    const {
+        // 상위 분류 선택하면, 상태관리하는 selectedId 값이 변경되게 하는 함수
+        handleRegionMainCategoryChange, handleRegionMiddleCategoryChange, handleRegionLastCategoryChange,
+        // 전체 분류, 대분류 값 변경에 따른 중/소분류 값 필터링
+        sortedRegionCategories, regionMiddleCategories, regionLastCategories}
+        = useRegionCategories(regionCategories);
+
+    console.log(regionCategories);
+
+
+
 
     console.log('post', post);
 
@@ -81,18 +110,42 @@ const ExchangeEditPage = () => {
 
     return (
         post && (
-            <div className={styles.postEditPage}>
-                <div className={styles.imageSection}>
-                    {/*이미지 캐러셀*/}
-                    <AdvancedImageCarousel
-                        maxLength={5}
-                        onFeaturedImageChange={handleFeaturedImageChange}
-                        images={post?.images}
-                    />
+
+            <>
+                {/*제목 입력 */}
+                <TitleInputSection
+                    label="제목"
+                    placeholder="제목을 입력하세요"
+                    ref={titleInputRef}
+                    id="title"
+                    maxLength={50}
+                    defaultValue={post.title}
+                />
+
+                {/*지역 선택*/}
+                {/*<RegionSelectSection*/}
+                {/*    // defaultRegionId={post['regionId']}*/}
+                {/*    sortedRegionCategories={sortedRegionCategories}*/}
+                {/*    regionMiddleCategories={regionMiddleCategories}*/}
+                {/*    regionLastCategories={regionLastCategories}*/}
+                {/*    handleRegionMainCategoryChange={handleRegionMainCategoryChange}*/}
+                {/*    handleRegionMiddleCategoryChange={handleRegionMiddleCategoryChange}*/}
+                {/*    handleRegionLastCategoryChange={handleRegionLastCategoryChange}*/}
+                {/*/>*/}
+
+                <div className={styles.postEditPage}>
+                    <div className={styles.imageSection}>
+                        {/*/!*이미지 캐러셀*!/*/}
+                        {/*<AdvancedImageCarousel*/}
+                        {/*    maxLength={5}*/}
+                        {/*    onFeaturedImageChange={handleFeaturedImageChange}*/}
+                        {/*    images={post?.images}*/}
+                        {/*/>*/}
+                    </div>
+                    <div className={styles.uploadSection}>
+                    </div>
                 </div>
-                <div className={styles.uploadSection}>
-                </div>
-            </div>
+            </>
         )
     );
     }

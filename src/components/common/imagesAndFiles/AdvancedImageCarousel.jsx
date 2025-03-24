@@ -35,6 +35,7 @@ const AdvancedImageCarousel = ({
             {/* 이미지를 hover하면 actions buttons 보인다고 안내 */}
             <div className={`${styles.carouselPlaceholder} ${styles.gray}`}>
                 <p>💡 이미지에 마우스를 올려 대표사진을 설정하거나, 선택을 취소할 수 있어요.</p>
+                <p>💡 사진은 전체 변경 혹은 전체 그대로 두기만 가능합니다.</p>
             </div>
 
             {/* 각 이미지 박스 */}

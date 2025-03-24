@@ -318,6 +318,7 @@ const ExchangeCreatePage = () => {
                         id="title"
                         maxLength={50}
                     />
+
                     {/*지역 선택*/}
                     <RegionSelectSection
                         userAddress={userAddress}

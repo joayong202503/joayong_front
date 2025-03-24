@@ -15,6 +15,7 @@ const TitleInputSection = forwardRef((props, titleInputRef) => {
                 name={'title'}
                 id={'title'}
                 maxlength={props?.maxLength}
+                defaultValue={props?.defaultValue ? props.defaultValue : ''}
             />
         </div>
     );
