@@ -1,5 +1,8 @@
 .postEditPage {
     width: 60%;
+    display: flex;
+    gap: 50px;
+    flex-direction: column;
     margin: 0 auto;
     padding: 32px;
     background-color: #fff;
@@ -10,4 +13,23 @@
     display: flex;
     gap: 2rem;
     margin-bottom: 2rem;
+}
+
+
+.locationContainer {
+    display: flex;
+    align-items: center;
+    color: gray;
+    gap: 10px;
+}
+
+.contentBox {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    & .title {
+        font-size: 1rem;
+        font-weight: 800;
+    }
 }
