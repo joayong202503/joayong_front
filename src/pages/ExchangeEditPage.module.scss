@@ -16,6 +16,16 @@
 }
 
 
+.bothTalentsContainer {
+    display: flex;
+    gap: 2rem;
+}
+
+.half {
+    flex: 1;
+}
+
+
 .locationContainer {
     display: flex;
     align-items: center;
