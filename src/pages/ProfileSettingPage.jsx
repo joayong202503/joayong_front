@@ -5,6 +5,7 @@ import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import { Camera } from "lucide-react"
 import { fetchUserProfile, uploadProfileImage } from "../services/profileApi.js";
 import Button from "../components/common/Button.jsx";
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = 'http://localhost:8999';
 
@@ -16,6 +17,7 @@ const ProfileSettingPage = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const fileInputRef = useRef(null);
+    const navigate = useNavigate();
 
     // Redux에서 현재 사용자 정보 가져오기
     const currentUser = useSelector((state) => state.auth.user);
@@ -95,17 +97,8 @@ const ProfileSettingPage = () => {
             // 성공 메시지 표시
             alert('프로필 이미지가 성공적으로 저장되었습니다.');
 
-            // 프로필 데이터 업데이트 (서버에서 반환된 새 이미지 URL이 있는 경우)
-            if (result && result.profileImageUrl) {
-                let newImageUrl = result.profileImageUrl;
-                if (newImageUrl && !newImageUrl.startsWith('http')) {
-                    newImageUrl = `${API_URL}${newImageUrl}`;
-                }
-                setProfileData({...profileData, profileImageUrl: newImageUrl});
-                setPreviewImage(null); // 미리보기 초기화
-            }
+            window.location.reload();
 
-            setIsSaving(false);
         } catch (error) {
             console.error('프로필 이미지 업로드 실패:', error);
             alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');

@@ -13,6 +13,7 @@ import MainLayout from "../layouts/mainLayout.jsx";
 import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
+import ProfileSettingPage from "../pages/ProfileSettingPage.jsx";
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -137,10 +138,12 @@ const router = createBrowserRouter([
       },
       // 프로필 수정 페이지
       {
-        path: 'settings/profile',
-        element: <AuthRequired>
-          {/*<ProfileSettingPage/>*/}
+        path: 'profile/:username/settings',
+        element:<AuthRequired>
+          <ProfileSettingPage/>
+
         </AuthRequired>
+
       },
       // 어바웃 페이지
       {

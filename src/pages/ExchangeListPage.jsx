@@ -4,9 +4,12 @@ import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import {searchExchanges} from "../services/searchApi.js";
-import profileImage from '../assets/images/profile.png';
+import defaultProfileImage from '../assets/images/profile.png';
 import InputBox from "../components/common/InputBox.jsx";
 import styles from "./ExchangeListPage.module.scss";
+import { fetchUserProfile } from "../services/profileApi.js";
+
+const API_URL = 'http://localhost:8999';
 
 const ExchangeListPage = () => {
     const navigate = useNavigate();
@@ -16,6 +19,7 @@ const ExchangeListPage = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState("");
     const searchInputRef = useRef(null);
+    const [userProfiles, setUserProfiles] = useState({}); // 사용자 프로필 정보 캐싱
 
     // 한페이지에 12개씩
     const itemsPerPage = 12;
@@ -23,6 +27,35 @@ const ExchangeListPage = () => {
     // redux에서 카테고리 데이터 가져오기
     const talentCategories = useSelector(state => state.talentCategory.talentCategories);
     const regionCategories = useSelector(state => state.regionCategory.regionCategories);
+
+    // 사용자 프로필 이미지 가져오기
+    const fetchUserProfileImage = async (username) => {
+        // 이미 캐시된 프로필 정보가 있으면 사용
+        if (userProfiles[username]) {
+            return userProfiles[username];
+        }
+
+        try {
+            const userData = await fetchUserProfile(username);
+
+            // 프로필 이미지 URL 처리
+            let profileImageUrl = userData.profileImageUrl;
+            if (profileImageUrl && !profileImageUrl.startsWith('http')) {
+                profileImageUrl = `${API_URL}${profileImageUrl}`;
+            }
+
+            // 캐시에 저장
+            setUserProfiles(prev => ({
+                ...prev,
+                [username]: profileImageUrl
+            }));
+
+            return profileImageUrl;
+        } catch (err) {
+            console.error(`사용자 ${username}의 프로필 정보를 가져오는데 실패했습니다:`, err);
+            return null;
+        }
+    };
 
     // 카테고리 ID로 카테고리 이름 찾기
     const getTalentName = (categoryId) => {
@@ -72,10 +105,10 @@ const ExchangeListPage = () => {
             if (keyword) {
                 // 4-1. 검색어가 있으면 검색 API 호출
                 const searchResult = await searchExchanges(keyword, 0, itemsPerPage);
-                processExchangeData(searchResult);
+                await processExchangeData(searchResult);
             } else {
                 // 4-2. 검색어가 없으면 모든 교환 게시물 가져오기
-                getRecentExchanges();
+                await getRecentExchanges();
             }
         } catch (err) {
             setError('검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
@@ -88,13 +121,17 @@ const ExchangeListPage = () => {
     };
 
     // 응답 데이터 처리 함수
-    const processExchangeData = (response) => {
+    const processExchangeData = async (response) => {
         if (response && response.postList && response.postList.content) {
-            const mappedData = response.postList.content.map(post => {
+            // Promise.all을 사용하여 모든 프로필 이미지를 비동기적으로 가져옴
+            const mappedData = await Promise.all(response.postList.content.map(async post => {
                 // 카테고리 ID를 이름으로 변환
                 const talentGive = post[`talent-g-id`] ? getTalentName(post[`talent-g-id`]) : "정보없음";
                 const talentTake = post[`talent-t-id`] ? getTalentName(post[`talent-t-id`]) : "정보없음";
                 const lessonLocation = post[`region-id`] ? getRegionName(post[`region-id`]) : "정보없음";
+
+                // 사용자 프로필 이미지 가져오기
+                const profileImageUrl = await fetchUserProfileImage(post.name);
 
                 return {
                     id: post["post-id"],
@@ -103,17 +140,17 @@ const ExchangeListPage = () => {
                     talentTake: talentTake,
                     lessonLocation: lessonLocation,
                     imageSrc: post.images && post.images.length > 0
-                      ? `http://localhost:8999${post.images[0].imageUrl}` : undefined,
+                        ? `${API_URL}${post.images[0].imageUrl}` : undefined,
                     profile: {
                         name: post.name,
-                        imageSrc: profileImage,
+                        imageSrc: profileImageUrl || defaultProfileImage,
                         size: 'xs',
                         username: post.name,
                     },
                     content: post.content,
                     createdAt: post.createdAt
                 };
-            });
+            }));
             setRecentExchanges(mappedData);
 
             // 현재 페이지 번호와 마지막 페이지 여부를 이용하여 총 페이지 수 계산
@@ -148,7 +185,7 @@ const ExchangeListPage = () => {
 
             console.log('API 응답:', response);
             // 응답을 가공
-            processExchangeData(response);
+            await processExchangeData(response);
         } catch (err) {
             console.error('재능 교환 목록을 가져오는데 실패했습니다:', err);
             setError('데이터를 불러오는데 실패했습니다. 잠시후 다시 시도해주세요.');
@@ -194,127 +231,124 @@ const ExchangeListPage = () => {
 
 
     return (
-      <>
-          <div className={styles.fullContainer}>
-              <InputBox
-                ref={searchInputRef}
-                searchIcon="true"
-                height="30"
-                width="68%"
-                placeHolder="검색어를 입력하세요 (제목/작성자/재능)"
-                onClick={handleSearch}
-                onHandleEnterKey={handleEnterKeySearch}
-              />
+        <>
+            <div className={styles.fullContainer}>
+                <InputBox
+                    ref={searchInputRef}
+                    searchIcon="true"
+                    height="30"
+                    width="68%"
+                    placeHolder="검색어를 입력하세요 (제목/작성자/재능)"
+                    onClick={handleSearch}
+                    onHandleEnterKey={handleEnterKeySearch}
+                />
 
-              {error ? (
-                <div className={styles.error}>{error}</div>
-              ) : recentExchanges.length === 0 ? (
-                <div className={styles.noResults}>
-                    {searchKeyword ? `"${searchKeyword}" 검색 결과가 없습니다.` : '게시물이 없습니다.'}
-                </div>
-              ) : (
-                <div className={styles.cardContainer}>
-                    <div className={styles.cardRow}>
-                        {firstRow.map(exchange => (
-                          <div
-                            key={exchange.id}
-                            className={styles.cardItem}
-                          >
-                              <Card
-                                title={exchange.title}
-                                talentGive={exchange.talentGive}
-                                talentTake={exchange.talentTake}
-                                lessonLocation={exchange.lessonLocation}
-                                lessonImageSrc={exchange.imageSrc}
-                                imageSrc={exchange.imageSrc}
-                                profile={exchange.profile}
-                                onDetailClick={() => handleDetailClick(exchange.id)}
-                              />
-                          </div>
-                        ))}
+                {error ? (
+                    <div className={styles.error}>{error}</div>
+                ) : recentExchanges.length === 0 ? (
+                    <div className={styles.noResults}>
+                        {searchKeyword ? `"${searchKeyword}" 검색 결과가 없습니다.` : '게시물이 없습니다.'}
                     </div>
+                ) : (
+                    <div className={styles.cardContainer}>
+                        <div className={styles.cardRow}>
+                            {firstRow.map(exchange => (
+                                <div
+                                    key={exchange.id}
+                                    className={styles.cardItem}
+                                >
+                                    <Card
+                                        title={exchange.title}
+                                        talentGive={exchange.talentGive}
+                                        talentTake={exchange.talentTake}
+                                        lessonLocation={exchange.lessonLocation}
+                                        lessonImageSrc={exchange.imageSrc}
+                                        profile={exchange.profile}
+                                        onDetailClick={() => handleDetailClick(exchange.id)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
 
-                    <div className={styles.cardRow}>
-                        {secondRow.map(exchange => (
-                          <div
-                            key={exchange.id}
-                            className={styles.cardItem}
-                          >
-                              <Card
-                                title={exchange.title}
-                                talentGive={exchange.talentGive}
-                                talentTake={exchange.talentTake}
-                                lessonLocation={exchange.lessonLocation}
-                                lessonImageSrc={exchange.imageSrc}
-                                imageSrc={exchange.imageSrc}
-                                profile={exchange.profile}
-                                onDetailClick={() => handleDetailClick(exchange.id)}
-                              />
-                          </div>
-                        ))}
+                        <div className={styles.cardRow}>
+                            {secondRow.map(exchange => (
+                                <div
+                                    key={exchange.id}
+                                    className={styles.cardItem}
+                                >
+                                    <Card
+                                        title={exchange.title}
+                                        talentGive={exchange.talentGive}
+                                        talentTake={exchange.talentTake}
+                                        lessonLocation={exchange.lessonLocation}
+                                        lessonImageSrc={exchange.imageSrc}
+                                        profile={exchange.profile}
+                                        onDetailClick={() => handleDetailClick(exchange.id)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className={styles.cardRow}>
+                            {thirdRow.map(exchange => (
+                                <div
+                                    key={exchange.id}
+                                    className={styles.cardItem}
+                                >
+                                    <Card
+                                        title={exchange.title}
+                                        talentGive={exchange.talentGive}
+                                        talentTake={exchange.talentTake}
+                                        lessonLocation={exchange.lessonLocation}
+                                        lessonImageSrc={exchange.imageSrc}
+                                        profile={exchange.profile}
+                                        onDetailClick={() => handleDetailClick(exchange.id)}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
+                )}
 
-                    <div className={styles.cardRow}>
-                        {thirdRow.map(exchange => (
-                          <div
-                            key={exchange.id}
-                            className={styles.cardItem}
-                          >
-                              <Card
-                                title={exchange.title}
-                                talentGive={exchange.talentGive}
-                                talentTake={exchange.talentTake}
-                                lessonLocation={exchange.lessonLocation}
-                                lessonImageSrc={exchange.imageSrc}
-                                imageSrc={exchange.imageSrc}
-                                profile={exchange.profile}
-                                onDetailClick={() => handleDetailClick(exchange.id)}
-                              />
-                          </div>
-                        ))}
+                {totalPages > 0 && (
+                    <div className={styles.pagination}>
+                        <button
+                            onClick={goToPreviousPage}
+                            disabled={currentPage === 0}
+                            className={styles.pageButton}
+                        >
+                            이전
+                        </button>
+
+                        {Array.from({length: Math.min(5, totalPages)}).map((_, index) => {
+                            const pageNumber = currentPage <= 2
+                                ? index
+                                : currentPage + index - 2;
+
+                            if (pageNumber >= totalPages) return null;
+
+                            return (
+                                <button
+                                    key={pageNumber}
+                                    onClick={() => handlePageChange(pageNumber)}
+                                    className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
+                                >
+                                    {pageNumber + 1}
+                                </button>
+                            );
+                        })}
+
+                        <button
+                            onClick={goToNextPage}
+                            disabled={currentPage === totalPages - 1}
+                            className={styles.pageButton}
+                        >
+                            다음
+                        </button>
                     </div>
-                </div>
-              )}
-
-              {totalPages > 0 && (
-                <div className={styles.pagination}>
-                    <button
-                      onClick={goToPreviousPage}
-                      disabled={currentPage === 0}
-                      className={styles.pageButton}
-                    >
-                        이전
-                    </button>
-
-                    {Array.from({length: Math.min(5, totalPages)}).map((_, index) => {
-                        const pageNumber = currentPage <= 2
-                          ? index
-                          : currentPage + index - 2;
-
-                        if (pageNumber >= totalPages) return null;
-
-                        return (
-                          <button
-                            key={pageNumber}
-                            onClick={() => handlePageChange(pageNumber)}
-                            className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
-                          >
-                              {pageNumber + 1}
-                          </button>
-                        );
-                    })}
-
-                    <button
-                      onClick={goToNextPage}
-                      disabled={currentPage === totalPages - 1}
-                      className={styles.pageButton}
-                    >
-                        다음
-                    </button>
-                </div>
-              )}
-          </div>
-      </>
+                )}
+            </div>
+        </>
     );
 };
 
