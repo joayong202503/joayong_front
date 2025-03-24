@@ -43,6 +43,18 @@ const ExchangeCreatePage = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const timeoutRef = useRef(null); // 타이머 ID 저장
 
+    // 모달 직접 닫았을 떄 모달 닫을 떄 로직이 두 번 작동하는 것을 방지 하기 위한 상태값
+    const [isNavigating, setIsNavigating] = useState(false);
+
+    // 페이지 이동(모달을 직접 닫을 경우, isNavigating이 true로 되어서 중복 이동 방지)
+    const handleNavigation = () => {
+        if (!isNavigating) {
+            setIsNavigating(true);
+            setShowSuccessModal(false);
+            navigate('/exchanges');
+        }
+    };
+
     // Redux에서 카테고리 값 가져오기
     const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
     const regionCategories = useSelector((state) => state.regionCategory.regionCategories);
@@ -232,12 +244,11 @@ const ExchangeCreatePage = () => {
         if (response.ok) {
             setShowSuccessModal(true);
             setTimeout(() => {
-                setShowSuccessModal(false);
-                navigate(-1);
-            }, 2000)
+                handleNavigation();  // 통합된 네비게이션 함수 사용
+            }, 2000);
         } else {
             // 400대, 500대 에러 처리
-            if (response.status = 500) {
+            if (response.status === 500) {
                 setShowAlertModal(true);
                 setAlertMessage({
                     title: "서버 오류",
@@ -278,11 +289,8 @@ const ExchangeCreatePage = () => {
                 {showSuccessModal && (
                     <AlertModal
                         title={"게시글이 등록되었습니다."}
-                        message={"이전 페이지로 이동합니다."}
-                        onClose={() => {
-                            setShowSuccessModal(false);
-                            navigate(-1);  // 2초 후 이전 페이지로 이동
-                        }}
+                        message={"재능 찾기 페이지로 이동합니다."}
+                        onClose={handleNavigation}  // 통합된 네비게이션 함수 사용
                     />
                 )}
 

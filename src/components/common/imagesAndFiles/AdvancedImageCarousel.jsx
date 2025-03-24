@@ -39,7 +39,8 @@ const AdvancedImageCarousel = ({
 
             {/* 각 이미지 박스 */}
             <div className={styles.imageContainerList}>
-                {images.length > 0 && (
+                {images.length > 0 &&
+                    (
                     images.map((imageObject) => (
                         <div key={imageObject.id} className={styles.imageContainer}>
                             {/* 이미지 */}
