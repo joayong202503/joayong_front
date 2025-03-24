@@ -4,12 +4,14 @@ import styles from './ProfilePage.module.scss'
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import Button from "../components/common/Button.jsx";
 import { fetchUserProfile } from "../services/profileApi.js";
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import ProfileExchanges from "../components/ProfilePage/ProfileExchanges.jsx";
 import ProfileRating from "../components/ProfilePage/ProfileRating.jsx";
 
 
+
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('ratings');
   const [profileData, setProfileData] = useState({
     name: '',
@@ -57,13 +59,17 @@ const ProfilePage = () => {
     return <div className={styles.errorState}>{error}</div>;
   }
 
+  const GoToProfilePage =() =>{
+    navigate(`/profile/${username}/settings`)
+  }
+
   return (
     <div className={styles.fullContainer}>
       <section className={styles.topContainer}>
         <div className={styles.profileContainer}>
           <ProfileCircle size="llg" imageUrl={profileData.profileImageUrl} />
           {isMyProfile && (
-            <Button theme="blackTheme" fontSize="large" height="50%">edit profile</Button>
+            <Button theme="blackTheme" fontSize="large" height="50%" onClick={GoToProfilePage}>edit profile</Button>
           )}
         </div>
         <div className={styles.profileContentContainer}>
