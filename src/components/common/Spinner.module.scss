@@ -1,0 +1,55 @@
+.spinner {
+    position: relative;
+    display: inline-block;
+}
+
+.small {
+    font-size: 15px;
+}
+
+.medium {
+    font-size: 24px;
+}
+
+.large {
+    font-size: 32px;
+}
+
+// 점프하는 동그라미들
+.spinner::before,
+.spinner::after,
+.spinner > span {
+    content: '●';
+    position: absolute;
+    color: #FF8BA7;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: bounce 0.8s infinite;
+}
+
+.spinner::before {
+    content: '●';
+    left: -32px;  // 위치 조정
+    animation-delay: 0s;
+}
+
+.spinner > span {
+    left: -16px;  // 가운데 동그라미 추가
+    animation-delay: 0.2s;
+}
+
+.spinner::after {
+    content: '●';
+    left: 0;
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+        color: #FF8BA7;
+    }
+    50% {
+        transform: translateY(-8px);
+        color: #93C6E7;
+    }
+}

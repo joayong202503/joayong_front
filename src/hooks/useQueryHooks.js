@@ -66,7 +66,7 @@ export const useUseQueryErrorHandler = (isError, error, navigate) => {
                 navigate('/error', {
                     state: {
                         errorPageUrl: window.location.pathname,
-                        status: 500,
+                        status: '',
                         message: "알 수 없는 오류가 발생했습니다."
                     }
                 });

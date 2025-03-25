@@ -4,21 +4,22 @@ import fetchWithAuth from "../../services/fetchWithAuth.js";
 import { useSelector } from "react-redux";
 import styles from "./ChatRoom.module.scss"; // SCSS 모듈 임포트
 
-const ChatRoom = ({ currentUserName = "조아용2", otherUserName = "화염용" }) => {
+const ChatRoom = ({ otherUserName = "조아용2" }) => {
   const [roomId, setRoomId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [userProfiles, setUserProfiles] = useState({});
 
   const currentUserProfile = useSelector((state) => state.auth.user);
+  const currentUserName = currentUserProfile.name;
 
+  console.log(currentUserProfile)
   useEffect(() => {
     const initializeChatRoom = async () => {
       const sendData = {
         user1Name: currentUserName,
         user2Name: otherUserName,
       };
-
       try {
         const roomResponse = await fetchWithAuth("http://localhost:8999/api/joayong/chat/chatroom", {
           method: "POST",
@@ -38,12 +39,12 @@ const ChatRoom = ({ currentUserName = "조아용2", otherUserName = "화염용" 
 
         setUserProfiles({
           [currentUserProfile.id]: {
-            username: currentUserProfile.username,
-            profileImageUrl: currentUserProfile.profileImageUrl,
+            username: currentUserProfile.name,
+            profileImageUrl: 'http://localhost:8999'+currentUserProfile.profileImageUrl,
           },
           [otherUserProfile.id]: {
-            username: otherUserProfile.username,
-            profileImageUrl: otherUserProfile.profileImageUrl,
+            username: otherUserProfile.name,
+            profileImageUrl: 'http://localhost:8999'+otherUserProfile.profileImageUrl,
           },
         });
 
@@ -86,7 +87,7 @@ const ChatRoom = ({ currentUserName = "조아용2", otherUserName = "화염용" 
               className={`${styles.message} ${isCurrentUser ? styles.sent : styles.received}`}
             >
               <img
-                src={sender.profileImageUrl || "/default-profile.png"}
+                src={sender.profileImageUrl || "src/assets/images/profile.png"}
                 alt="profile"
                 className={styles.profileImage}
               />

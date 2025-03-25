@@ -21,9 +21,9 @@ export const getAddressByCoords = async (latitude, longitude) => {
         }
 
         // fetch 성공하면 주소 반환
-        console.log(data);
-        const address = `${data.results[0].components.city} ${data.results[0].components.borough}`; // 첫 번째 결과의 주소
-        return address;
+         // 첫 번째 결과의 주소
+        return `${data.results[0].components.city} ${data.results[0].components.borough}`;
+
     } catch (error) {
         console.error('에러 발생:', error);
         return null;

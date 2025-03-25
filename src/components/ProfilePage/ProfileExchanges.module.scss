@@ -1,0 +1,90 @@
+.fullContainer {
+  width: 1200px;
+  margin-top: 80px;
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+}
+
+.cardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.cardItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.loadingState, .errorState, .emptyState {
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorState {
+  color: #e53935;
+}
+
+.emptyState {
+  color: #757575;
+  font-size: 1.1rem;
+}
+
+.pagination {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  padding-bottom: 50px;
+  left: 45%;
+}
+.pageButton {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #f8f9fa;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background-color: #000000;
+    color: white;
+    border-color: #000000;
+  }
+}
+
+@media (max-width: 992px) {
+  .cardContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .cardContainer {
+    grid-template-columns: 1fr;
+  }
+}

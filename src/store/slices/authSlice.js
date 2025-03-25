@@ -7,6 +7,26 @@ const initialState = {
     status: 'idle', // 추가: 'idle', 'loading', 'succeeded', 'failed'
 };
 
+// 로그인 요청 & Redux에 저장
+export const login = createAsyncThunk("auth/login", async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await fetchWithUs(authApi.login, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      });
+  
+      if (!response.ok) throw new Error("로그인 실패. 다시 시도해주세요.");
+      
+      const data = await response.json();
+      localStorage.setItem("accessToken", data.accessToken); // 토큰 저장
+      dispatch(fetchMe()); // 로그인 후 유저 정보 가져오기
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  });
+
 const authSlice = createSlice({
     name: "auth",
     initialState: initialState,

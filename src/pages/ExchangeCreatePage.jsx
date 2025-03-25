@@ -3,12 +3,12 @@ import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.
 import React, { useEffect, useRef, useState} from "react";
 import styles from "./ExchangeCreatePage.module.scss";
 import {Form, useNavigate} from "react-router-dom";
-import ImageUploadSection from "../components/ExchangeCreatePage/ImageUploadSection.jsx";
+import ImageUploadSection from "../components/common/imagesAndFiles/ImageUploadSection.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
-import FileListDisplay from "../components/ExchangeCreatePage/FileListDisplay.jsx";
+import FileListDisplay from "../components/common/imagesAndFiles/FileListDisplay.jsx";
 import TitleInputSection from "../components/ExchangeCreatePage/TitleInputSection.jsx";
-import RegionSelectSection from "../components/ExchangeCreatePage/RegionSelectSection.jsx";
-import TalentSelectSection from "../components/ExchangeCreatePage/TalentSelectSection.jsx";
+import RegionSelectSection from "../components/common/categories/RegionSelectSection.jsx";
+import TalentSelectSection from "../components/common/categories/TalentSelectSection.jsx";
 import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSecition.jsx";
 import SubmitButton from "../components/ExchangeCreatePage/SubmitButton.jsx";
 import {useTalentCategories} from "../hooks/exchangesCreatePageHook/talentHooks.js";
@@ -17,7 +17,6 @@ import { postApi } from "../services/api.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
 import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
-import { debounce } from 'lodash';
 
 const ExchangeCreatePage = () => {
 
@@ -42,6 +41,19 @@ const ExchangeCreatePage = () => {
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [alertMessage, setAlertMessage] = useState({ title: '', message: '' });
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const timeoutRef = useRef(null); // 타이머 ID 저장
+
+    // 모달 직접 닫았을 떄 모달 닫을 떄 로직이 두 번 작동하는 것을 방지 하기 위한 상태값
+    const [isNavigating, setIsNavigating] = useState(false);
+
+    // 페이지 이동(모달을 직접 닫을 경우, isNavigating이 true로 되어서 중복 이동 방지)
+    const handleNavigation = () => {
+        if (!isNavigating) {
+            setIsNavigating(true);
+            setShowSuccessModal(false);
+            navigate('/exchanges');
+        }
+    };
 
     // Redux에서 카테고리 값 가져오기
     const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
@@ -53,7 +65,7 @@ const ExchangeCreatePage = () => {
         handleTalentToReceiveSubCategoryChange, selectedTalentToReceiveSubCategory, selectedTalentToGiveSubCategory } = useTalentCategories(talentCategories);
     const { sortedRegionCategories, regionMiddleCategories, regionLastCategories, selectedRegionLastCategory,
         handleRegionMainCategoryChange, handleRegionMiddleCategoryChange, handleRegionLastCategoryChange } = useRegionCategories(regionCategories);
-    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile } = useFileUpload();
+    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile, setFileUploadErrorMessage } = useFileUpload();
 
     // 값 가져오기 위해, ref 만들어서 자식 컴포넌트에 내려 줌
     const fileInputRef = useRef();
@@ -64,24 +76,53 @@ const ExchangeCreatePage = () => {
     // 파일 업로드 오류 메시지가 변경될 때마다 모달 표시
     useEffect(() => {
         if (fileUploadErrorMessage) {
+            // 기존 타이머가 실행 중이라면 취소
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null; // 초기화
+            }
+
+            // 모달 열기 및 메시지 설정
+            setAlertMessage({ message: '', title: fileUploadErrorMessage });
             setShowAlertModal(true);
-            setAlertMessage({ message: "데이터를 확인하세요", title: fileUploadErrorMessage });
+
+            // 2초 후 모달 자동 닫기
+            timeoutRef.current = setTimeout(() => {
+                setShowAlertModal(false);
+                timeoutRef.current = null; // 타이머 초기화
+            }, 2000);
+
+            // fileUploadErrormessage 초기화
+            setFileUploadErrorMessage('');
+
         }
     }, [fileUploadErrorMessage]); // fileUploadErrorMessage 값이 변경될 때마다 실행
 
-    // 값 가져오기 위해, ref 만들어서 자식 컴포넌트에 내려 줌
-
-    // Tab 키가 눌렸을 때 제출 버튼으로 포커스를 이동
-    const handleTabKeyDown = (e) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            console.log(submitButtonRef.current);
-            submitButtonRef.current.focus();
+    // 모달 띄우기
+    const handleAlertModal = (message) => {
+        // 기존 타이머가 실행 중이라면 취소
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+            timeoutRef.current = null; // 초기화
         }
+
+        // 모달 열기 및 메시지 설정
+        setAlertMessage({message: '', title: message});
+        setShowAlertModal(true);
+
+        // 2초 후 모달 자동 닫기
+        timeoutRef.current = setTimeout(() => {
+            setShowAlertModal(false);
+            timeoutRef.current = null; // 타이머 초기화
+        }, 2000);
     };
 
     // 엔터키로 폼 제출되는 것을 막음
     const handleEnterKeyDown = (e) => {
+
+        // enter키의 작동을 막을 건데, 그치만 textarea에 있을 때는 enter키가 정상적으로 작동해야 줄 띄우기가 가능,
+        if (e.target === contentInputRef.current) return;
+
         if (e.key === 'Enter') {
             e.preventDefault();
         }
@@ -102,11 +143,6 @@ const ExchangeCreatePage = () => {
         const formData = new FormData();
         // - 파일(사진)과 나머지 이렇게 크게 2개로 나누고, 각 부분에 대해서 나눠서 보냄
 
-        // 테스트용
-        // console.log(selectedTalentToReceiveSubCategory);
-        // console.log(selectedTalentToGiveSubCategory);
-        // console.log(selectedRegionLastCategory);
-
         // - formdata에 데이터 집어넣기
         //   :  이미지의 경우,  formData.append(fetch 할 때의 key 이름, file)
         //   :  json의 경우, formData.append(fetch 할 때 보낼 key 이름, new Blob([JSON.stringify(data)], {data type} )'
@@ -118,43 +154,37 @@ const ExchangeCreatePage = () => {
         appendUploadedFileToFormData(uploadedFile, formData);
 
         // 테스트용
-        // console.log(uploadedFile);
+        console.log(post.content.length);
         return formData;
     }
 
     const validateFormData = (post) => {
 
-        console.log(post);
-
         // 1) 타이틀 공백 체크
         const title = post.title;
         if (!title || !title.trim()) {
-            setShowAlertModal(true);
-            setAlertMessage({message: "데이터를 확인해주세요", title: "제목을 입력해 주세요."});
+            handleAlertModal("제목을 입력해주세요");
             return false;
         }
 
         // 2) 내용 공백 체크
         const content = post.content;
         if (!content || !content.trim()) {
-            setShowAlertModal(true);
-            setAlertMessage({message: "데이터를 확인해주세요", title: "내용을 입력해 주세요."});
+            handleAlertModal("내용을 입력해주세요");
             return false;
         }
 
         // 3) 지역 공백 체크
         const regionId = post["region-id"];
         if (!regionId || isNaN(regionId)) {
-            setShowAlertModal(true);
-            setAlertMessage({message: "데이터를 확인해주세요", title: "지역을 선택해 주세요."});
+            handleAlertModal("지역을 입력해주세요");
             return false;
         }
 
         // 4) 줄 재능 null 체크
         const talentToGiveId = post["talent-g-id"];
         if (!talentToGiveId || isNaN(talentToGiveId)) {
-            setShowAlertModal(true);
-            setAlertMessage({message: "데이터를 확인해주세요", title: "줄 수 있는 재능을 입력해 주세요."});
+            handleAlertModal("줄 재능을 입력해주세요");
             return false;
         }
 
@@ -162,7 +192,7 @@ const ExchangeCreatePage = () => {
         const talentToReceiveId = post["talent-t-id"];
         if (!talentToReceiveId || isNaN(talentToReceiveId)) {
             setShowAlertModal(true);
-            setAlertMessage({message: "데이터를 확인해주세요", title:"받고자 하는 재능을 선택해주세요"});
+            handleAlertModal("받고자 하는 재능을 입력해주세요");
             return false;
         }
 
@@ -214,15 +244,14 @@ const ExchangeCreatePage = () => {
         if (response.ok) {
             setShowSuccessModal(true);
             setTimeout(() => {
-                setShowSuccessModal(false);
-                navigate(-1);
-            }, 2000)
+                handleNavigation();  // 통합된 네비게이션 함수 사용
+            }, 2000);
         } else {
             // 400대, 500대 에러 처리
-            if (response.status >= 500) {
+            if (response.status === 500) {
                 setShowAlertModal(true);
                 setAlertMessage({
-                    title: "서버 내부 문제",
+                    title: "서버 오류",
                     message: "서버에서 문제가 발생했습니다. 잠시 후 다시 시도해주세요."
                 });
             } else if (response.status >= 400 && response.status < 500) {
@@ -260,11 +289,8 @@ const ExchangeCreatePage = () => {
                 {showSuccessModal && (
                     <AlertModal
                         title={"게시글이 등록되었습니다."}
-                        message={"이전 페이지로 이동합니다."}
-                        onClose={() => {
-                            setShowSuccessModal(false);
-                            navigate(-1);  // 2초 후 이전 페이지로 이동
-                        }}
+                        message={"재능 찾기 페이지로 이동합니다."}
+                        onClose={handleNavigation}  // 통합된 네비게이션 함수 사용
                     />
                 )}
 
@@ -283,10 +309,6 @@ const ExchangeCreatePage = () => {
                         uploadedFiles={uploadedFile}
                         setUploadedFile={setUploadedFile}
                     />
-                    {/*<FileListDisplay*/}
-                    {/*    uploadedFile={uploadedFile}*/}
-                    {/*    setUploadedFile={setUploadedFile}*/}
-                    {/*/>*/}
 
                     {/*제목 입력 */}
                     <TitleInputSection
@@ -294,7 +316,9 @@ const ExchangeCreatePage = () => {
                         placeholder="제목을 입력하세요"
                         ref={titleInputRef}
                         id="title"
+                        maxLength={50}
                     />
+
                     {/*지역 선택*/}
                     <RegionSelectSection
                         userAddress={userAddress}
@@ -322,7 +346,6 @@ const ExchangeCreatePage = () => {
                         ref={contentInputRef}
                         name="content"
                         id="content"
-                        onKeyDown={handleTabKeyDown}
                     />
 
                     {/*제출 버튼*/}

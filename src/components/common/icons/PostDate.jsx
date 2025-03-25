@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from "./PostDate.module.scss";
 import {Calendar1Icon} from "lucide-react";
-import formatDate from "../../utils/formatDate.js";
+import formatDate from "../../../utils/formatDate.js";
 
 const PostDate = ({isLoading=true, isPostUploaded=true, date}) => {
 

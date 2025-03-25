@@ -1,13 +1,15 @@
 .fullContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   margin-top: 50px;
-  width: 100%;
+  align-items: center;
   padding: 0 20px;
 }
-
+.inputContainer{
+  display: flex;
+  width: 1270px;
+  justify-content: start;
+}
 .cardContainer {
   margin-top: 30px;
   display: flex;
@@ -36,9 +38,19 @@
   font-size: 16px;
 }
 
-.error {
-  color: #e74c3c;
+.noResults{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 200px;
 }
+.resetButton{
+  color: #9d9d9d;
+}
+.resetButton:hover{
+  color: black;
+}
+
 
 .pagination {
   display: flex;
@@ -67,8 +79,8 @@
   }
 
   &.active {
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
-    border-color: #007bff;
+    border-color: #000000;
   }
 }

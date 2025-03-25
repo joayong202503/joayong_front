@@ -1,38 +1,42 @@
+// ChatRoom.module.scss
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 80vh; // 화면 높이의 80%로 설정 (조정 가능)
+  height: 80vh;
   width: 100%;
-  max-width: 800px; // 최대 너비 제한
+  max-width: 800px;
   margin: 0 auto;
   background-color: #f5f5f5;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  margin-top: 1rem;
 }
 
 .messageList {
   flex: 1;
   padding: 20px;
-  overflow-y: auto; // 메시지가 많아지면 스크롤
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
 .message {
+  margin: 10px 0;
   display: flex;
   align-items: flex-start;
-  max-width: 70%; // 메시지 최대 너비
+  max-width: 70%;
+  position: relative; // username 위치를 고정하기 위해 relative 설정
 }
 
 .sent {
-  flex-direction: row-reverse; // 현재 유저 메시지는 오른쪽 정렬
+  flex-direction: row-reverse;
   margin-left: auto;
 }
 
 .received {
-  flex-direction: row; // 상대방 메시지는 왼쪽 정렬
+  flex-direction: row;
   margin-right: auto;
 }
 
@@ -47,13 +51,29 @@
 .messageContent {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
 }
 
 .username {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 5px;
+  position: absolute; // 이름 위치를 고정
+  top: -20px; // 메시지 위에 배치
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  margin: -5px 20px;
+}
+
+.sent .username {
+  right: 50px; // 프로필 이미지와의 간격 고려
+}
+
+.received .username {
+  left: 50px; // 프로필 이미지와의 간격 고려
 }
 
 .text {
@@ -63,15 +83,16 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin: 0;
   word-wrap: break-word;
+  max-width: 100%;
 }
 
 .sent .text {
-  background-color: #007bff; // 현재 유저 메시지 색상
+  background-color: #007bff;
   color: #fff;
 }
 
 .received .text {
-  background-color: #e9ecef; // 상대방 메시지 색상
+  background-color: #e9ecef;
   color: #333;
 }
 
@@ -83,7 +104,7 @@
 }
 
 .input {
-  flex: 1;
+  flex: 5;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 20px;
@@ -116,10 +137,9 @@
   }
 }
 
-// 반응형 조정
 @media (max-width: 600px) {
   .chatContainer {
-    height: 100vh; // 모바일에서 전체 높이 사용
+    height: 100vh;
     border-radius: 0;
   }
 
@@ -130,5 +150,18 @@
   .profileImage {
     width: 30px;
     height: 30px;
+  }
+
+  .username {
+    max-width: 120px;
+    font-size: 12px;
+  }
+
+  .sent .username {
+    right: 40px;
+  }
+
+  .received .username {
+    left: 40px;
   }
 }
