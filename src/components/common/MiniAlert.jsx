@@ -4,7 +4,7 @@ import styles from './MiniAlert.module.scss';
 const MiniAlert = ({
     message = "성공적으로 처리되었습니다.",
     isNegative = false, // 부정적인 메시지인지 확인(아이콘 다르게)
-    duration = 3000,
+    duration = 2000,
     onClose,
     isVisible = true
 }) => {
@@ -51,7 +51,7 @@ const MiniAlert = ({
 
     return (
         <>
-            {isVisible && <div className={styles.overlay} />}
+            {isVisible && <div className={`${styles.overlay} ${visible ? styles.visible : styles.hidden}`}/>}
             <div className={`${styles.alertContainer} ${visible ? styles.visible : styles.hidden}`}>
                 <div className={styles.alertContent}>
                     <div className={styles.leftContent}>

@@ -23,7 +23,7 @@ const ExchangeRequestPage = () => {
     // Yup으로 유효성 검사
     const validationSchema = Yup.object({
         content: Yup.string()
-            .trim("내용을 입력해 주세요") // 이건 직접적 처리가 필요할 경우에만 사용하세요
+            .trim("내용을 입력해 주세요")
             .required("내용을 입력해주세요")
             .max(2200, "내용은 2200자 이내로 입력해주세요"),
 
@@ -307,7 +307,7 @@ const ExchangeRequestPage = () => {
                 <span className={styles.title}>{username}님의 재능을 어필해보세요</span>
                 <ToolTip content={post?.content} title={`${post?.username}님은 이런 사람을 찾고 있어요`} />
                 <ContentInputSection
-                    maxlength={255}
+                    maxlength={2200}
                     placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
                     isTitleNecessary={false}
                     name={'content'}

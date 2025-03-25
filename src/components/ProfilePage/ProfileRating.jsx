@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProfileRating.module.scss'
 import RatingBox from "../common/RatingBox.jsx";
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { fetchUserRatings } from "../../services/profileApi.js"
+
+// API URL 상수 추가
+const API_URL = 'http://localhost:8999';
 
 const ProfileRating = () => {
   const [ratingData, setRatingData] = useState(null);
@@ -22,8 +25,24 @@ const ProfileRating = () => {
 
         // 실제 응답 구조에 맞게 처리
         if (data && data.data && data.data.length > 0) {
-          // data 배열의 첫 번째 항목에서 평점 데이터 설정
-          setRatingData(data.data[0]);
+          // API URL 처리 - 프로필 이미지 URL이 상대 경로인 경우 API_URL 추가
+          const processedData = { ...data.data[0] };
+
+          if (processedData.ratingList) {
+            processedData.ratingList = processedData.ratingList.map(rating => {
+              // 리뷰어 프로필 URL이 http로 시작하지 않으면 API_URL 추가
+              if (rating.reviewerProfileUrl && !rating.reviewerProfileUrl.startsWith('http')) {
+                return {
+                  ...rating,
+                  reviewerProfileUrl: `${API_URL}${rating.reviewerProfileUrl}`
+                };
+              }
+              return rating;
+            });
+          }
+
+          // 처리된 데이터로 상태 업데이트
+          setRatingData(processedData);
           // API 응답에서 총 페이지 수 설정
           setTotalPages(data.totalPages);
         } else {
@@ -77,6 +96,7 @@ const ProfileRating = () => {
                 reviewerName={ratingItem.reviewer}
                 reviewList={ratingItem.reviewList}
                 createAt={ratingItem.createAt}
+                reviewerProfileUrl={ratingItem.reviewerProfileUrl}
               />
             ))
           ) : (

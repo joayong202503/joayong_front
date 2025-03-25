@@ -17,9 +17,16 @@ import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
 import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
-import ChatRoom from "../components/chat/ChatRoom.jsx";
+import ChatPage from "../pages/ChatPage.jsx";
+import ProfileSettingPage from "../pages/ProfileSettingPage.jsx";
 
 const router = createBrowserRouter([
+  // status 500 에러 페이지
+  {
+    path: '/error',
+    element: <ErrorPage />
+  }
+  ,
   // 회원가입 페이지
   {
     path: '/signup',
@@ -137,7 +144,7 @@ const router = createBrowserRouter([
       {
         path: 'chat', // matchid -> messageId로 수정
         element: <AuthRequired>
-          <ChatRoom />
+          <ChatPage/>
         </AuthRequired>
         
 
@@ -149,10 +156,12 @@ const router = createBrowserRouter([
       },
       // 프로필 수정 페이지
       {
-        path: 'settings/profile',
-        element: <AuthRequired>
-          {/*<ProfileSettingPage/>*/}
+        path: 'profile/:username/settings',
+        element:<AuthRequired>
+          <ProfileSettingPage/>
+
         </AuthRequired>
+
       },
       // 어바웃 페이지
       {

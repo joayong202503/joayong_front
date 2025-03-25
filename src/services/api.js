@@ -34,6 +34,7 @@ export const postApi = {
   increaseViewCount : `${POST_URL}/view-count/`, // "POST" MAPPING
   viewCount : `${POST_URL}/view-count/`, // "GET" MAPPING
   deletePost : `${POST_URL}/delete/`, // 게시글 삭제
+  updatePost : `${POST_URL}/update`, // 게시글 수정 (PUT)
 }
 
 const getMatchingRequestUrl = (filter, status) => {
