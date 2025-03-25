@@ -31,15 +31,15 @@ const RatingBox = ({ reviewerName, reviewList, createAt }) => {
   const getIconForQuestion = (question) => {
     switch (question) {
       case '전문성':
-        return <Award size={18} />;
+        // return <Award size={18} />;
       case '의사소통':
-        return <MessageCircle size={18} />;
+        // return <MessageCircle size={18} />;
       case '준비성':
-        return <CalendarCheck size={18} />;
+        // return <CalendarCheck size={18} />;
       case '친절도':
-        return <Smile size={18} />;
+        // return <Smile size={18} />;
       case '만족도':
-        return <ThumbsUp size={18} />;
+        // return <ThumbsUp size={18} />;
       default:
         return null;
     }

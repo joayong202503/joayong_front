@@ -29,6 +29,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const getUserProfile = async () => {
       try {
+        window.scrollTo(0, 0);
         const userName = username;
         const userData = await fetchUserProfile(userName);
         setProfileData(userData);
