@@ -37,7 +37,9 @@ const Card = ({
             <span className={styles.title}>{title}</span>
           </div>
           <div className={styles.profileContainer}>
-            <ProfileCircle src={profile.imageSrc} size={profile.size} />
+              <div className={styles.profilePhotoContainer}>
+                  <ProfileCircle src={profile.imageSrc} size={profile.size} username={profile.name}   />
+              </div>
             <span className={styles.profileName}>{profile.name}</span>
           </div>
           <div className={styles.locationContainer}>

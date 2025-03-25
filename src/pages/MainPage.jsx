@@ -53,6 +53,7 @@ const MainPage = () => {
     return "지역없음";
   };
 
+  //
   useEffect(() => {
     const getRecentExchanges = async() =>{
       try {
@@ -75,6 +76,7 @@ const MainPage = () => {
                 ? `http://localhost:8999${post.images[0].imageUrl}` : undefined,
               profile: {
                 name: post.name,
+                username: post.name,
                 imageSrc: profileImage,
                 size: 'xs'
               },

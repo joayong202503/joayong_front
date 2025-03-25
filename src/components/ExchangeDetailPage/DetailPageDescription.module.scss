@@ -39,3 +39,9 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}

@@ -1,7 +1,7 @@
 import React, {useRef} from "react";
 import styles from "./TalentSelectSection.module.scss";
-import DropDownSelect from "../common/DropDownSelect.jsx";
-import {useTalentCategories} from "../../hooks/exchangesCreatePageHook/talentHooks.js";
+import DropDownSelect from "../DropDownSelect.jsx";
+import {useTalentCategories} from "../../../hooks/exchangesCreatePageHook/talentHooks.js";
 import {useSelector} from "react-redux";
 
 const TalentSelectSection = ({

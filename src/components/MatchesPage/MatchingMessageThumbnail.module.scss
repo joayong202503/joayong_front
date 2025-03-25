@@ -1,0 +1,134 @@
+.divForLine {
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        background-color: #f8fafc;
+    }
+}
+
+.matchingMessageThumbnailWrapper {
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 24px;
+    gap: 24px;
+    background: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: translateY(-1px);
+    }
+}
+
+.leftLayout {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profileWithIndicator {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.messageContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.messageHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    
+    .senderName {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #475569;
+    }
+    
+    .sentDate {
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+}
+
+.requestSummary {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.5;
+
+    .user {
+        font-weight: 600;
+        color: #334155;
+    }
+
+    .skillText {
+        margin: 0 4px;
+        font-weight: 600;
+
+        &.give {
+            color: #475569;
+            background: #f8fafc;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+        
+        &.want {
+            color: #475569;
+            background: #f8fafc;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+    }
+}
+
+.actionButtons {
+    display: flex;
+    gap: 12px;
+}
+
+// 매칭 펜딩, 거절, 완료 시에 옆에 태그처럼 보여주기
+.messageStatus {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #555;
+
+    &.pending {
+        background-color: #FEF7CD;
+        color: #927400;
+    }
+
+    &.accepted  {
+        background-color: #F2FCE2;
+        color: #3b7a17;
+    }
+
+    &.rejected {
+     background-color: #FFDEE2;
+        color: #a12940;
+    }
+}
+
+.dot {
+    position: absolute;
+    left: -10px;
+    top: -2px;
+}

@@ -1,12 +1,19 @@
 import React, { forwardRef } from 'react';
 import styles from './ImageUploadSection.module.scss';
-import Button from "../common/Button.jsx";
+import Button from "../Button.jsx";
 
-const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
+const ImageUploadSection = forwardRef(({ onFileSelect, name }, inputBoxRef) => {
 
     // 드롭박스 클릭 시 input(type:file) 클릭되게
     const triggerFileInput = () => {
         inputBoxRef.current.click();
+    };
+
+    const handleKeyDown = (e) => {
+        // Enter 키가 눌렸을 때 기본 동작(파일 선택 창 열기)을 방지
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
     };
 
     // 파일을 드래그한 상태에서 드롭할 때 호출되는 함수
@@ -32,22 +39,27 @@ const ImageUploadSection = forwardRef(({ onFileSelect }, inputBoxRef) => {
             onClick={triggerFileInput}
             onDrop={handleDrop}    // 파일을 드롭할 때 호출
             onDragOver={handleDragOver}  // 드래그 오버 시 호출하여 드롭 가능 상태로 만듦
+            onKeyDown={handleKeyDown} // 엔터키 눌림 방지
         >
             <div className={styles.textContainer}>
-                <p className={styles.inputLabel}>능력을 한 눈에 보여줄 수 있는 사진을 첨부해보는 건 어떤신가요?</p>
+                <p className={styles.inputLabel}>능력을 한 눈에 보여줄 사진을 첨부해보시는 건 어떤신가요?</p>
                 <p className={styles.inputLabel}>매칭 확률을 높일 수 있어요.</p>
             </div>
-            <Button
-                theme={'blueTheme'}
-                fontSize={'small'}
-            >파일 첨부하기</Button>
+            <div className={styles.buttonContainer}>
+                <Button
+                    theme={'blueTheme'}
+                    fontSize={'small'}
+                >파일 첨부하기</Button>
+            </div>
             <input
                 ref={inputBoxRef}
                 type="file"
+                name={name}
                 multiple={true}
                 id="fileInputBox"
                 accept="image/*"
                 onChange={onFileSelect}
+                style={{ display: 'none' }}
             />
         </div>
     );

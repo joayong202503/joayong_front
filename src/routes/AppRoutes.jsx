@@ -13,14 +13,12 @@ import MainLayout from "../layouts/mainLayout.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
 import SignUp from "../pages/SignUp.jsx";
 
+import MatchesPage from "../pages/MatchesPage.jsx";
+import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
+import ExchangeListPage from "../pages/ExchangeListPage.jsx";
+import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
 
 const router = createBrowserRouter([
-  // status 500 에러 페이지
-  {
-    path: '/error',
-    element: <ErrorPage />
-  }
-  ,
   // 회원가입 페이지
   {
     path: '/signup',
@@ -49,6 +47,11 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout/>,
     children: [
+      // 에러 페이지
+      {
+        path: 'error',
+        element: <ErrorPage/>
+      },
       // 메인페이지
       {
         index: true,
@@ -60,7 +63,7 @@ const router = createBrowserRouter([
           // 전체 재능교환조회 페이지
           {
             index: true,
-            // element: <ExchangeListPage/>
+            element: <ExchangeListPage/>
           },
           // 새 재능교환 추가 페이지
           {
@@ -76,7 +79,7 @@ const router = createBrowserRouter([
           {
             path: ':exchangeId',
             element:
-            // 성능 최적화를 위한 react-query로 데이터 캐싱
+                // 성능 최적화를 위한 react-query로 데이터 캐싱
                 <QueryClientProvider client={queryClient}>
                   <ExchangeDetailPage/>
                 </QueryClientProvider>,
@@ -84,9 +87,12 @@ const router = createBrowserRouter([
           // 게시글 수정 페이지
           {
             path: ':exchangeId/edit',
-            element: <AuthRequired>
-              {/*<ExchangeEditPage/>*/}
-            </AuthRequired>
+            element:
+                <AuthRequired>
+                  <QueryClientProvider client={queryClient}>
+                    <ExchangeEditPage/>
+                  </QueryClientProvider>,
+                </AuthRequired>
           },
           // 재능매칭 요청 페이지
           {
@@ -106,14 +112,14 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AuthRequired>
-              {/*<MatchesPage/>*/}
+              <MatchesPage/>
             </AuthRequired>
           },
           // 매칭 후 리뷰작성 사이트
           {
-            path: ':matchId/rating',
+            path: ':messageId/rating', // matchid -> messageId로 수정
             element: <AuthRequired>
-              {/*<MatchRatingPage/>*/}
+              <MatchingRatingPage/>
             </AuthRequired>
           }
         ]
@@ -121,7 +127,7 @@ const router = createBrowserRouter([
       },
       // WRTC & 채팅 페이지
       {
-        path: 'chat/:matchId',
+        path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
           {/*<ChatPage/>*/}
         </AuthRequired>

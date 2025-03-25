@@ -1,6 +1,10 @@
-.layoutContainer{
-
+.layoutContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-.mainContainer{
 
+.mainContainer {
+  padding-top: 80px; // Header 높이만큼 패딩
+  flex: 1; // 남은 공간을 모두 차지하도록 설정
 }

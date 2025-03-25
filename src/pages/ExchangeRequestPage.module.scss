@@ -1,0 +1,51 @@
+.mainWrapper {
+  width: 60%;
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-direction: column;
+  margin: 50px auto;
+}
+
+.categoriesSection {
+  width: 100%;
+  display: flex;
+  gap: 30px;
+}
+
+.half {
+  flex: 1;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.highlight {
+  color: #1b399b;
+}
+
+.sectionBox {
+  //border: 2px solid red;
+}
+
+.contentBox {
+    align-items: center;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(115, 115, 122, 0.15);
+    padding: 5px 15px 5px 8px;
+    box-sizing: border-box;
+    gap: 7px;
+}
+
+.contentText {
+  width: 0.8rem;
+}
+
+.buttonsContainer {
+  padding: 0 150px;
+  display: flex;
+  gap: 20px;
+}

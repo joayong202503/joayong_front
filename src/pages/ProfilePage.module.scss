@@ -1,0 +1,107 @@
+.fullContainer{
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.topContainer{
+  display: flex;
+  width: 80%;
+  padding: 100px 50px;
+  justify-content: center;
+
+}
+.profileContainer{
+  height: 100px;
+  gap: 30px;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.profileContentContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 300px;
+  height: 200px;
+
+}
+.nameText{
+  padding-top: 40px;
+  font-size: 45px;
+  font-weight: bold;
+}
+.emailText{
+  color: #909196;
+  font-size: 20px;
+}
+.fullTalentContainer{
+  display: flex;
+  margin-top: 20px;
+  gap: 20px;
+}
+.talentContainer{
+  background: rgba(227, 217, 217, 0.5);
+  width: 180px;
+  border-radius: 10px;
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+}
+.talentTitle{
+  font-size: 15px;
+  color: #757575;
+}
+.talentText{
+  margin-top: 10px;
+  margin-left: 8px;
+  font-size: 20px;
+}
+
+.bottomContainer{
+  display: flex;
+  width:80%;
+  margin-top: 100px;
+}
+.menuContainer{
+  display: flex;
+  width: 100px;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.menuContainer button{
+  color: #9a9a9a;
+  border: none;
+  font-size: 20px;
+  background: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
+
+/* 활성화된 버튼 스타일 */
+.activeButton {
+  color: #000000 !important;
+}
+.navContainer{
+  width: 100%;
+}
+.ratingContainer h2{
+  font-size: 40px;
+}
+.ratingContainer span{
+  font-size: 20px;
+  margin-left: 5px;
+}
+
+.myExchangesContainer h2{
+  margin-bottom: 40px;
+  font-size: 40px;
+}
+.editBtn{
+  background: #000;
+  height: 50px;
+  z-index: 100;
+}

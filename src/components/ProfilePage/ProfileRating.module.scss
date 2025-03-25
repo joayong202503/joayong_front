@@ -1,0 +1,60 @@
+.fullContainer{
+  width: 100%;
+}
+
+.ratingTitle{
+  display: flex;
+  align-items: center;
+}
+
+.ratingTitle h2 {
+  margin-right: 10px;
+}
+
+.ratingBoxContainer{
+  width: 100%;
+
+
+}
+
+.loadingState, .errorState, .noRatings {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #757575;
+  text-align: center;
+  padding: 20px;
+}
+.pagination {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 60px;
+  padding-bottom: 50px;
+  left: 45%;
+}
+
+.pageButton {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #f8f9fa;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background-color: #000000;
+    color: white;
+    border-color: #000000;
+  }
+}
