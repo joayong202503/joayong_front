@@ -27,7 +27,8 @@
 .arrow {
   color: #888888;
   font-size: 12px;
-  transition: transform 0.2s ease;
+  transition: transform 0.5s ease;
+  display: flex;
 }
 
 .dropdownMenu {

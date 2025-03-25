@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './DropDownBasic.module.scss';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const Dropdown = React.forwardRef(({
                                        options, defaultOption, onChange, selectedOption, width = 150, disabled, placeholder }
@@ -129,13 +130,13 @@ const Dropdown = React.forwardRef(({
                 {!selectedOption && (
                     <>
                         <span className={styles.placeholder}>{placeholder}</span>
-                        <span className={styles.arrow}>{isOpen ? '▲' : '▼'}</span>
+                        <span className={styles.arrow}>{isOpen ?  <ChevronUp/> : <ChevronDown/>}</span>
                     </>
                 )}
                 {selectedOption && (
                     <>
                         <span className={styles.selectedOption}>{selectedOption?.name}</span>
-                        <span className={styles.arrow}>{isOpen ? '▲' : '▼'}</span>
+                        <span className={styles.arrow}>{isOpen ? <ChevronUp/> : <ChevronDown/>}</span>
                     </>
                 )}
             </div>
