@@ -17,13 +17,27 @@ const ProfilePage = () => {
     name: '',
     email: '',
     profileImageUrl: null,
-    totalRating: 0.0
+    totalRating: 0.0,
+    talentLearning:'',
+    talentTeaching:''
   });
 
   const [error, setError] = useState(null);
   // 내 프로필인지 아닌지 구분해주는 상태변수
   const [isMyProfile, setIsMyProfile] = useState(false);
   const currentUser = useSelector((state) => state.auth.user);
+
+  // redux에서 카테고리 데이터 가져오기
+  const talentCategories = useSelector(state => state.talentCategory.talentCategories);
+
+  // 카테고리 ID로 카테고리 이름 찾기
+  const getTalentName = (categoryId) => {
+    if(!talentCategories || talentCategories.length === 0) return " 카테고리 로딩중";
+    const allSubCategories = talentCategories.flatMap(main => main.subTalentList || []);
+    // 소분류에서 해당 ID 찾기
+    const category = allSubCategories.find(sub => sub.id === categoryId);
+    return category ? category.name : " 카테고리 없음 ";
+  };
 
   // URL에서 사용자 이름 파라미터 가져오기
   const { username } = useParams();
@@ -35,12 +49,19 @@ const ProfilePage = () => {
         const userName = username;
         const userData = await fetchUserProfile(userName);
 
+        const talentTeaching = getTalentName(userData.talentGId);
+        const talentLearning = getTalentName(userData.talentTId);
+
         // 프로필 이미지 URL 처리
         if (userData.profileImageUrl && !userData.profileImageUrl.startsWith('http')) {
           userData.profileImageUrl = `${API_URL}${userData.profileImageUrl}`;
         }
 
-        setProfileData(userData);
+        setProfileData({
+          ...userData,
+          talentTeaching,
+          talentLearning
+        });
 
         // Redux에서 가져온 사용자 정보와 현재 프로필 비교
         if (currentUser) {
@@ -53,9 +74,12 @@ const ProfilePage = () => {
         setError('프로필 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
       }
     };
+    if (talentCategories.length > 0) {
+      getUserProfile();
+    }
 
     getUserProfile();
-  }, [username, currentUser]);
+  }, [username, currentUser,talentCategories]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -84,11 +108,11 @@ const ProfilePage = () => {
             <div className={styles.fullTalentContainer}>
               <div className={styles.talentContainer}>
                 <span className={styles.talentTitle}>Teaching</span>
-                <span className={styles.talentText}>{profileData.teachingCategory || '웹개발'}</span>
+                <span className={styles.talentText}>{profileData.talentTeaching || '없음'}</span>
               </div>
               <div className={styles.talentContainer}>
                 <span className={styles.talentTitle}>Learning</span>
-                <span className={styles.talentText}>{profileData.learningCategory || '영어회화'}</span>
+                <span className={styles.talentText}>{profileData.talentLearning || '없음'}</span>
               </div>
             </div>
           </div>

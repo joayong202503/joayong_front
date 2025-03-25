@@ -8,44 +8,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {authActions} from "../store/slices/authSlice.js";
 import {fetchMatchingRequestsWithFilters} from "../services/matchingService.js";
 import {BellDot, BellIcon, BellRing, Dot} from "lucide-react";
-import { fetchUserProfile } from "../services/profileApi.js";
 
 const Header = () => {
 
   // 스토어에서 유저 정보 가져오기
   const user = useSelector(state => state.auth.user);
-  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   // ========= 매칭관리 : 내가 수신인이고 아직 수락/거절여부 결정하지 않은 내역 있으면 빨간점으로 알림 표시  ===== //
   const location = useLocation(); // 매 페이지마다 새로 fetch 되게 하려고 useLocation 사용
   const [hasReceivedPendingRequests, setHasReceviedPendingRequests] = useState(false);
-
-  // 현재 로그인한 사용자의 프로필 이미지 가져오기
-  useEffect(() => {
-    const loadUserProfileImage = async () => {
-      if (!user) {
-        setProfileImageUrl(null);
-        return;
-      }
-
-      try {
-        const userData = await fetchUserProfile(user.name);
-
-        // API 응답에서 프로필 이미지 URL 처리
-        let imageUrl = userData.profileImageUrl;
-        if (imageUrl && !imageUrl.startsWith('http')) {
-          imageUrl = `http://localhost:8999${imageUrl}`;
-        }
-
-        setProfileImageUrl(imageUrl);
-      } catch (err) {
-        console.error('프로필 이미지를 불러오는데 실패했습니다:', err);
-        setProfileImageUrl(null);
-      }
-    };
-
-    loadUserProfileImage();
-  }, [user]);
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
@@ -87,8 +58,8 @@ const Header = () => {
   // 해당 페이지로 넘어가면 해당 nav부분 css 변하도록
   const getLinkClassName = ({isActive}) =>{
     return isActive
-        ? `${styles.aItem} ${styles.activeLink}`
-        :styles.aItem;
+      ? `${styles.aItem} ${styles.activeLink}`
+      :styles.aItem;
   };
 
   // 로그인이 되어있으면 로그아웃이 가능하도록 로그아웃 상태면 로그인페이지로 넘어가도록
@@ -113,42 +84,46 @@ const Header = () => {
   }
 
   return (
-      <header className={styles.headerContainer}>
-        <div className={styles.logoContainer}>
-          <NavLink to="/"><img src={logoImage} alt="logo사진"/></NavLink>
+    <header className={styles.headerContainer}>
+      <div className={styles.logoContainer}>
+        <NavLink to="/"><img src={logoImage} alt="logo사진"/></NavLink>
+      </div>
+      <div>
+        <ul className={styles.menuContainer}>
+          <li className={styles.menuItem}>
+            <NavLink to="/exchanges" end className={getLinkClassName}>재능 찾아보기</NavLink>
+          </li>
+          <li className={styles.menuItem}>
+            <NavLink to="/exchanges/new" className={getLinkClassName}>재능 등록하기</NavLink>
+          </li>
+          <li className={styles.menuItem}>
+            <NavLink to="/matches" className={getLinkClassName}>매칭 관리</NavLink>
+            {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
+            <div className={styles.dotContainer}>
+              {hasReceivedPendingRequests &&
+                <BellDot size={14} color={'blue'} strokeWidth={1.5} style={{fill: 'white'}}/>}
+            </div>
+          </li>
+          <li className={styles.menuItem}>
+            <NavLink to="/about" className={getLinkClassName}>알아보기</NavLink>
+          </li>
+        </ul>
+      </div>
+      <div className={styles.rightContainer}>
+        <div className={styles.profileContainer}
+             onClick={handleProfileClick}
+             style={{cursor:'pointer'}}>
+          <ProfileCircle size="sm" />
         </div>
-        <div>
-          <ul className={styles.menuContainer}>
-            <li className={styles.menuItem}>
-              <NavLink to="/exchanges" className={getLinkClassName}>재능 찾아보기</NavLink>
-            </li>
-            <li className={styles.menuItem}>
-              <NavLink to="/matches" className={getLinkClassName} >매칭 관리</NavLink>
-              {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
-              <div className={styles.dotContainer}>
-                { hasReceivedPendingRequests && <BellDot size={14} color={'blue'} strokeWidth={1.5} style={{ fill: 'white' }}/>}
-              </div>
-            </li>
-            <li className={styles.menuItem}>
-              <NavLink to ="/about" className={getLinkClassName}>알아보기</NavLink>
-            </li>
-          </ul>
+        <div className={styles.buttonContainer}>
+          <Button theme="blueTheme"
+                  onClick={handleAuthAction}
+          >{user? '로그아웃' :'로그인'}</Button>
         </div>
-        <div className={styles.rightContainer}>
-          <div className={styles.profileContainer}
-               onClick={handleProfileClick}
-               style={{cursor:'pointer'}}>
-            <ProfileCircle size="sm" src={profileImageUrl} />
-          </div>
-          <div className={styles.buttonContainer}>
-            <Button theme="blueTheme"
-                    onClick={handleAuthAction}
-            >{user? '로그아웃' :'로그인'}</Button>
-          </div>
 
-        </div>
+      </div>
 
-      </header>
+    </header>
   );
 };
 
