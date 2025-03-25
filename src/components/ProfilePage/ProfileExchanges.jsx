@@ -17,7 +17,7 @@ const ProfileExchanges = () => {
   const { username } = useParams();
 
   // 한 페이지당 표시할 게시물 수
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
   // redux에서 카테고리 데이터 가져오기
   const talentCategories = useSelector(state => state.talentCategory.talentCategories);
