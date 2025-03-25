@@ -8,8 +8,6 @@ const Dropdown = React.forwardRef(({
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    console.log(defaultOption);
-
     // 현재 사용자가 위치한 드롭다운 메뉴에 highlightedOption = option 내용이 같은지 비교해서 stsyles.highlighted 적용하기 위한 용도
     const [highlightedOption, setHighlightedOption] = useState(selectedOption || null);
 

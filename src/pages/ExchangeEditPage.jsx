@@ -4,22 +4,29 @@ import { useSelector } from "react-redux";
 import TitleInputSection from "../components/ExchangeCreatePage/TitleInputSection";
 import DropDownBasic from '../components/common/DropDownBasic';
 import ContentInputSection from '../components/ExchangeCreatePage/ContentInputSecition';
-import {fetchPostDetail} from '../services/postService.js';
+import {fetchPostDetail, updatePost} from '../services/postService.js';
 import styles from './ExchangeEditPage.module.scss';
 import {
-    filterRegionCategories, getRegionDetailsObjectBySubId,
+    getRegionDetailsObjectBySubId,
     getSortedTalentCategories,
     getTalentCategoryDetailsObject
 } from "../utils/sortAndGetCategories.js";
 import Button from "../components/common/Button.jsx";
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import MiniAlert from "../components/common/MiniAlert.jsx";
+import { usePostData } from '../hooks/exchangeEditPageHooks/usePostData.js';
+import { useCategoryState } from '../hooks/exchangeEditPageHooks/useCategoryState.js';
+import { useAutoFocus } from '../hooks/exchangeEditPageHooks/useAutoFocus.js';
+import { useValidation } from '../hooks/exchangeEditPageHooks/useValidation.js';
 
 const ExchangeEditPage = () => {
 
     const { exchangeId: postId } = useParams();
     const navigate = useNavigate();
     const myUsername = useSelector((state) => state.auth.user?.name);
+
+    // 서버에서 가져온 데이터
+    const [originalPost, setOriginalPost] = useState(null);
 
     // Ref
     const refs = {
@@ -33,36 +40,66 @@ const ExchangeEditPage = () => {
         content: useRef(null)
     };
 
-    // State
-    const [postData, setPostData] = useState({
-        post: null,
-        region: {
-            main: null,
-            middle: null,
-            last: null
-        },
-        talent: {
-            give: { main: null, sub: null },
-            take: { main: null, sub: null }
-        }
-    });
+    // 서버에 제출할 데이터 관리 훅
+    const { postData, updatePostData } = usePostData();
 
-    // 컨펌 모달 훅
+    // yup 유효성 검증 조건
+    const { validationSchema } = useValidation();
+
+    // 필터링용 카테고리 관리 훅
+    const { categoryState, setCategoryState, handleCategoryChange: handleCategoryStateChange } = useCategoryState(updatePostData);
+
+    // 자동 포커스 관리 훅
+    const { handleAutoFocus } = useAutoFocus(refs);
+
+    // 컨펌 모달 상태
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [confirmModalTitle, setConfirmModalTitle] = useState('');
     const [confirmModalOnConfirm, setConfirmModalOnConfirm] = useState(() => () => {});
     const [confirmModalOnCancel, setConfirmModalOnCancel] = useState(() => () => {});
 
-    // 미니 모달
+    // 미니 모달 상태
     const [isMiniModalOpen, setIsMiniModalOpen] = useState(false);
-    const [miniModalOnClose, setMiniModalOnClose] = useState(() => () => {});
+    const [miniModalMessage, setMiniModalMessage] = useState('');
+    const [isNegativeMiniModalMessage, setIsNegativeMiniModalMessage] = useState(false);
 
     // Selectors
     const regionCategories = useSelector((state) => state.regionCategory.regionCategories);
     const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
-    const sortedTalentCategories = useMemo(() => {
-        return getSortedTalentCategories(talentCategories);
-    });
+    const sortedTalentCategories = useMemo(() => getSortedTalentCategories(talentCategories), [talentCategories]);
+
+    // 드롭다운 값 변경 시 카테고리 상태 업데이트 및 자동 포커스
+    const handleCategoryChange = (type, level) => (selectedItem) => {
+        if (!selectedItem) return;
+
+        handleCategoryStateChange(type, level)(selectedItem);
+        handleAutoFocus(type, level);
+    };
+
+    //필터링 시 소분류 값 다르게 보여주는 용으로 관리하는 CategoryState의 초기 값 설정
+    const initializeCategories = useCallback((data) => {
+        const regionDetails = getRegionDetailsObjectBySubId(data['region-id'], regionCategories);
+        const giveDetails = getTalentCategoryDetailsObject(data['talent-g-id'], talentCategories);
+        const takeDetails = getTalentCategoryDetailsObject(data['talent-t-id'], talentCategories);
+
+        setCategoryState({
+            region: {
+                main: regionDetails?.mainCategory,
+                middle: regionDetails?.subCategory,
+                last: regionDetails?.smallCategory
+            },
+            talent: {
+                give: {
+                    main: giveDetails?.mainCategory,
+                    sub: giveDetails?.subCategory
+                },
+                take: {
+                    main: takeDetails?.mainCategory,
+                    sub: takeDetails?.subCategory
+                }
+            }
+        });
+    }, [regionCategories, talentCategories, setCategoryState]);
 
     // 게시글 상세정보 가져오기
     const fetchPostDetails = useCallback(async () => {
@@ -70,32 +107,18 @@ const ExchangeEditPage = () => {
             const response = await fetchPostDetail(postId);
             const data = await response.json();
 
-            // region-id 로 대/중/소분류 이름 가져오기(api는 소분류만 제공)
-            const regionDetails = getRegionDetailsObjectBySubId(data['region-id'], regionCategories) || [];
+            setOriginalPost(data);
 
-            // talent id로 대/소분류 상세정보 가져오기(api는 소분류만 제공)
-            const giveDetails = getTalentCategoryDetailsObject(data['talent-g-id'], talentCategories);
-            const takeDetails = getTalentCategoryDetailsObject(data['talent-t-id'], talentCategories);
+            // 서버에서 받은 데이터로 postData 업데이트
+            updatePostData('title', data.title);
+            updatePostData('content', data.content);
+            updatePostData('region-id', data['region-id']);
+            updatePostData('talent-g-id', data['talent-g-id']);
+            updatePostData('talent-t-id', data['talent-t-id']);
+            updatePostData('post-id', data['post-id']);
 
-            setPostData(prev => ({
-                ...prev,
-                post: data,
-                region: {
-                    main: regionDetails?.mainCategory,
-                    middle: regionDetails?.subCategory,
-                    last: regionDetails?.smallCategory
-                },
-                talent: {
-                    give: {
-                        main: giveDetails?.mainCategory,
-                        sub: giveDetails?.subCategory
-                    },
-                    take: {
-                        main: takeDetails?.mainCategory,
-                        sub: takeDetails?.subCategory
-                    }
-                }
-            }));
+            // 필터링용 카테고리 초기화
+            initializeCategories(data);
         } catch (error) {
             navigate('/error', {
                 state: {
@@ -105,11 +128,11 @@ const ExchangeEditPage = () => {
                 }
             });
         }
-    }, [postId, regionCategories, talentCategories, navigate]);
+    }, [postId, updatePostData, initializeCategories, navigate]);
 
     // 내 게시글 아니면 접근 다시 한 번 이중 차단
     useEffect(() => {
-        if (postData.post && postData.post.name !== myUsername) {
+        if (originalPost && originalPost.name !== myUsername) {
             navigate('/error', {
                 state: {
                     errorPageUrl: window.location.pathname,
@@ -117,7 +140,7 @@ const ExchangeEditPage = () => {
                 }
             });
         }
-    }, [postData.post, myUsername, navigate]);
+    }, [originalPost, myUsername, navigate]);
 
     // 게시글 상세정보 가져오기
     useEffect(() => {
@@ -127,92 +150,7 @@ const ExchangeEditPage = () => {
         if (refs.title.current) {
             refs.title.current.focus();
         }
-    }, [postId, fetchPostDetails]);
-
-    // 드롭다운 값 변경 시 영역별 각종 처리 로직
-    const handleCategoryChange = (type, level) => (selectedItem) => {
-        console.log(selectedItem, '111111111111111111111111111111111');
-        if (!selectedItem) return;
-
-        // post 자체를 수정해주기
-        setPostData(prev => {
-            // find 등의 함수를 쓰기 위해 객체 복사
-            const updatedData = { ...prev };
-
-            // 지역을 변경할 때
-            if (type === 'region') {
-
-                // 지역 대분류 변경할 때
-                if (level === 'main') {
-                    updatedData.region = {
-                        main: selectedItem, // 대분류는 선택한 값으로
-                        middle: null, // 중/소분류는 null로
-                        last: null
-                    };
-                } else if (level === 'middle') {
-                    updatedData.region = {
-                        ...prev.region, // 기존 값 유지
-                        middle: selectedItem, // 중분류는 선택한 값으로
-                        last: null // 소분류는 null로
-                    };
-                } else if (level === 'last') {
-                    updatedData.region = {
-                        ...prev.region,
-                        last: selectedItem
-                    };
-                }
-            // 재능을 변경할 때
-            } else if (type === 'talent') {
-                if (level === 'give-main') {
-                    updatedData.talent.give = {
-                        main: selectedItem, // 대분류는 선택한 값으로
-                        sub: null // 소분류는 null로
-                    };
-                } else if (level === 'give-sub') {
-                    updatedData.talent.give = {
-                        ...prev.talent.give, // 기존 값 유지
-                        sub: selectedItem // 소분류는 선택한 값으로
-                    };
-                } else if (level === 'take-main') {
-                    updatedData.talent.take = {
-                        main: selectedItem,
-                        sub: null
-                    };
-                } else if (level === 'take-sub') {
-                    updatedData.talent.take = {
-                        ...prev.talent.take,
-                        sub: selectedItem
-                    };
-                }
-            }
-
-            return updatedData;
-        });
-
-        // 자동 포서크 관련
-        const focusMap = {
-            'region-main': refs.secondRegion,
-            'region-middle': refs.thirdRegion,
-            'region-last': refs.talentGiveMain,
-            'talent-give-main': refs.talentGiveSub,
-            'talent-give-sub': refs.talentTakeMain,
-            'talent-take-main': refs.talentTakeSub,
-            'talent-take-sub': refs.content
-        };
-
-        const focusKey = `${type}-${level}`; // parameter로 (region, main)을 주면, 위 focusmap에서 region-main에 해당하는 focus할 부분을 찾아온다.
-        if (focusMap[focusKey]?.current) {
-            // focusKey값이 'talent-take-sub'면 refs.content(textarea)의 글자 가장 뒤에 focus, 나머지는 그냥 focus
-            if (focusKey === 'talent-take-sub') {
-                focusMap[focusKey].current.focus();
-                focusMap[focusKey].current.setSelectionRange(focusMap[focusKey].current.value.length, focusMap[focusKey].current.value.length);
-                return;
-            }
-            setTimeout(() => focusMap[focusKey].current.focus(), 0);
-        }
-    };
-
-    if (!postData.post) return null;
+    }, [postId]);
 
     console.log(postData);
     console.log(111);
@@ -227,6 +165,59 @@ const ExchangeEditPage = () => {
         setConfirmModalOnCancel(onCancel);
     };
 
+    // 게시글 수정
+    const handlePostModification = async () => {
+        try {
+            // 유효성 검증
+            console.log('보낼 내용');
+            console.log(postData);
+            console.log('보낼 내용');
+            await validationSchema.validate(postData, { abortEarly: true });
+
+            // 폼 데이터로 변환
+            const transformToFormData = (postData) => {
+                // - formdata에 데이터 집어넣기
+                //   :  이미지의 경우,  formData.append(fetch 할 때의 key 이름, file)
+                //   :  json의 경우, formData.append(fetch 할 때 보낼 key 이름, new Blob([JSON.stringify(data)], {data type} )'
+                const formData = new FormData();
+                formData.append('post',
+                    new Blob([JSON.stringify(postData)],
+                        { type: 'application/json' }));
+
+                return formData;
+            };
+
+            const formData = transformToFormData(postData);
+
+            await updatePost(formData);  // updatePost에서 이미 에러 처리함
+
+            setIsConfirmModalOpen(false);
+            setIsMiniModalOpen(true);
+            setMiniModalMessage('게시글이 정상적으로 수정되었습니다.');
+
+            // 2초 후 상세 페이지로 이동
+            setTimeout(() => {
+                navigate(`/exchanges/${postId}`);
+            }, 2000);
+        } catch (error) {
+            setIsConfirmModalOpen(false);
+            setIsMiniModalOpen(true);
+            setIsNegativeMiniModalMessage(true);
+
+            // ApiError인 경우 message 사용, validation 에러인 경우 errors 배열 사용
+            setMiniModalMessage(error.message || error.errors[0]);
+
+            // 2초 후 미니 모달 닫기
+            setTimeout(() => {
+                setIsMiniModalOpen(false);
+                setTimeout(() => {
+                    setIsNegativeMiniModalMessage(false);
+                    setMiniModalMessage("정상적으로 처리되었습니다.");
+                }, 2010);
+            }, 2000);
+        }
+    };
+
     return (
         <div className={styles.postEditPage}>
             <TitleInputSection
@@ -235,7 +226,7 @@ const ExchangeEditPage = () => {
                 ref={refs.title}
                 id="title"
                 maxLength={50}
-                defaultValue={postData.post.title}
+                defaultValue={postData.title}
             />
 
             {/* 지역 선택 섹션 */}
@@ -244,30 +235,30 @@ const ExchangeEditPage = () => {
                 <div className={styles.locationContainer}>
                     <DropDownBasic
                         options={regionCategories}
-                        defaultOption={postData.region.main}
+                        defaultOption={categoryState?.region?.main}
                         onChange={handleCategoryChange('region', 'main')}
-                        selectedOption={postData.region.main}
+                        selectedOption={categoryState.region.main}
                         width={150}
                         placeholder={'대분류'}
                     />
                     <DropDownBasic
-                        options={postData.region.main?.subRegionList || []}
-                        defaultOption={postData.region.middle}
+                        options={categoryState?.region?.main?.subRegionList || []}
+                        defaultOption={categoryState?.region?.middle}
                         onChange={handleCategoryChange('region', 'middle')}
-                        selectedOption={postData.region.middle}
+                        selectedOption={categoryState?.region?.middle}
                         width={150}
                         ref={refs.secondRegion}
-                        disabled={!postData.region.main}
+                        disabled={!categoryState?.region?.main}
                         placeholder={'중분류'}
                     />
                     <DropDownBasic
-                        options={postData.region.middle?.detailRegionList || []}
-                        defaultOption={postData.region.last}
+                        options={categoryState?.region?.middle?.detailRegionList || []}
+                        defaultOption={categoryState?.region?.last}
                         onChange={handleCategoryChange('region', 'last')}
-                        selectedOption={postData.region.last}
+                        selectedOption={categoryState?.region?.last}
                         width={150}
                         ref={refs.thirdRegion}
-                        disabled={!postData.region.middle}
+                        disabled={!categoryState?.region?.middle}
                         placeholder={'소분류'}
                     />
                 </div>
@@ -282,21 +273,21 @@ const ExchangeEditPage = () => {
                         <DropDownBasic
                             ref={refs.talentGiveMain}
                             options={sortedTalentCategories}
-                            defaultOption={postData.talent.give.main}
+                            defaultOption={categoryState?.talent?.give?.main}
                             onChange={handleCategoryChange('talent', 'give-main')}
-                            selectedOption={postData.talent.give.main}
+                            selectedOption={categoryState?.talent?.give?.main}
                             width={150}
                             placeholder={'대분류'}
                         />
                         <DropDownBasic
                             ref={refs.talentGiveSub}
-                            options={postData.talent.give.main?.subTalentList || []}
-                            defaultOption={postData.talent.give.sub}
+                            options={categoryState?.talent?.give.main?.subTalentList || []}
+                            defaultOption={categoryState?.talent?.give?.sub}
                             onChange={handleCategoryChange('talent', 'give-sub')}
-                            selectedOption={postData.talent.give.sub}
+                            selectedOption={categoryState?.talent?.give?.sub}
                             width={150}
                             placeholder={'소분류'}
-                            disabled={!postData.talent.give.main}
+                            disabled={!categoryState?.talent?.give?.main}
                         />
                     </div>
                 </div>
@@ -308,21 +299,21 @@ const ExchangeEditPage = () => {
                         <DropDownBasic
                             ref={refs.talentTakeMain}
                             options={sortedTalentCategories}
-                            defaultOption={postData.talent.take.main}
+                            defaultOption={categoryState?.talent?.take?.main}
                             onChange={handleCategoryChange('talent', 'take-main')}
-                            selectedOption={postData.talent.take.main}
+                            selectedOption={categoryState?.talent?.take?.main}
                             width={150}
                             placeholder={'대분류'}
                         />
                         <DropDownBasic
                             ref={refs.talentTakeSub}
-                            options={postData.talent.take.main?.subTalentList || []}
-                            defaultOption={postData.talent.take.sub}
+                            options={categoryState?.talent?.take?.main?.subTalentList || []}
+                            defaultOption={categoryState?.talent?.take?.sub}
                             onChange={handleCategoryChange('talent', 'take-sub')}
-                            selectedOption={postData.talent.take.sub}
+                            selectedOption={categoryState?.talent?.take?.sub}
                             width={150}
                             placeholder={'소분류'}
-                            disabled={!postData.talent.take.main}
+                            disabled={!categoryState?.talent?.take?.main}
                         />
                     </div>
                 </div>
@@ -335,7 +326,7 @@ const ExchangeEditPage = () => {
                 isTitleNecessary={true}
                 name={'content'}
                 ref={refs.content}
-                defaultValue={postData.post.content}
+                defaultValue={postData.content}
             />
 
             <div className={styles.buttonContainer}>
@@ -347,8 +338,7 @@ const ExchangeEditPage = () => {
                         onConfirm: () => () => {
                             // minmodal 2초 지속. 미니 모달 닫힌 후 이전 페이지로 이동(미니 모달 사용자가 닫아도 마찬가지)
                             setIsConfirmModalOpen(false);
-                            setIsMiniModalOpen(true);
-                            setMiniModalOnClose(() => () => navigate(-1));
+                            navigate(-1);
                         },
                         onCancel: () => () => setIsConfirmModalOpen(false)
                     })}
@@ -358,8 +348,7 @@ const ExchangeEditPage = () => {
                     fontSize={'small'}
                     onClick={() => showConfirmModal({
                         title: '게시글을 수정하시겠습니까?',
-                        // onConfirm: handlePostModification,
-                        onConfirm: () => () => alert("수정수정"),
+                        onConfirm: () => handlePostModification,
                         onCancel: () => () => {setIsConfirmModalOpen(false)}
                     })}
                 > 수정하기
@@ -372,17 +361,20 @@ const ExchangeEditPage = () => {
                     title={confirmModalTitle}
                     onConfirm={confirmModalOnConfirm}
                     onClose={confirmModalOnCancel}
-            />}
+                />}
 
             {/*  미니 모달 */}
-            <MiniAlert
-                isVisible={isMiniModalOpen}
-                onClose={miniModalOnClose}
-            />
-
-
-
+            { isMiniModalOpen &&
+                <MiniAlert
+                    isVisible={isMiniModalOpen}
+                    onClose={() => {setIsMiniModalOpen(false)}}
+                    message={miniModalMessage}
+                    isNegative={isNegativeMiniModalMessage}
+                />
+            }
         </div>
+
+
     );
 };
 

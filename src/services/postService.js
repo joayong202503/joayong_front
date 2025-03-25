@@ -132,3 +132,29 @@ export const fetchPostDetail = async (postId) => {
     
     return response;
 };
+
+
+
+export const updatePost = async (formData) => {
+
+    console.log(formData);
+
+    try {
+        const response = await fetchWithAuth(`${postApi.updatePost}`, {
+            method: 'PUT',
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new ApiError(data.status, '서버 오류 발생', data?.message); // ApiError로 구조화된 에러 던지기
+        }
+
+        // 성공: 삭제 결과 반환
+        return await response.json();
+
+    } catch (error) {
+        console.error('네트워크 또는 기타 에러:', error); // 네트워크 에러나 런타임 에러 로그
+        throw error;
+    }
+};
