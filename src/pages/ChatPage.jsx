@@ -4,6 +4,7 @@ import { Provider, useSelector } from "react-redux";
 import { store } from "../store/index.js";
 import { useParams } from "react-router-dom";
 import { fetchRtcRoomId } from "../services/rtcApi.js";
+import styles from './ChatPage.module.scss';
 
 const ChatPage = () => {
   const user = useSelector((state) => state.auth.user);
@@ -40,11 +41,11 @@ const ChatPage = () => {
   return (
     <>
       <Provider store={store}>
-        <div className="wrap">
-          <div className="video-container">
+        <div className={styles.wrap}>
+          <div className={styles.videoContainer}>
             <RtcRoom roomCode={roomId} username={username} />
           </div>
-          <div className="chat-container">{/* <Chat /> */}</div>
+          <div className={styles.chatContainer}>{/* <Chat /> */}</div>
         </div>
       </Provider>
     </>
