@@ -10,6 +10,9 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 import MainPage from "../pages/MainPage.jsx";
 import MainLayout from "../layouts/mainLayout.jsx";
+import LoginPage from "../pages/LoginPage.jsx";
+import SignUp from "../pages/SignUp.jsx";
+
 import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
@@ -23,7 +26,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <SignupPage/>
+        element: <SignUp />
       }
     ]
   },
@@ -34,7 +37,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <LoginPage/>
+        element: <LoginPage/>
       }
     ]
 
