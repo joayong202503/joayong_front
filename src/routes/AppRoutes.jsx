@@ -10,9 +10,14 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 import MainPage from "../pages/MainPage.jsx";
 import MainLayout from "../layouts/mainLayout.jsx";
+import LoginPage from "../pages/LoginPage.jsx";
+import SignUp from "../pages/SignUp.jsx";
+
 import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
+import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
+import ChatPage from "../pages/ChatPage.jsx";
 import ProfileSettingPage from "../pages/ProfileSettingPage.jsx";
 
 const router = createBrowserRouter([
@@ -29,7 +34,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <SignupPage/>
+        element: <SignUp />
       }
     ]
   },
@@ -40,7 +45,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <LoginPage/>
+        element: <LoginPage/>
       }
     ]
 
@@ -50,6 +55,11 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout/>,
     children: [
+      // 에러 페이지
+      {
+        path: 'error',
+        element: <ErrorPage/>
+      },
       // 메인페이지
       {
         index: true,
@@ -117,7 +127,7 @@ const router = createBrowserRouter([
           {
             path: ':messageId/rating', // matchid -> messageId로 수정
             element: <AuthRequired>
-              {/*<MatchRatingPage/>*/}
+              <MatchingRatingPage/>
             </AuthRequired>
           }
         ]
@@ -127,7 +137,7 @@ const router = createBrowserRouter([
       {
         path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
-          {/*<ChatPage/>*/}
+          <ChatPage/>
         </AuthRequired>
 
       },

@@ -1,11 +1,12 @@
 // RatingBox.module.scss - 스타일 수정
 .fullContainer{
-  box-shadow: 5px 5px 5px 5px rgba(110, 110, 110, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
-  width: 80%;
-  padding: 15px;
+  width: 90%;
+  padding: 20px 30px;
   margin-bottom: 20px;
 }
+
 
 .reviewerInfo {
   display: flex;
@@ -44,6 +45,7 @@
 .ratingItem{
   display: flex;
   align-items: center;
+  //justify-content: space-between;
 }
 
 .ratingLabel {

@@ -23,6 +23,7 @@ export const categoryApi = {
 // 로그인, 로그아웃 관련 API
 export const authApi = {
   login : `${API_URL}${AUTH_NOT_REQUIRED}/login`, // 로그인(유저 + 로그인 여부 반환)
+  signup : `${API_URL}${AUTH_NOT_REQUIRED}/signup`, //  회원가입입
   me : `${API_URL}${AUTH_REQUIRED}/user/me` // 유저 정보 반환(자동 로그인인 경우 이 api로 user정보 조회함)
 };
 

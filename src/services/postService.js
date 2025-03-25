@@ -118,4 +118,17 @@ export const fetchPostDetailById = async (postId) => {
 }
 export default useDeletePost;
 
-
+// 게시글 상세 정보 fetch (useQuery 사용하지 않는 버전)
+export const fetchPostDetail = async (postId) => {
+    const response = await fetchWithAuth(`${postApi.specificPost}/${postId}`);
+    
+    if (!response.ok) {
+        throw new ApiError({
+            status: response.status,
+            message: response.message,
+            details: response
+        });
+    }
+    
+    return response;
+};

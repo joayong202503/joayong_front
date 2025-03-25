@@ -10,8 +10,11 @@ const RegionSelectSection = ({
                                  handleRegionMainCategoryChange,
                                  handleRegionMiddleCategoryChange,
                                  handleRegionLastCategoryChange,
-                                 userAddress
+                                 userAddress=null,
+                                 // defaultRegionId=null
                              }) => {
+
+    // console.log('default', defaultRegionId);
 
     return (
         <div className={`${styles.inputWrapper} ${styles.location}`}>
