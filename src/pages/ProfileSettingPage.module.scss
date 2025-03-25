@@ -1,0 +1,46 @@
+.bodyContainer{
+  display: flex;
+  justify-content: center;
+}
+.fullContainer{
+  margin-top: 50px;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.titleContainer{
+  font-size: 20px;
+}
+.profileContainer{
+  margin-top: 30px;
+  position: relative;
+}
+.editPhotoContainer{
+  background: white;
+  border-radius: 50%;
+  border: 1px solid #cecece;
+  position: absolute;
+  top: 65%;
+  left: 69%;
+  padding: 12px 0px;
+}
+.bottomContainer{
+  margin-top: 50px;
+  width: 50%;
+}
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+.inputContainer label{
+  color: #888888;
+}
+.buttonContainer{
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
