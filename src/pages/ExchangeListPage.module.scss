@@ -39,10 +39,16 @@
 }
 
 .noResults{
-  margin-top: 30px;
   display: flex;
   flex-direction: column;
-
+  align-items: center;
+  margin-top: 200px;
+}
+.resetButton{
+  color: #9d9d9d;
+}
+.resetButton:hover{
+  color: black;
 }
 
 

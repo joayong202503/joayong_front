@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import styles from './MainPage.module.scss'
 import Card from "../components/common/Card.jsx";
-import { GoChevronLeft } from "react-icons/go";
-import { GoChevronRight } from "react-icons/go";
+import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 import mainPhoto from "../assets/images/mainPage.jpeg"
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import profileImage from '../assets/images/profile.png'
+import {Users,MessageCircle,Video,Star} from "lucide-react";
 
 
 
@@ -127,14 +127,14 @@ const MainPage = () => {
             <img className={styles.mainImage} src={mainPhoto}/>
             <div className={styles.contentContainer}>
               <h1>재능을 교환하고, 같이 성장합니다.</h1>
-              <p> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
+              <span> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
                 함께 만들어가는 재능교환 플랫폼 입니다.
-              </p>
+              </span>
             </div>
           </div>
 
         </section>
-        <section className={styles.bottomContainer}>
+        <section className={styles.middleContainer}>
           <div className={styles.titleContainer}>
             <h2> 최근 등록된 재능교환</h2>
           </div>
@@ -189,6 +189,38 @@ const MainPage = () => {
               </button>
             )}
           </div>
+        </section>
+        <section className={styles.bottomContainer}>
+          <div className={styles.bottomTitleContainer}>
+          <div className={styles.titleButton}>주요 기능</div>
+          <h1 className={styles.title}>어떻게 재능을 교환하나요?</h1>
+          <span className={styles.content}>당신의 재능을 공유하고 다른사람의 재능을 얻는 간단한 프로세스</span>
+
+          </div>
+          <div className={styles.fullBoxContainer}>
+            <div className={styles.boxContainer}>
+              <div className={styles.iconContainer}><Users color="#166ffe" /></div>
+              <h2 className={styles.boxTitle}>재능 게시물 등록</h2>
+              <p className={styles.boxContent}>내가 가진 재능과 배우고 싶은 재능을 설명하는 게시물을 올려보세요</p>
+            </div>
+            <div className={styles.boxContainer}>
+              <div className={styles.iconContainer}><MessageCircle color="#166ffe" /></div>
+              <h2 className={styles.boxTitle}>메세지로 연결</h2>
+              <p className={styles.boxContent}>마음에 드는 재능 게시물을 통해 요청메세지를 보내 연락해보세요</p>
+            </div>
+            <div className={styles.boxContainer}>
+              <div className={styles.iconContainer}><Video color="#166ffe" /></div>
+              <h2 className={styles.boxTitle}>화상채팅</h2>
+              <p className={styles.boxContent}>편리한 화상시스템을 통해 재능을 온라인으로 교환해보세요</p>
+            </div>
+            <div className={styles.boxContainer}>
+              <div className={styles.iconContainer}><Star color="#166ffe" /></div>
+              <h2 className={styles.boxTitle}>리뷰등록</h2>
+              <p className={styles.boxContent}>재능 교환 후에는 리뷰를 남겨보세요<br/> 별점과 후기를 통해 경험을 공유하고 더 나은 재능 교환을 만들 수 있습니다</p>
+            </div>
+
+          </div>
+
         </section>
       </div>
     </>
