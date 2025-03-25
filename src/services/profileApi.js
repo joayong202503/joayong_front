@@ -116,3 +116,33 @@ export const updateUsername = async (newName) =>{
     throw error;
   }
 }
+
+// 사용자 재능 카테고리 업데이트하기
+export const updateUserCategories = async (categoryData) => {
+  try {
+    const requestData = {
+      "talent-g-id": categoryData.teachingCategoryId,
+      "talent-t-id": categoryData.learningCategoryId
+    };
+
+    const response = await fetchWithAuth(`${API_URL}${AUTH_REQUIRED}/user/update/talent`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('서버 응답 에러:', response.status, errorText);
+      throw new Error(`재능 카테고리 업데이트 API 호출 실패: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('재능 카테고리 업데이트에 실패했습니다:', error);
+    throw error;
+  }
+};
