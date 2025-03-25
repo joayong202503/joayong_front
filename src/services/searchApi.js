@@ -21,6 +21,24 @@ export const searchExchanges = async (keyword, page = 0, size = 12) => {
 
     // 3. 응답확인
     if (!response.ok) {
+      // 404 상태코드이면 응답 본문을 확인
+      if (response.status === 404) {
+        // 응답 본문 확인
+        const errorData = await response.json();
+
+        // "검색결과가 없습니다" 메시지인 경우 빈 결과 반환
+        if (errorData.message === "검색결과가 없습니다.") {
+          return {
+            postList: {
+              content: [],
+              number: page,
+              last: true,
+              totalElements: 0,
+              totalPages: 0
+            }
+          };
+        }
+      }
       throw new Error('검색 결과를 가져오는데 실패했습니다: ' + response.status);
     }
     //4. JSON 변환 및 반환
