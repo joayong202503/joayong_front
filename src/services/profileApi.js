@@ -93,3 +93,26 @@ export const uploadProfileImage = async (imageFile) => {
     throw error;
   }
 };
+
+// 사용자 이름 변경하기
+export const updateUsername = async (newName) =>{
+  try{
+    const response = await fetchWithAuth(`${API_URL}${AUTH_REQUIRED}/user/update/name?newname=${encodeURIComponent(newName)}`,{
+      method: 'PUT',
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('서버 응답 에러:', response.status, errorText);
+      throw new Error(`사용자 이름 변경 API 호출 실패: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('사용자 이름 변경에 실패했습니다:', error);
+    throw error;
+  }
+}
