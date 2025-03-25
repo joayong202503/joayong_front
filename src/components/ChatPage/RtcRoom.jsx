@@ -51,6 +51,20 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
               success: function (pluginHandle) {
                 storePluginRef.current = pluginHandle;
 
+                let createRoom = {
+                  request : "create",
+                  room : roomId,
+                  permanent : false,
+                  record: false,
+                  publishers: 2,
+                  bitrate : 128000,
+                  fir_freq : 10,
+                  ptype: "publisher",
+                  description: `create room : ${roomCode} , ${username}`,
+                  is_private: false
+              }
+              pluginHandle.send({ message: createRoom });
+
                 let register = pin
                   ? {
                       request: "join",
