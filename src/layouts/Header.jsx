@@ -120,7 +120,10 @@ const Header = () => {
       <div>
         <ul className={styles.menuContainer}>
           <li className={styles.menuItem}>
-            <NavLink to="/exchanges" className={getLinkClassName}>재능 찾아보기</NavLink>
+            <NavLink to="/exchanges" className={getLinkClassName} end>재능 찾아보기</NavLink>
+          </li>
+          <li className={styles.menuItem}>
+            <NavLink to="/exchanges/new" className={getLinkClassName}>재능 등록하기</NavLink>
           </li>
           <li className={styles.menuItem}>
             <NavLink to="/matches" className={getLinkClassName} >매칭 관리</NavLink>
