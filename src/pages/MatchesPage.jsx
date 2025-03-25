@@ -1,5 +1,4 @@
-import React, {useEffect, useState, useCallback, useMemo} from 'react';
-import { debounce } from 'lodash';
+import React, {useEffect, useState, useMemo} from 'react';
 import styles from './MatchesPage.module.scss';
 import Button from "../components/common/Button.jsx";
 import SegmentControl from "../components/common/SegmentControl.jsx";
@@ -14,6 +13,10 @@ import InputBox from "../components/common/InputBox.jsx";
 import {useSelector} from "react-redux";
 
 const MatchesPage = () => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // 페이지의 최상단으로 이동
+    }, []);
 
     // ### matchingRequests vs FilteredRequests
     //  - matchingReques는 fetch 된 값, filteredRequests는 fetch된 검색어로 필터링한 값
@@ -130,13 +133,17 @@ const MatchesPage = () => {
         const requestsWithProfiles = await Promise.all(
             requests.map(async (request) => {
                 const userInfo = await fetchUserInfo(request.senderName);
-                return {
+                const userInfoWithProfileUrl = {
                     // 기존 request 응답 받은 것에 sender의 profile image url 추가하여 반환
                     ...request,
                     profileImage: userInfo.profileImageUrl ?
                         getCompleteImagePath(userInfo.profileImageUrl).imageUrl :
                         null
                 };
+                console.log(userInfoWithProfileUrl);
+                console.log(userInfoWithProfileUrl);
+                console.log(userInfoWithProfileUrl);
+                return userInfoWithProfileUrl;
             })
 
         );

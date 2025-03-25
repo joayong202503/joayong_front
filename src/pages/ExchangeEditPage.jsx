@@ -21,6 +21,10 @@ import { useValidation } from '../hooks/exchangeEditPageHooks/useValidation.js';
 
 const ExchangeEditPage = () => {
 
+    useEffect(() => {
+        window.scrollTo(0, 0); // 페이지의 최상단으로 이동
+    }, []);
+
     const { exchangeId: postId } = useParams();
     const navigate = useNavigate();
     const myUsername = useSelector((state) => state.auth.user?.name);

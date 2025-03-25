@@ -120,17 +120,21 @@ const Header = () => {
       <div>
         <ul className={styles.menuContainer}>
           <li className={styles.menuItem}>
-            <NavLink to="/exchanges" className={getLinkClassName}>재능 찾아보기</NavLink>
+            <NavLink to="/exchanges" end className={getLinkClassName}>재능 찾아보기</NavLink>
           </li>
           <li className={styles.menuItem}>
-            <NavLink to="/matches" className={getLinkClassName} >매칭 관리</NavLink>
+            <NavLink to="/exchanges/new" className={getLinkClassName}>재능 등록하기</NavLink>
+          </li>
+          <li className={styles.menuItem}>
+            <NavLink to="/matches" className={getLinkClassName}>매칭 관리</NavLink>
             {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
             <div className={styles.dotContainer}>
-              { hasReceivedPendingRequests && <BellDot size={14} color={'blue'} strokeWidth={1.5} style={{ fill: 'white' }}/>}
+              {hasReceivedPendingRequests &&
+                  <BellDot size={14} color={'blue'} strokeWidth={1.5} style={{fill: 'white'}}/>}
             </div>
           </li>
           <li className={styles.menuItem}>
-            <NavLink to ="/about" className={getLinkClassName}>알아보기</NavLink>
+            <NavLink to="/about" className={getLinkClassName}>알아보기</NavLink>
           </li>
         </ul>
       </div>
