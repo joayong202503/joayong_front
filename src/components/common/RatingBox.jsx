@@ -1,8 +1,10 @@
 import React from 'react';
 import styles from './RatingBox.module.scss'
 import { ThumbsUp, Award, MessageCircle, CalendarCheck, Smile, Star } from "lucide-react";
+import ProfileCircle from "./ProfileCircle.jsx";
+import {useNavigate} from "react-router-dom";
 
-const RatingBox = ({ reviewerName, reviewList, createAt }) => {
+const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) => {
   // 별점 아이콘 렌더링 함수
   const renderStars = (rating) => {
     const stars = [];
@@ -31,15 +33,15 @@ const RatingBox = ({ reviewerName, reviewList, createAt }) => {
   const getIconForQuestion = (question) => {
     switch (question) {
       case '전문성':
-        return <Award size={18} />;
+        // return <Award size={18} />;
       case '의사소통':
-        return <MessageCircle size={18} />;
+        // return <MessageCircle size={18} />;
       case '준비성':
-        return <CalendarCheck size={18} />;
+        // return <CalendarCheck size={18} />;
       case '친절도':
-        return <Smile size={18} />;
+        // return <Smile size={18} />;
       case '만족도':
-        return <ThumbsUp size={18} />;
+        // return <ThumbsUp size={18} />;
       default:
         return null;
     }
@@ -51,11 +53,23 @@ const RatingBox = ({ reviewerName, reviewList, createAt }) => {
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   };
 
+  const navigate = useNavigate();
+
+  //프로필을 클릭했을때 해당 프로필 페이지로 이동할 수 있도록
+  const handleProfileClick =() =>{
+      navigate(`/profile/${reviewerName}`)
+  }
+
   return (
     <div className={styles.fullContainer}>
       <div className={styles.nameContainer}>
         <div className={styles.reviewerInfo}>
-          <p className={styles.reviewer}>작성자 : {reviewerName}</p>
+          <div className={styles.profileContainer}
+               onClick={handleProfileClick}
+               style={{cursor: 'pointer'}}>
+            <ProfileCircle size="sm" src={reviewerProfileUrl}/>
+          </div>
+          <p className={styles.reviewer}>{reviewerName}</p>
 
         </div>
         <div className={styles.ratingResultContainer}>
