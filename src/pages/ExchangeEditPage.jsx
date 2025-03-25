@@ -18,8 +18,11 @@ import { usePostData } from '../hooks/exchangeEditPageHooks/usePostData.js';
 import { useCategoryState } from '../hooks/exchangeEditPageHooks/useCategoryState.js';
 import { useAutoFocus } from '../hooks/exchangeEditPageHooks/useAutoFocus.js';
 import { useValidation } from '../hooks/exchangeEditPageHooks/useValidation.js';
+import {useQueryClient} from "@tanstack/react-query";
 
 const ExchangeEditPage = () => {
+
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         window.scrollTo(0, 0); // 페이지의 최상단으로 이동
@@ -156,10 +159,7 @@ const ExchangeEditPage = () => {
         }
     }, [postId]);
 
-    console.log(postData);
-    console.log(111);
-    console.log(111);
-    console.log(111);
+    console.log('서버에 보낼 내용:', postData);
 
     // 컨펌 모달
     const showConfirmModal = ({ title, message, onConfirm, onCancel }) => {
@@ -195,14 +195,17 @@ const ExchangeEditPage = () => {
 
             await updatePost(formData);  // updatePost에서 이미 에러 처리함
 
+            // 캐시데이터 무효화
+            queryClient.invalidateQueries(['postDetail', postId]);
+
             setIsConfirmModalOpen(false);
             setIsMiniModalOpen(true);
             setMiniModalMessage('게시글이 정상적으로 수정되었습니다.');
 
-            // 2초 후 상세 페이지로 이동
+            // 1초 후 상세 페이지로 이동
             setTimeout(() => {
                 navigate(`/exchanges/${postId}`);
-            }, 2000);
+            }, 1000);
         } catch (error) {
             setIsConfirmModalOpen(false);
             setIsMiniModalOpen(true);
@@ -231,6 +234,7 @@ const ExchangeEditPage = () => {
                 id="title"
                 maxLength={50}
                 defaultValue={postData.title}
+                onChange={(e) => updatePostData('title', e.target.value)}
             />
 
             {/* 지역 선택 섹션 */}
@@ -331,6 +335,7 @@ const ExchangeEditPage = () => {
                 name={'content'}
                 ref={refs.content}
                 defaultValue={postData.content}
+                onChange={(e) => updatePostData('content', e.target.value)}
             />
 
             <div className={styles.buttonContainer}>
