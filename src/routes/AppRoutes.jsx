@@ -17,6 +17,7 @@ import MatchesPage from "../pages/MatchesPage.jsx";
 import ExchangeEditPage from "../pages/ExchangeEditPage.jsx";
 import ExchangeListPage from "../pages/ExchangeListPage.jsx";
 import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
+import ChatPage from "../pages/ChatPage.jsx";
 
 const router = createBrowserRouter([
   // 회원가입 페이지
@@ -129,7 +130,7 @@ const router = createBrowserRouter([
       {
         path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
-          {/*<ChatPage/>*/}
+          <ChatPage/>
         </AuthRequired>
 
       },
