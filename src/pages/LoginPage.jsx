@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import { authApi } from '../services/api'; // ✅ 실제 API 사용
 import styles from './LoginPage.module.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../store/slices/authSlice';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.auth); // ✅ 로그인 상태 가져오기
 
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
@@ -37,51 +38,22 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
     if (!validateEmail(email) || !password) return;
-  
-    setIsSubmitting(true);
-    setError('');
-  
-    try {
-      const loginRequest = {
-        "email":email,
-        "password":password
-      }
-      // ✅ 실제 로그인 API 호출
-      const rs = await fetch(authApi.login,{
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body:JSON.stringify(loginRequest)
-      })
-      const response = await rs.json();
-  
-      // ✅ 회원 정보가 없을 경우 오류 발생
-      if (!response || !response.accessToken) {
-        throw new Error('존재하지 않는 회원입니다. 회원가입을 진행해주세요.');
-      }
-  
-      // ✅ 토큰 저장 (인증 유지)
-      localStorage.setItem('user', JSON.stringify(response.user));
-      localStorage.setItem('token', response.token);
-  
-      // ✅ "로그인 정보 기억하기" 체크 시 이메일 저장
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
-  
-      navigate('/'); // 로그인 성공 시 홈으로 이동
-    } catch (err) {
-      setError(err.message || '로그인 실패. 다시 시도해주세요.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
+    dispatch(login({ email, password }))
+      .unwrap() // Thunk 결과를 기다림
+      .then(() => {
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', email);
+        } else {
+          localStorage.removeItem('rememberedEmail');
+        }
+        navigate('/'); // 로그인 성공 후 홈으로 이동
+      })
+      .catch((err) => {
+        console.error(err); // 오류 처리
+      });
+  };
 
   return (
     <div className={styles.container}>
@@ -135,16 +107,15 @@ const LoginPage = () => {
           />
           <label htmlFor="remember">로그인 정보 기억하기</label>
         </div>
-
         <div className={styles['text-center']}>
           <p>계정이 없으신가요?</p>
-          <button onClick={() => navigate('/signup')} className={styles.link}>
+          <p onClick={() => navigate('/signup')} className={styles.link}>
             회원가입
-          </button>
+          </p>
         </div>
 
-        <button type="submit" disabled={isSubmitting} className={styles['btn-primary']}>
-          {isSubmitting ? '로그인 중...' : '로그인'}
+        <button type="submit" disabled={status === 'loading'} className={styles['btn-primary']}>
+          {status === 'loading' ? '로그인 중...' : '로그인'}
         </button>
 
         {error && <p className={styles['error-text']}>{error}</p>}
@@ -152,6 +123,5 @@ const LoginPage = () => {
     </div>
   );
 };
-
 
 export default LoginPage;

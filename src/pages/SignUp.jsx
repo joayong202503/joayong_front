@@ -58,7 +58,19 @@ const SignUp = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await authApi.signup(email, username, password);
+      const signupRequest = {
+            "email":email,
+            "name":username,
+            "password":password
+          }
+      const rs = await fetch(authApi.signup,{
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body:JSON.stringify(signupRequest)
+      })
+      const response = await rs.json();
       console.log('회원가입 성공:', response);
 
       // ✅ 회원가입 성공 메시지 표시
