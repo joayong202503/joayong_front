@@ -51,7 +51,7 @@ const MiniAlert = ({
 
     return (
         <>
-            {isVisible && <div className={styles.overlay} />}
+            {isVisible && <div className={`${styles.overlay} ${visible ? styles.visible : styles.hidden}`}/>}
             <div className={`${styles.alertContainer} ${visible ? styles.visible : styles.hidden}`}>
                 <div className={styles.alertContent}>
                     <div className={styles.leftContent}>

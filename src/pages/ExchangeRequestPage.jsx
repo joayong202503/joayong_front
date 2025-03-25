@@ -23,7 +23,7 @@ const ExchangeRequestPage = () => {
     // Yup으로 유효성 검사
     const validationSchema = Yup.object({
         content: Yup.string()
-            .trim("내용을 입력해 주세요") // 이건 직접적 처리가 필요할 경우에만 사용하세요
+            .trim("내용을 입력해 주세요")
             .required("내용을 입력해주세요")
             .max(2200, "내용은 2200자 이내로 입력해주세요"),
 
