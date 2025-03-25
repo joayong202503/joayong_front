@@ -10,6 +10,9 @@ import ProfilePage from "../pages/ProfilePage.jsx";
 import ExchangeRequestPage from "../pages/ExchangeRequestPage.jsx";
 import MainPage from "../pages/MainPage.jsx";
 import MainLayout from "../layouts/mainLayout.jsx";
+import LoginPage from "../pages/LoginPage.jsx";
+import SignUp from "../pages/SignUp.jsx";
+
 
 const router = createBrowserRouter([
   // status 500 에러 페이지
@@ -25,7 +28,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <SignupPage/>
+        element: <SignUp />
       }
     ]
   },
@@ -36,7 +39,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <LoginPage/>
+        element: <LoginPage/>
       }
     ]
 
