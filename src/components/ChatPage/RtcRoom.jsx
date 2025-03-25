@@ -24,12 +24,13 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
   const mystreamRef = useRef(null);
 
   const opaqueId = "videoroom-test-" + Janus.randomString(12);
-  const roomId = 1234;
+  const roomId = roomCode;
   const pin = null;
   const serverUrl = "https://janus.jsflux.co.kr/janus";
 
   useEffect(() => {
     console.log("roomId : ", roomId);
+    console.log("username : ",username);
 
     // if (!isStarted) return;
 
@@ -49,6 +50,7 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
               opaqueId: opaqueId,
               success: function (pluginHandle) {
                 storePluginRef.current = pluginHandle;
+
                 let register = pin
                   ? {
                       request: "join",
@@ -63,12 +65,18 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
                       ptype: "publisher",
                       display: username,
                     };
+
+                    console.log("register : ",register);
+                    
+                    
                 pluginHandle.send({ message: register });
               },
               error: function (error) {
                 Janus.error("Error attaching plugin...", error);
               },
               onmessage: function (msg, jsep) {
+                console.log("msg : ",msg);
+                
                 let event = msg["videoroom"];
                 if (event === "joined") {
                   dispatch({
@@ -80,7 +88,8 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
                       publisherPvtId: msg["private_id"],
                     },
                   });
-
+                  console.log("sssss");
+                  
                   publishOwnFeed(true);
 
                   if (msg["publishers"] && msg["publishers"].length > 0) {
@@ -128,7 +137,7 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
         janusRef.current.destroy();
       }
     };
-  }, []);
+  }, [roomCode]);
 
   // const joinRoom = () => {
   //   if (!username) {
@@ -273,7 +282,6 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
 
   return (
     <div>
-      <h2>Janus WebRTC 1:1 화상채팅</h2>
       {
       // !isStarted ? (
       //   <>
