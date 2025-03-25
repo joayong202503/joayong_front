@@ -11,6 +11,9 @@ import {
     getSortedTalentCategories,
     getTalentCategoryDetailsObject
 } from "../utils/sortAndGetCategories.js";
+import Button from "../components/common/Button.jsx";
+import ConfirmModal from "../components/common/ConfirmModal.jsx";
+import MiniAlert from "../components/common/MiniAlert.jsx";
 
 const ExchangeEditPage = () => {
 
@@ -43,6 +46,16 @@ const ExchangeEditPage = () => {
             take: { main: null, sub: null }
         }
     });
+
+    // 컨펌 모달 훅
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [confirmModalTitle, setConfirmModalTitle] = useState('');
+    const [confirmModalOnConfirm, setConfirmModalOnConfirm] = useState(() => () => {});
+    const [confirmModalOnCancel, setConfirmModalOnCancel] = useState(() => () => {});
+
+    // 미니 모달
+    const [isMiniModalOpen, setIsMiniModalOpen] = useState(false);
+    const [miniModalOnClose, setMiniModalOnClose] = useState(() => () => {});
 
     // Selectors
     const regionCategories = useSelector((state) => state.regionCategory.regionCategories);
@@ -206,6 +219,14 @@ const ExchangeEditPage = () => {
     console.log(111);
     console.log(111);
 
+    // 컨펌 모달
+    const showConfirmModal = ({ title, message, onConfirm, onCancel }) => {
+        setIsConfirmModalOpen(true);
+        setConfirmModalTitle(title);
+        setConfirmModalOnConfirm(onConfirm);
+        setConfirmModalOnCancel(onCancel);
+    };
+
     return (
         <div className={styles.postEditPage}>
             <TitleInputSection
@@ -311,11 +332,56 @@ const ExchangeEditPage = () => {
             <ContentInputSection
                 maxlength={2200}
                 placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
-                isTitleNecessary={false}
+                isTitleNecessary={true}
                 name={'content'}
                 ref={refs.content}
                 defaultValue={postData.post.content}
             />
+
+            <div className={styles.buttonContainer}>
+                <Button
+                    theme={'whiteTheme'}
+                    fontSize={'small'}
+                    onClick={() => showConfirmModal({
+                        title: '게시글 수정을 취소하시겠습니까?',
+                        onConfirm: () => () => {
+                            // minmodal 2초 지속. 미니 모달 닫힌 후 이전 페이지로 이동(미니 모달 사용자가 닫아도 마찬가지)
+                            setIsConfirmModalOpen(false);
+                            setIsMiniModalOpen(true);
+                            setMiniModalOnClose(() => () => navigate(-1));
+                        },
+                        onCancel: () => () => setIsConfirmModalOpen(false)
+                    })}
+                > 취소하기</Button>
+                <Button
+                    theme={'blueTheme'}
+                    fontSize={'small'}
+                    onClick={() => showConfirmModal({
+                        title: '게시글을 수정하시겠습니까?',
+                        // onConfirm: handlePostModification,
+                        onConfirm: () => () => alert("수정수정"),
+                        onCancel: () => () => {setIsConfirmModalOpen(false)}
+                    })}
+                > 수정하기
+                </Button>
+            </div> {/*end of buttons */}
+
+            {/* 컨펌 모달 */}
+            {isConfirmModalOpen &&
+                <ConfirmModal
+                    title={confirmModalTitle}
+                    onConfirm={confirmModalOnConfirm}
+                    onClose={confirmModalOnCancel}
+            />}
+
+            {/*  미니 모달 */}
+            <MiniAlert
+                isVisible={isMiniModalOpen}
+                onClose={miniModalOnClose}
+            />
+
+
+
         </div>
     );
 };
