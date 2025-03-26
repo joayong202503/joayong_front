@@ -108,7 +108,6 @@ const Header = () => {
       // 2초 후 메인 페이지로 이동
       setTimeout(() => {
         setIsMiniAlertOpen(false);
-        setShouldNavigate(true); // 페이지 이동
         navigate("/");
       }, 1000);
 
