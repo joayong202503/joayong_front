@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { authApi } from "../services/api"; // API 호출을 위한 import
@@ -15,6 +15,8 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [emailAvailable, setEmailAvailable] = useState(true); // 이메일 사용 가능 여부 상태
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false); // 이메일 중복 확인 중 상태
   const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate()
 
   const validateEmail = (email) => {
@@ -46,13 +48,52 @@ const SignUp = () => {
     return true;
   };
 
+  const checkEmailAvailability = async () => {
+    if(!validateEmail(email)) return;
+    setIsCheckingEmail(true);
+    try {
+      const response = await fetch(`${authApi.duplicate}?type=email&value=${email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      console.log("data : ",data);
+      
+      if (data.available) {
+        setEmailAvailable(true);
+      } else {
+        setEmailAvailable(false);
+        setEmailError("이메일이 이미 사용 중입니다.");
+      }
+    } catch (error) {
+      console.error("이메일 중복 확인 오류:", error);
+      setEmailAvailable(false);
+      setEmailError("이메일 중복 확인 오류가 발생했습니다.");
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+
+  // 이메일 중복확인 디바운스로 2초 관리
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (email) {
+        checkEmailAvailability(); // 이메일 중복 확인
+      }
+    }, 1500); // 2초 뒤에 중복 확인
+
+    return () => clearTimeout(delayDebounceFn); 
+  }, [email]); 
+
   const handleSignUp = async (e) => {
     e.preventDefault();
 
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword();
 
-    if (!isEmailValid || !isPasswordValid || !username) {
+    if (!isEmailValid || !isPasswordValid || !username || !emailAvailable) {
       return;
     }
 
@@ -100,14 +141,14 @@ const SignUp = () => {
             type="text"
             value={email}
             onChange={(e) => {
-              setEmail(e.target.value);
-              if (emailError) validateEmail(e.target.value);
+              setEmail(e.target.value); // 이메일 변경 시 상태 업데이트
             }}
             className={styles["input-box"]}
             placeholder="이메일 주소를 입력하세요"
             required
           />
           {emailError && <p className={styles["error-text"]}>{emailError}</p>}
+          {isCheckingEmail && <p>이메일 중복 확인 중...</p>}
         </div>
 
         <div>
