@@ -1,5 +1,4 @@
-import React, {useEffect, useState, useCallback, useMemo} from 'react';
-import { debounce } from 'lodash';
+import React, {useEffect, useState, useMemo} from 'react';
 import styles from './MatchesPage.module.scss';
 import Button from "../components/common/Button.jsx";
 import SegmentControl from "../components/common/SegmentControl.jsx";
@@ -14,6 +13,10 @@ import InputBox from "../components/common/InputBox.jsx";
 import {useSelector} from "react-redux";
 
 const MatchesPage = () => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0); // 페이지의 최상단으로 이동
+    }, []);
 
     // ### matchingRequests vs FilteredRequests
     //  - matchingReques는 fetch 된 값, filteredRequests는 fetch된 검색어로 필터링한 값
@@ -58,7 +61,6 @@ const MatchesPage = () => {
 
     // 내가 받은 메시지이며 동시에 status가 N인 메시지가 있는지 확인
     useEffect(() => {
-
         // 필터링하여 값이 바뀐 경우, status가 r+c, d, m, 이거나, filter가 send인 경우는 initialrequests 업데이트 하면 안됨
         // (그러면 당연히내가 받은 status 가 n인 메시지는 0이 됨)
         if (selectedTabMenu === 'R+C' || selectedTabMenu === 'D' || selectedTabMenu === 'M' || selectedSegmentControlMenu === '보낸 요청') {
@@ -71,23 +73,45 @@ const MatchesPage = () => {
             setInitialRequests(matchingRequests);
         }
 
-        const flag = initialRequests.some(request => request.status === 'N' && request.receiverName === myUsername);
+        // matchingRequests를 기준으로 pending 상태 확인
+        const flag = matchingRequests.some(request => request.status === 'N' && request.receiverName === myUsername);
         setHasPendingRequests(flag);
-    }, [initialRequests, myUsername, matchingRequests]);
+    }, [initialRequests, myUsername, matchingRequests, selectedTabMenu, selectedSegmentControlMenu]);
 
 
     // ====== 일반 함수 ====== //
     // 게시글의 status 가 변경되었을 시, 성능 최적화를 위해
     // 다시 모든 데이터를 불러오지 않고 useState로 관리하는 값만 바꿈
     const updateMatchingRequest = (messageId, newStatus) => {
-        setMatchingRequests(prevRequests =>
-            prevRequests.map(request =>
+        setMatchingRequests(prevRequests => {
+            const updatedRequests = prevRequests.map(request =>
                 request.messageId === messageId
                     ? { ...request, status: newStatus }
                     : request
-            )
-        );
+            );
+
+            // 현재 선택된 탭에 따라 필터링
+            if (selectedTabMenu !== 'ALL') {
+                return updatedRequests.filter(request => {
+                    switch (selectedTabMenu) {
+                        case 'N':
+                            return request.status === 'N';
+                        case 'M':
+                            return request.status === 'M';
+                        case 'D':
+                            return request.status === 'D';
+                        case 'R+C':
+                            return request.status === 'R' || request.status === 'C';
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            return updatedRequests;
+        });
     };
+
 
     // 선택된 세크먼트 컨트롤 메뉴에 따라 메시지 조회 시 filter 값을 정의하는 함수
     const getMessageFilterBySender = (selectedSegmentControlMenu) => {
@@ -109,13 +133,17 @@ const MatchesPage = () => {
         const requestsWithProfiles = await Promise.all(
             requests.map(async (request) => {
                 const userInfo = await fetchUserInfo(request.senderName);
-                return {
+                const userInfoWithProfileUrl = {
                     // 기존 request 응답 받은 것에 sender의 profile image url 추가하여 반환
                     ...request,
                     profileImage: userInfo.profileImageUrl ?
                         getCompleteImagePath(userInfo.profileImageUrl).imageUrl :
                         null
                 };
+                console.log(userInfoWithProfileUrl);
+                console.log(userInfoWithProfileUrl);
+                console.log(userInfoWithProfileUrl);
+                return userInfoWithProfileUrl;
             })
 
         );

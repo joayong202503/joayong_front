@@ -11,7 +11,6 @@ const RegionSelectSection = ({
                                  handleRegionMiddleCategoryChange,
                                  handleRegionLastCategoryChange,
                                  userAddress=null,
-                                 // defaultRegionId=null
                              }) => {
 
     // console.log('default', defaultRegionId);

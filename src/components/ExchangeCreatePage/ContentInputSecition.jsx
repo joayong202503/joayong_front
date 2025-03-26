@@ -2,7 +2,7 @@ import React, {forwardRef, useState} from 'react';
 import styles from './ContentInputSection.module.scss';
 
 const ContentInputSection
-    = forwardRef(({ onKeyDown, isTitleNecessary=true, onChange, maxlength=2200 }, ref) => {
+    = forwardRef(({ onKeyDown, isTitleNecessary=true, onChange, maxlength=2200, defaultValue }, ref) => {
 
     // 글자 수 관리
     const [charCount, setCharCount] = useState(0);
@@ -29,6 +29,7 @@ const ContentInputSection
                     handleCharCountChange(e);
                 }}
                 onKeyDown={onKeyDown}
+                defaultValue={defaultValue ? defaultValue : ''}
             >
             </textarea>
 
