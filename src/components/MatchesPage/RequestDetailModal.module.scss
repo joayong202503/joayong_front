@@ -37,6 +37,7 @@
     margin: 0;
     font-size: 1.25rem;
     color: #333;
+    cursor: pointer;
   }
 }
 
@@ -96,9 +97,6 @@
   margin: 0;
 }
 
-h2 {
-  cursor: pointer;
-}
 .requestContent {
   display: flex;
   flex-direction: column;
