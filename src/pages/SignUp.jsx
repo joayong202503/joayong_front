@@ -14,9 +14,15 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [nameError, setNameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
   const [emailAvailable, setEmailAvailable] = useState(true); // 이메일 사용 가능 여부 상태
   const [isCheckingEmail, setIsCheckingEmail] = useState(false); // 이메일 중복 확인 중 상태
+
+  const [nameAvailable, setNameAvailable] = useState(true); // 이름 사용 가능 여부 상태
+  const [isCheckingName, setIsCheckingName] = useState(false); // 이름 중복 확인 중 상태
+
   const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate()
 
   const validateEmail = (email) => {
@@ -49,20 +55,24 @@ const SignUp = () => {
   };
 
   const checkEmailAvailability = async () => {
-    if(!validateEmail(email)) return;
+    if (!validateEmail(email)) return;
     setIsCheckingEmail(true);
     try {
-      const response = await fetch(`${authApi.duplicate}?type=email&value=${email}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${authApi.duplicate}?type=email&value=${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await response.json();
-      console.log("data : ",data);
-      
+      console.log("data : ", data);
+
       if (data.available) {
         setEmailAvailable(true);
+        setEmailError("");
       } else {
         setEmailAvailable(false);
         setEmailError("이메일이 이미 사용 중입니다.");
@@ -76,16 +86,58 @@ const SignUp = () => {
     }
   };
 
-  // 이메일 중복확인 디바운스로 2초 관리
+  // 이메일 중복확인 디바운스로 1.2초 관리
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (email) {
         checkEmailAvailability(); // 이메일 중복 확인
       }
-    }, 1500); // 2초 뒤에 중복 확인
+    }, 1200); // 1.2초 뒤에 중복 확인
 
-    return () => clearTimeout(delayDebounceFn); 
-  }, [email]); 
+    return () => clearTimeout(delayDebounceFn);
+  }, [email]);
+
+  const checkNameAvailability = async () => {
+    setIsCheckingName(true);
+    try {
+      const response = await fetch(
+        `${authApi.duplicate}?type=name&value=${username}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("data : ", data);
+
+      if (data.available) {
+        setNameAvailable(true);
+        setNameError("");
+      } else {
+        setNameAvailable(false);
+        setNameError("이름이 이미 사용 중입니다.");
+      }
+    } catch (error) {
+      console.error("이름 중복 확인 오류:", error);
+      setNameAvailable(false);
+      setNameError("이름 중복 확인 오류가 발생했습니다.");
+    } finally {
+      setIsCheckingName(false);
+    }
+  };
+
+  // 이름 중복확인 디바운스로 1.2초 관리
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (username) {
+        checkNameAvailability(); // 이메일 중복 확인
+      }
+    }, 1200); // 1.2초 뒤에 중복 확인
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [username]);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -93,7 +145,7 @@ const SignUp = () => {
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword();
 
-    if (!isEmailValid || !isPasswordValid || !username || !emailAvailable) {
+    if (!isEmailValid || !isPasswordValid || !nameAvailable || !emailAvailable) {
       return;
     }
 
@@ -162,6 +214,8 @@ const SignUp = () => {
             placeholder="사용자 이름을 입력하세요"
             required
           />
+          {nameError && <p className={styles["error-text"]}>{nameError}</p>}
+          {isCheckingName && <p>이름 중복 확인 중...</p>}
         </div>
 
         <div>
