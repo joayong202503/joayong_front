@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Header.module.scss";
-import logoImage from "../assets/images/logo.png";
+import logoImage from "../assets/images/logo-big.png";
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import Button from "../components/common/Button.jsx";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -126,6 +126,22 @@ const Header = () => {
     }
   };
 
+  const handleNewClick = (e) => {
+    e.preventDefault(); // 기본 네비게이션을 막음
+
+    setTimeout(() => {
+      navigate("/exchanges/new"); 
+    }, 500); // 0.5초 지연
+  };
+
+  const handleMatcheClick = (e) => {
+    e.preventDefault(); // 기본 네비게이션을 막음
+
+    setTimeout(() => {
+      navigate("/matches"); 
+    }, 500); // 0.5초 지연
+  };
+
   return (
     <header className={styles.headerContainer}>
       {isMiniAlertOpen && (
@@ -145,17 +161,17 @@ const Header = () => {
       <div>
         <ul className={styles.menuContainer}>
           <li className={styles.menuItem}>
-            <NavLink to="/exchanges" end className={getLinkClassName}>
+            <NavLink to="/exchanges" end className={getLinkClassName} >
               재능 찾아보기
             </NavLink>
           </li>
           <li className={styles.menuItem}>
-            <NavLink to="/exchanges/new" className={getLinkClassName}>
+            <NavLink to="/exchanges/new" className={getLinkClassName} onClick={handleNewClick}>
               재능 등록하기
             </NavLink>
           </li>
           <li className={styles.menuItem}>
-            <NavLink to="/matches" className={getLinkClassName}>
+            <NavLink to="/matches" className={getLinkClassName} onClick={handleMatcheClick}>
               매칭 관리
             </NavLink>
             {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
