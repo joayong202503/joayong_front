@@ -310,23 +310,46 @@ const ExchangeListPage = () => {
                             이전
                         </button>
 
-                        {Array.from({length: Math.min(5, totalPages)}).map((_, index) => {
-                            const pageNumber = currentPage <= 2
-                                ? index
-                                : currentPage + index - 2;
-
-                            if (pageNumber >= totalPages) return null;
-
-                            return (
+                        {totalPages <= 5 ? (
+                            // 총 페이지가 5개 이하일 때는 모든 페이지 표시
+                            Array.from({length: totalPages}).map((_, index) => (
                                 <button
-                                    key={pageNumber}
-                                    onClick={() => handlePageChange(pageNumber)}
-                                    className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
+                                    key={index}
+                                    onClick={() => handlePageChange(index)}
+                                    className={`${styles.pageButton} ${currentPage === index ? styles.active : ''}`}
                                 >
-                                    {pageNumber + 1}
+                                    {index + 1}
                                 </button>
-                            );
-                        })}
+                            ))
+                        ) : (
+                            // 총 페이지가 5개 초과일 때 로직
+                            Array.from({length: 5}).map((_, index) => {
+                                let pageNumber;
+
+                                if (currentPage >= totalPages - 2) {
+                                    // 마지막 페이지 근처면 마지막 5개 페이지 표시
+                                    pageNumber = totalPages - 5 + index;
+                                } else if (currentPage <= 2) {
+                                    // 처음 페이지 근처면 처음 5개 페이지 표시
+                                    pageNumber = index;
+                                } else {
+                                    // 중간 페이지면 현재 페이지 중심으로 표시
+                                    pageNumber = currentPage + index - 2;
+                                }
+
+                                if (pageNumber >= totalPages || pageNumber < 0) return null;
+
+                                return (
+                                    <button
+                                        key={pageNumber}
+                                        onClick={() => handlePageChange(pageNumber)}
+                                        className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
+                                    >
+                                        {pageNumber + 1}
+                                    </button>
+                                );
+                            })
+                        )}
 
                         <button
                             onClick={goToNextPage}
