@@ -3,12 +3,13 @@ import { useSelector } from 'react-redux';
 import styles from './ProfileSettingPage.module.scss'
 import ProfileCircle from "../components/common/ProfileCircle.jsx";
 import { Camera } from "lucide-react"
-import { fetchUserProfile, uploadProfileImage, updateUsername } from "../services/profileApi.js";
+import {fetchUserProfile, uploadProfileImage, updateUsername, updateUserCategories} from "../services/profileApi.js";
 import Button from "../components/common/Button.jsx";
 import { useNavigate } from 'react-router-dom';
 import InputBox from "../components/common/InputBox.jsx";
 import DropDownBasic from '../components/common/DropDownBasic';
 import { getSortedTalentCategories } from "../utils/sortAndGetCategories.js";
+import MiniAlert from "../components/common/MiniAlert.jsx";
 
 const API_URL = 'http://localhost:8999';
 
@@ -27,6 +28,14 @@ const ProfileSettingPage = () => {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
+    // MiniAlert 상태 관리
+    const [alertConfig, setAlertConfig] = useState({
+        isVisible: false,
+        message: "",
+        isNegative: false,
+        duration: 3000
+    });
+
     // Redux에서 현재 사용자 정보 가져오기
     const currentUser = useSelector((state) => state.auth.user);
     const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
@@ -43,6 +52,24 @@ const ProfileSettingPage = () => {
             sub: null
         }
     });
+
+    // MiniAlert 표시 함수
+    const showAlert = (message, isNegative = false, duration = 3000) => {
+        setAlertConfig({
+            isVisible: true,
+            message,
+            isNegative,
+            duration
+        });
+    };
+
+    // MiniAlert 닫기 함수
+    const closeAlert = () => {
+        setAlertConfig(prev => ({
+            ...prev,
+            isVisible: false
+        }));
+    };
 
     // 카테고리 변경 핸들러
     const handleCategoryChange = (type, level) => (selectedItem) => {
@@ -171,13 +198,13 @@ const ProfileSettingPage = () => {
 
         // 이미지 파일 검증
         if (!file.type.match('image.*')) {
-            alert('이미지 파일만 업로드 가능합니다.');
+            showAlert('이미지 파일만 업로드 가능합니다.', true);
             return;
         }
 
         // 파일 크기 제한 (5MB)
         if (file.size > 5 * 1024 * 1024) {
-            alert('파일 크기는 5MB 이하여야 합니다.');
+            showAlert('파일 크기는 5MB 이하여야 합니다.', true);
             return;
         }
 
@@ -204,15 +231,34 @@ const ProfileSettingPage = () => {
 
     // 프로필 정보 저장
     const handleSubmit = async () => {
+        // 카테고리 유효성 검사
+        const isTeachingSelected = categoryState.teaching.main !== null;
+        const isTeachingSubSelected = categoryState.teaching.sub !== null;
+        const isLearningSelected = categoryState.learning.main !== null;
+        const isLearningSubSelected = categoryState.learning.sub !== null;
+
+        // 대분류만 선택하고 소분류를 선택하지 않은 경우 처리
+        if ((isTeachingSelected && !isTeachingSubSelected) ||
+          (isLearningSelected && !isLearningSubSelected)) {
+            showAlert('카테고리의 대분류와 소분류를 모두 선택해주세요.', true);
+            return;
+        }
+
         // 변경 사항이 있는지 확인
-        const hasImageChange = !!formData.profileImage;
-        const hasNameChange = formData.name && formData.name !== profileData.name;
+        const hasImageChange = formData.profileImage;
+        const hasNameChange = formData.name !== profileData.name;
         const hasCategoryChange =
-            formData.teachingCategoryId !== profileData.teachingCategoryId ||
-            formData.learningCategoryId !== profileData.learningCategoryId;
+          formData.teachingCategoryId !== profileData.talentGId ||
+          formData.learningCategoryId !== profileData.talentTId;
 
         if (!hasImageChange && !hasNameChange && !hasCategoryChange) {
-            alert('변경할 내용이 없습니다.');
+            showAlert('변경된 내용이 없습니다 내용을 변경해주세요.', true);
+            return;
+        }
+
+        // 필수 입력 필드 검증
+        if (!formData.name.trim()) {
+            showAlert('사용자 이름을 입력해주세요.', true);
             return;
         }
 
@@ -232,164 +278,157 @@ const ProfileSettingPage = () => {
             }
 
             // 카테고리 업데이트 (카테고리가 변경된 경우)
-            if (hasCategoryChange && (formData.teachingCategoryId || formData.learningCategoryId)) {
+            if (hasCategoryChange) {
                 try {
                     console.log('카테고리 업데이트 요청:', formData.teachingCategoryId, formData.learningCategoryId);
 
-                    const requestData = {
-                        "talent-g-id": formData.teachingCategoryId || 0,
-                        "talent-t-id": formData.learningCategoryId || 0
+                    const categoryData = {
+                        teachingCategoryId: formData.teachingCategoryId || 0,
+                        learningCategoryId: formData.learningCategoryId || 0
                     };
 
-                    console.log('API 요청 데이터:', requestData);
-
-                    const response = await fetch(`${API_URL}/api/joayong/user/update/talent`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`
-                        },
-                        body: JSON.stringify(requestData)
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('서버 응답 에러:', response.status, errorText);
-                        throw new Error(`재능 카테고리 업데이트 실패: ${response.status} - ${errorText}`);
-                    }
-
-                    const categoryResult = await response.json();
+                    const categoryResult = await updateUserCategories(categoryData);
                     console.log('카테고리 업데이트 성공:', categoryResult);
                 } catch (err) {
                     console.error('카테고리 업데이트 실패:', err);
                     throw err;
                 }
             }
-
             // 성공 메시지 표시
-            alert('프로필 정보가 성공적으로 저장되었습니다.');
+            showAlert('프로필 정보가 성공적으로 저장되었습니다.');
 
-            window.location.reload();
+            // 잠시 후 페이지 새로고침
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
         } catch (error) {
             console.error('프로필 정보 업데이트 실패:', error);
-            alert('프로필 정보 업데이트에 실패했습니다. 다시 시도해주세요.');
+            showAlert('프로필 정보 업데이트에 실패했습니다. 다시 시도해주세요.', true);
             setIsSaving(false);
         }
     };
-
-    // 사용자가 취소할 때 실행되는 함수
     const handleCancel = () => {
-        navigate(-1); // 이전 페이지로 이동
+        navigate(`/profile/${currentUser.name}`); // 정확한 경로로 이동
     };
+
 
     if (isLoading) return <div className={styles.loadingState}>로딩 중...</div>;
     if (error) return <div className={styles.errorState}>{error}</div>;
 
     return (
-        <div className={styles.bodyContainer}>
-            <div className={styles.fullContainer}>
-                <div className={styles.titleContainer}>
-                    <h1>Edit Profile</h1>
-                </div>
-                <div className={styles.profileContainer}>
-                    {/* 프로필 이미지 */}
-                    <ProfileCircle
-                        size="llg"
-                        src={previewImage || profileData.profileImageUrl}
-                    />
-                    <div className={styles.editPhotoContainer}>
-                        {/* 파일 입력 */}
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            accept="image/*"
-                            onChange={handleFileChange}
-                        />
-                        {/* 카메라 아이콘 버튼 */}
-                        <button
-                            className={styles.editInput}
-                            onClick={handleImageButtonClick}
-                        >
-                            <Camera />
-                        </button>
-                    </div>
-                </div>
-                <div className={styles.bottomContainer}>
-                    <div className={styles.inputContainer}>
-                        <label>Username</label>
-                        <InputBox
-                            theme="gray"
-                            width={'100%'}
-                            value={formData.name}
-                            name="name"
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className={styles.inputContainer}>
-                        <label>가르칠 카테고리</label>
-                        <div className={styles.dropdownContainer}>
-                            <DropDownBasic
-                                options={sortedTalentCategories}
-                                defaultOption={categoryState.teaching.main}
-                                onChange={handleCategoryChange('teaching', 'main')}
-                                selectedOption={categoryState.teaching.main}
-                                width={150}
-                                placeholder={'대분류'}
-                            />
-                            <DropDownBasic
-                                options={categoryState.teaching.main?.subTalentList || []}
-                                defaultOption={categoryState.teaching.sub}
-                                onChange={handleCategoryChange('teaching', 'sub')}
-                                selectedOption={categoryState.teaching.sub}
-                                width={150}
-                                placeholder={'소분류'}
-                                disabled={!categoryState.teaching.main}
-                            />
-                        </div>
-                    </div>
-                    <div className={styles.inputContainer}>
-                        <label>배우고 싶은 카테고리</label>
-                        <div className={styles.dropdownContainer}>
-                            <DropDownBasic
-                                options={sortedTalentCategories}
-                                defaultOption={categoryState.learning.main}
-                                onChange={handleCategoryChange('learning', 'main')}
-                                selectedOption={categoryState.learning.main}
-                                width={150}
-                                placeholder={'대분류'}
-                            />
-                            <DropDownBasic
-                                options={categoryState.learning.main?.subTalentList || []}
-                                defaultOption={categoryState.learning.sub}
-                                onChange={handleCategoryChange('learning', 'sub')}
-                                selectedOption={categoryState.learning.sub}
-                                width={150}
-                                placeholder={'소분류'}
-                                disabled={!categoryState.learning.main}
-                            />
-                        </div>
-                    </div>
+      <div className={styles.bodyContainer}>
+          <div className={styles.fullContainer}>
+              <div className={styles.titleContainer}>
+                  <h1>Edit Profile</h1>
+              </div>
+              <div className={styles.profileContainer}>
+                  {/* 프로필 이미지 */}
+                  <ProfileCircle
+                    size="llg"
+                    src={previewImage || profileData.profileImageUrl}
+                  />
+                  <div className={styles.editPhotoContainer}>
+                      {/* 파일 입력 */}
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                      {/* 카메라 아이콘 버튼 */}
+                      <button
+                        className={styles.editInput}
+                        onClick={handleImageButtonClick}
+                      >
+                          <Camera />
+                      </button>
+                  </div>
+              </div>
+              <div className={styles.bottomContainer}>
+                  <div className={styles.inputContainer}>
+                      <label>Username</label>
+                      <InputBox
+                        width={'100%'}
+                        value={formData.name}
+                        name="name"
+                        onChange={handleInputChange}
+                      />
+                  </div>
+                  <div className={styles.inputContainer}>
+                      <label>가르칠 카테고리</label>
+                      <div className={styles.dropdownContainer}>
+                          <DropDownBasic
+                            options={sortedTalentCategories}
+                            defaultOption={categoryState.teaching.main}
+                            onChange={handleCategoryChange('teaching', 'main')}
+                            selectedOption={categoryState.teaching.main}
+                            width={150}
+                            placeholder={'대분류'}
+                          />
+                          <DropDownBasic
+                            options={categoryState.teaching.main?.subTalentList || []}
+                            defaultOption={categoryState.teaching.sub}
+                            onChange={handleCategoryChange('teaching', 'sub')}
+                            selectedOption={categoryState.teaching.sub}
+                            width={150}
+                            placeholder={'소분류'}
+                            disabled={!categoryState.teaching.main}
+                          />
+                      </div>
+                  </div>
+                  <div className={styles.inputContainer}>
+                      <label>배우고 싶은 카테고리</label>
+                      <div className={styles.dropdownContainer}>
+                          <DropDownBasic
+                            options={sortedTalentCategories}
+                            defaultOption={categoryState.learning.main}
+                            onChange={handleCategoryChange('learning', 'main')}
+                            selectedOption={categoryState.learning.main}
+                            width={150}
+                            placeholder={'대분류'}
+                          />
+                          <DropDownBasic
+                            options={categoryState.learning.main?.subTalentList || []}
+                            defaultOption={categoryState.learning.sub}
+                            onChange={handleCategoryChange('learning', 'sub')}
+                            selectedOption={categoryState.learning.sub}
+                            width={150}
+                            placeholder={'소분류'}
+                            disabled={!categoryState.learning.main}
+                          />
+                      </div>
+                  </div>
 
-                    <div className={styles.buttonContainer}>
-                        <Button
-                            onClick={handleSubmit}
-                            theme="blackTheme"
-                            disabled={isSaving}
-                        >
-                            {isSaving ? '저장 중...' : '수정하기'}
-                        </Button>
-                        <Button
-                            onClick={handleCancel}
-                            theme="grayTheme"
-                            disabled={isSaving}
-                        >
-                            취소
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                  <div className={styles.buttonContainer}>
+                      <Button
+                        onClick={handleSubmit}
+                        theme="blackTheme"
+                        disabled={isSaving}
+                      >
+                          {isSaving ? '저장 중...' : '수정하기'}
+                      </Button>
+                      <Button
+                        onClick={handleCancel}
+                        theme="grayTheme"
+                        disabled={isSaving}
+                      >
+                          취소
+                      </Button>
+                  </div>
+              </div>
+          </div>
+
+          {/* MiniAlert 컴포넌트 */}
+          <MiniAlert
+            message={alertConfig.message}
+            isNegative={alertConfig.isNegative}
+            duration={alertConfig.duration}
+            isVisible={alertConfig.isVisible}
+            onClose={closeAlert}
+          />
+      </div>
     );
 };
 
