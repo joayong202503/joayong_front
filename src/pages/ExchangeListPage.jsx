@@ -123,6 +123,7 @@ const ExchangeListPage = () => {
     // 응답 데이터 처리 함수
     const processExchangeData = async (response) => {
         if (response && response.postList && response.postList.content) {
+            setTotalPages(response.postList.totalPages);
             // Promise.all을 사용하여 모든 프로필 이미지를 비동기적으로 가져옴
             const mappedData = await Promise.all(response.postList.content.map(async post => {
                 // 카테고리 ID를 이름으로 변환
@@ -148,22 +149,11 @@ const ExchangeListPage = () => {
                         username: post.name,
                     },
                     content: post.content,
-                    createdAt: post.createdAt
+                    createdAt: post.createdAt,
                 };
             }));
             setRecentExchanges(mappedData);
 
-            // 현재 페이지 번호와 마지막 페이지 여부를 이용하여 총 페이지 수 계산
-            let calculatedTotalPages = 0;
-
-            if (response.postList.last) {
-                // 현재 페이지가 마지막 페이지라면, 현재 페이지 번호 + 1이 총 페이지 수
-                calculatedTotalPages = response.postList.number + 1;
-            } else {
-                // 마지막 페이지가 아니라면, 최소한 현재 페이지보다 더 많은 페이지가 있음
-                calculatedTotalPages = response.postList.number + 2; // 최소한 다음 페이지는 존재
-            }
-            setTotalPages(calculatedTotalPages);
         } else {
             setRecentExchanges([]);
             setTotalPages(0);

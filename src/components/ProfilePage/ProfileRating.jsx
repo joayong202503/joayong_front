@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  React, { useState, useEffect } from 'react';
 import styles from './ProfileRating.module.scss'
 import RatingBox from "../common/RatingBox.jsx";
 import { useParams,useNavigate } from 'react-router-dom';
