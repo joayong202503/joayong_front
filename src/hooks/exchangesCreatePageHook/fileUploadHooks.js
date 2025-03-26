@@ -4,7 +4,7 @@ import {useState} from "react";
 export const useFileUpload = () => {
     // 총 업로드할 파일 리스트 및 파일 검사했을 때의 에러 값을 상태값으로 관리
     const [uploadedFile, setUploadedFile] = useState([]);
-    const [fileUploadErrorMessage, setFileUploadErrorMessage] = useState(null);
+    const [fileUploadErrorMessage, setFileUploadErrorMessage] = useState('');
 
     // 파일 검사하는 함수
     const validateFiles = (allFiles) => {
@@ -25,9 +25,17 @@ export const useFileUpload = () => {
         return { valid: true }; // 모든 검사를 통과하면 반환하는 값
     }
 
-
     // 파일을 첨부했을 때의 로직
     const handleFileSelect = (e) => {
+
+        console.log(11111111);
+        console.log(11111111);
+
+        console.log(11111111);
+        console.log(e.target.files);
+        console.log(e.target.files);
+        console.log(e.target.files);
+        console.log(e.target.files);
 
         setFileUploadErrorMessage(null); // 에러 메시지 초기화
 
@@ -43,7 +51,7 @@ export const useFileUpload = () => {
         // 파일 검사 : {valid: true/false, (에러시) errorMessage : 에러메시지} 반환함
         const validateFilesResult = validateFiles(uniqueFiles); // 수정된 부분: allFiles 전달
 
-        // 에러가 있었을 시, 에러 메시지 모달을 CreateNewPost 모달에서 띄어주기 위해, usestate로 관리하는 에러 값을 수정해줌
+        // 에러가 있었을 시, 에러 메시지 모달을 CreateNewPost 모달에서 띄어주기 위해, useState로 관리하는 에러 값을 수정해줌
         if (!validateFilesResult.valid) {
             setFileUploadErrorMessage(null); // 상태 초기화
             setTimeout(() => {
@@ -55,6 +63,8 @@ export const useFileUpload = () => {
         // 모든 검사 통과하면 파일 상태 업데이트
         setUploadedFile(uniqueFiles);
         setFileUploadErrorMessage(null); // 에러 메시지 초기화
+
+
     };
 
 

@@ -66,6 +66,18 @@ img {
   }
 }
 
+
+.addImageContainer {
+  cursor: pointer;
+  background-color: rgba(173, 216, 230, 0.5);
+  border: 2px dashed #00bfff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
 .controlButton {
   width: 35px;
   flex: 0 0 auto;
@@ -88,4 +100,44 @@ img {
       transform: none;
     }
   }
+
+
+  /* 모달 오버레이 스타일 */
+  .modalOverlay {
+    position: fixed;
+    width: 100vh;
+    height: 100vh;
+    //top: 0;
+    //left: 0;
+    //right: 0;
+    //bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modalContent {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 모달 닫기 버튼 */
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    padding: 5px;
+    z-index: 10; /* 닫기 버튼이 다른 요소 위에 오도록 */
+  }
 }
+

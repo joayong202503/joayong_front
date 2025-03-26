@@ -19,7 +19,10 @@ import { useCategoryState } from '../hooks/exchangeEditPageHooks/useCategoryStat
 import { useAutoFocus } from '../hooks/exchangeEditPageHooks/useAutoFocus.js';
 import { useValidation } from '../hooks/exchangeEditPageHooks/useValidation.js';
 import {useQueryClient} from "@tanstack/react-query";
-import AdvancedImageCarousel from "../components/common/imagesAndFiles/AdvancedImageCarousel.jsx";
+import AdvancedImageUpload from "../components/common/imagesAndFiles/AdvancedImageUpload.jsx";
+import ImageCarouselWithThumbNail from "../components/common/imagesAndFiles/ImageCarouselWithThumbNail.jsx";
+import * as ReactDom from "react-dom";
+import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js";
 
 const ExchangeEditPage = () => {
 
@@ -73,6 +76,25 @@ const ExchangeEditPage = () => {
     const [miniModalMessage, setMiniModalMessage] = useState('');
     const [isNegativeMiniModalMessage, setIsNegativeMiniModalMessage] = useState(false);
 
+    // 이미지 캐러셀 모달 상태
+    const [isImageCarouselModalOpen, setIsImageCarouselModalOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // 파일을 업로드 검증 훅
+    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile, setFileUploadErrorMessage } = useFileUpload();
+
+    // 이미지 모달 열려 있는 동안은 스크롤 불가
+    useEffect(() => {
+        if (isImageCarouselModalOpen) {
+            document.body.style.overflow = "hidden"; // 스크롤 방지
+        } else {
+            document.body.style.overflow = ""; // 원래 상태로 복구
+        }
+        return () => {
+            document.body.style.overflow = ""; // 컴포넌트 언마운트 시 복구
+        };
+    }, [isImageCarouselModalOpen]);
+
     // Selectors
     const regionCategories = useSelector((state) => state.regionCategory.regionCategories);
     const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
@@ -111,8 +133,29 @@ const ExchangeEditPage = () => {
         });
     }, [regionCategories, talentCategories, setCategoryState]);
 
+    console.log('업로드된 파일', uploadedFile);
+    console.log('업로드 에러 메시지', fileUploadErrorMessage);
+
+    // 파일 업로드 유효성 검사 미통과 시 모달
+    useEffect(() => {
+        if (fileUploadErrorMessage) {
+            setIsMiniModalOpen(true);
+            setIsNegativeMiniModalMessage(true);
+            setMiniModalMessage(fileUploadErrorMessage);
+        }
+    }, [fileUploadErrorMessage]);
+
+    // 파일 업로드 유효성 검사 통과 후 상태값에 추가되었을 떄 처리 로직
+    useEffect(() => {
+        // 파일 업로드 성공했으면 postData에 추가해주기
+        updatePostData('update-image', true);
+        updatePostData('images', uploadedFile);
+        console.log('파일 첨부 후에!!!!', postData);
+    }, [uploadedFile]);
+
     // 게시글 상세정보 가져오기
     const fetchPostDetails = useCallback(async () => {
+
         try {
             const response = await fetchPostDetail(postId);
             const data = await response.json();
@@ -173,34 +216,29 @@ const ExchangeEditPage = () => {
         setConfirmModalOnCancel(onCancel);
     };
 
+    // 폼 데이터로 변환
+    const transformToFormData = (postData) => {
+        const formData = new FormData();
+
+        // postData.images는 서버에 보낼 용도가 아니라 image carousel 용이므로, 삐고 formData 생성
+        const newPostData = {...postData};
+        delete newPostData.images;
+
+        console.log('최종 보낼 내용', newPostData);
+
+        formData.append('post',
+            new Blob([JSON.stringify(newPostData)],
+                { type: 'application/json' }));
+
+        return formData;
+    };
+
     // 게시글 수정
     const handlePostModification = async () => {
         try {
             // 유효성 검증
-            console.log('보낼 내용');
-            console.log(postData);
-            console.log('보낼 내용');
+            console.log('보낼 내용(이미지 분리 전)', postData);
             await validationSchema.validate(postData, { abortEarly: true });
-
-            // 폼 데이터로 변환
-            const transformToFormData = (postData) => {
-                // - formdata에 데이터 집어넣기
-                //   :  이미지의 경우,  formData.append(fetch 할 때의 key 이름, file)
-                //   :  json의 경우, formData.append(fetch 할 때 보낼 key 이름, new Blob([JSON.stringify(data)], {data type} )'
-                const formData = new FormData();
-
-                // postData.images는 서버에 보낼 용도가 아니라 image carousel 용이므로, 삐고 formData 생성
-                const newPostData = {...postData};
-                delete newPostData.images;
-
-                console.log('최종 보낼 내용', newPostData);
-
-                formData.append('post',
-                    new Blob([JSON.stringify(newPostData)],
-                        { type: 'application/json' }));
-
-                return formData;
-            };
 
             const formData = transformToFormData(postData);
 
@@ -250,176 +288,228 @@ const ExchangeEditPage = () => {
             onCancel: () => () => setIsConfirmModalOpen(false)
         })}
 
+    console.log(postData.images, 22222222222222);
+
     return (
-        <div className={styles.postEditPage}>
+        <>
+            <div className={styles.postEditPage}>
 
-            {/* 사진 */}
-            <div className={styles.imageSection}>
-                <AdvancedImageCarousel
-                    images={postData?.images || []}
-                    maxLength={5}
-                    description={['게시물의 일관성을 위해, 사진은 전체 변경 또는 유지만 가능해요.', '사진에 마우스를 올려 확대/취소 할 수 있어요.']}
-                    onFileDelete={handleFileDelete}
+                {/* 사진 : fetc가 되고나면 실행 */}
+                { postData &&
+                    <div className={styles.imageSection}>
+                        <AdvancedImageUpload
+                            images={postData?.images || []}
+                            maxLength={5}
+                            description={['게시물의 일관성을 위해, 사진은 전체 변경 또는 유지만 가능해요.', '사진에 마우스를 올려 확대/취소 할 수 있어요.']}
+                            onFileDelete={handleFileDelete}
+                            onEnlargePhoto={() => setIsImageCarouselModalOpen(true)}
+                            isAllOrNone={true} // 사진 전체 수정만 가능
+                            onFileSelect={handleFileSelect}
+                        />
+                    </div>
+                }
+
+                <TitleInputSection
+                    label="제목"
+                    placeholder="제목을 입력하세요"
+                    ref={refs.title}
+                    id="title"
+                    maxLength={50}
+                    defaultValue={postData.title}
+                    onChange={(e) => updatePostData('title', e.target.value)}
                 />
-            </div>
 
-            <TitleInputSection
-                label="제목"
-                placeholder="제목을 입력하세요"
-                ref={refs.title}
-                id="title"
-                maxLength={50}
-                defaultValue={postData.title}
-                onChange={(e) => updatePostData('title', e.target.value)}
-            />
-
-            {/* 지역 선택 섹션 */}
-            <div className={`${styles.locationSection} ${styles.contentBox}`}>
-                <span className={styles.title}>여기서 만날 수 있어요</span>
-                <div className={styles.locationContainer}>
-                    <DropDownBasic
-                        options={regionCategories}
-                        defaultOption={categoryState?.region?.main}
-                        onChange={handleCategoryChange('region', 'main')}
-                        selectedOption={categoryState.region.main}
-                        width={150}
-                        placeholder={'대분류'}
-                    />
-                    <DropDownBasic
-                        options={categoryState?.region?.main?.subRegionList || []}
-                        defaultOption={categoryState?.region?.middle}
-                        onChange={handleCategoryChange('region', 'middle')}
-                        selectedOption={categoryState?.region?.middle}
-                        width={150}
-                        ref={refs.secondRegion}
-                        disabled={!categoryState?.region?.main}
-                        placeholder={'중분류'}
-                    />
-                    <DropDownBasic
-                        options={categoryState?.region?.middle?.detailRegionList || []}
-                        defaultOption={categoryState?.region?.last}
-                        onChange={handleCategoryChange('region', 'last')}
-                        selectedOption={categoryState?.region?.last}
-                        width={150}
-                        ref={refs.thirdRegion}
-                        disabled={!categoryState?.region?.middle}
-                        placeholder={'소분류'}
-                    />
-                </div>
-            </div>
-
-            {/* 재능 섹션 */}
-            <div className={styles.bothTalentsContainer}>
-                {/* 줄 재능 */}
-                <div className={`${styles.talentSection} ${styles.contentBox} ${styles.half}`}>
-                    <span className={styles.title}>내가 줄 재능</span>
+                {/* 지역 선택 섹션 */}
+                <div className={`${styles.locationSection} ${styles.contentBox}`}>
+                    <span className={styles.title}>여기서 만날 수 있어요</span>
                     <div className={styles.locationContainer}>
                         <DropDownBasic
-                            ref={refs.talentGiveMain}
-                            options={sortedTalentCategories}
-                            defaultOption={categoryState?.talent?.give?.main}
-                            onChange={handleCategoryChange('talent', 'give-main')}
-                            selectedOption={categoryState?.talent?.give?.main}
+                            options={regionCategories}
+                            defaultOption={categoryState?.region?.main}
+                            onChange={handleCategoryChange('region', 'main')}
+                            selectedOption={categoryState.region.main}
                             width={150}
                             placeholder={'대분류'}
                         />
                         <DropDownBasic
-                            ref={refs.talentGiveSub}
-                            options={categoryState?.talent?.give.main?.subTalentList || []}
-                            defaultOption={categoryState?.talent?.give?.sub}
-                            onChange={handleCategoryChange('talent', 'give-sub')}
-                            selectedOption={categoryState?.talent?.give?.sub}
+                            options={categoryState?.region?.main?.subRegionList || []}
+                            defaultOption={categoryState?.region?.middle}
+                            onChange={handleCategoryChange('region', 'middle')}
+                            selectedOption={categoryState?.region?.middle}
                             width={150}
+                            ref={refs.secondRegion}
+                            disabled={!categoryState?.region?.main}
+                            placeholder={'중분류'}
+                        />
+                        <DropDownBasic
+                            options={categoryState?.region?.middle?.detailRegionList || []}
+                            defaultOption={categoryState?.region?.last}
+                            onChange={handleCategoryChange('region', 'last')}
+                            selectedOption={categoryState?.region?.last}
+                            width={150}
+                            ref={refs.thirdRegion}
+                            disabled={!categoryState?.region?.middle}
                             placeholder={'소분류'}
-                            disabled={!categoryState?.talent?.give?.main}
                         />
                     </div>
                 </div>
 
-                {/* 받을 재능 */}
-                <div className={`${styles.talentSection} ${styles.contentBox} ${styles.half}`}>
-                    <span className={styles.title}>내가 받을 재능</span>
-                    <div className={styles.locationContainer}>
-                        <DropDownBasic
-                            ref={refs.talentTakeMain}
-                            options={sortedTalentCategories}
-                            defaultOption={categoryState?.talent?.take?.main}
-                            onChange={handleCategoryChange('talent', 'take-main')}
-                            selectedOption={categoryState?.talent?.take?.main}
-                            width={150}
-                            placeholder={'대분류'}
-                        />
-                        <DropDownBasic
-                            ref={refs.talentTakeSub}
-                            options={categoryState?.talent?.take?.main?.subTalentList || []}
-                            defaultOption={categoryState?.talent?.take?.sub}
-                            onChange={handleCategoryChange('talent', 'take-sub')}
-                            selectedOption={categoryState?.talent?.take?.sub}
-                            width={150}
-                            placeholder={'소분류'}
-                            disabled={!categoryState?.talent?.take?.main}
-                        />
+                {/* 재능 섹션 */}
+                <div className={styles.bothTalentsContainer}>
+                    {/* 줄 재능 */}
+                    <div className={`${styles.talentSection} ${styles.contentBox} ${styles.half}`}>
+                        <span className={styles.title}>내가 줄 재능</span>
+                        <div className={styles.locationContainer}>
+                            <DropDownBasic
+                                ref={refs.talentGiveMain}
+                                options={sortedTalentCategories}
+                                defaultOption={categoryState?.talent?.give?.main}
+                                onChange={handleCategoryChange('talent', 'give-main')}
+                                selectedOption={categoryState?.talent?.give?.main}
+                                width={150}
+                                placeholder={'대분류'}
+                            />
+                            <DropDownBasic
+                                ref={refs.talentGiveSub}
+                                options={categoryState?.talent?.give.main?.subTalentList || []}
+                                defaultOption={categoryState?.talent?.give?.sub}
+                                onChange={handleCategoryChange('talent', 'give-sub')}
+                                selectedOption={categoryState?.talent?.give?.sub}
+                                width={150}
+                                placeholder={'소분류'}
+                                disabled={!categoryState?.talent?.give?.main}
+                            />
+                        </div>
+                    </div>
+
+                    {/* 받을 재능 */}
+                    <div className={`${styles.talentSection} ${styles.contentBox} ${styles.half}`}>
+                        <span className={styles.title}>내가 받을 재능</span>
+                        <div className={styles.locationContainer}>
+                            <DropDownBasic
+                                ref={refs.talentTakeMain}
+                                options={sortedTalentCategories}
+                                defaultOption={categoryState?.talent?.take?.main}
+                                onChange={handleCategoryChange('talent', 'take-main')}
+                                selectedOption={categoryState?.talent?.take?.main}
+                                width={150}
+                                placeholder={'대분류'}
+                            />
+                            <DropDownBasic
+                                ref={refs.talentTakeSub}
+                                options={categoryState?.talent?.take?.main?.subTalentList || []}
+                                defaultOption={categoryState?.talent?.take?.sub}
+                                onChange={handleCategoryChange('talent', 'take-sub')}
+                                selectedOption={categoryState?.talent?.take?.sub}
+                                width={150}
+                                placeholder={'소분류'}
+                                disabled={!categoryState?.talent?.take?.main}
+                            />
+                        </div>
                     </div>
                 </div>
+
+                {/* 내용 */}
+                <ContentInputSection
+                    maxlength={2200}
+                    placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
+                    isTitleNecessary={true}
+                    name={'content'}
+                    ref={refs.content}
+                    defaultValue={postData.content}
+                    onChange={(e) => updatePostData('content', e.target.value)}
+                />
+
+                <div className={styles.buttonContainer}>
+                    <Button
+                        theme={'whiteTheme'}
+                        fontSize={'small'}
+                        onClick={() => showConfirmModal({
+                            title: '게시글 수정을 취소하시겠습니까?',
+                            onConfirm: () => () => {
+                                // minmodal 2초 지속. 미니 모달 닫힌 후 이전 페이지로 이동(미니 모달 사용자가 닫아도 마찬가지)
+                                setIsConfirmModalOpen(false);
+                                navigate(-1);
+                            },
+                            onCancel: () => () => setIsConfirmModalOpen(false)
+                        })}
+                    > 취소하기</Button>
+                    <Button
+                        theme={'blueTheme'}
+                        fontSize={'small'}
+                        onClick={() => showConfirmModal({
+                            title: '게시글을 수정하시겠습니까?',
+                            onConfirm: () => handlePostModification,
+                            onCancel: () => () => {
+                                setIsConfirmModalOpen(false)
+                            }
+                        })}
+                    > 수정하기
+                    </Button>
+                </div>
+                {/*end of buttons */}
+
+                {/* 컨펌 모달 */}
+                {isConfirmModalOpen &&
+                    <ConfirmModal
+                        title={confirmModalTitle}
+                        onConfirm={confirmModalOnConfirm}
+                        onClose={confirmModalOnCancel}
+                    />}
+
+                {/*  미니 모달 */}
+                {isMiniModalOpen &&
+                    <MiniAlert
+                        isVisible={isMiniModalOpen}
+                        onClose={() => {
+                            setIsMiniModalOpen(false)
+                            setIsMiniModalOpen(false)
+                        }}
+                        message={miniModalMessage}
+                        isNegative={isNegativeMiniModalMessage}
+                    />
+                }
             </div>
 
-            {/* 내용 */}
-            <ContentInputSection
-                maxlength={2200}
-                placeholder="가르칠 내용과 이 재능에 대한 경험을 설명해주세요"
-                isTitleNecessary={true}
-                name={'content'}
-                ref={refs.content}
-                defaultValue={postData.content}
-                onChange={(e) => updatePostData('content', e.target.value)}
-            />
-
-            <div className={styles.buttonContainer}>
-                <Button
-                    theme={'whiteTheme'}
-                    fontSize={'small'}
-                    onClick={() => showConfirmModal({
-                        title: '게시글 수정을 취소하시겠습니까?',
-                        onConfirm: () => () => {
-                            // minmodal 2초 지속. 미니 모달 닫힌 후 이전 페이지로 이동(미니 모달 사용자가 닫아도 마찬가지)
-                            setIsConfirmModalOpen(false);
-                            navigate(-1);
-                        },
-                        onCancel: () => () => setIsConfirmModalOpen(false)
-                    })}
-                > 취소하기</Button>
-                <Button
-                    theme={'blueTheme'}
-                    fontSize={'small'}
-                    onClick={() => showConfirmModal({
-                        title: '게시글을 수정하시겠습니까?',
-                        onConfirm: () => handlePostModification,
-                        onCancel: () => () => {setIsConfirmModalOpen(false)}
-                    })}
-                > 수정하기
-                </Button>
-            </div> {/*end of buttons */}
-
-            {/* 컨펌 모달 */}
-            {isConfirmModalOpen &&
-                <ConfirmModal
-                    title={confirmModalTitle}
-                    onConfirm={confirmModalOnConfirm}
-                    onClose={confirmModalOnCancel}
-                />}
-
-            {/*  미니 모달 */}
-            { isMiniModalOpen &&
-                <MiniAlert
-                    isVisible={isMiniModalOpen}
-                    onClose={() => {setIsMiniModalOpen(false)}}
-                    message={miniModalMessage}
-                    isNegative={isNegativeMiniModalMessage}
-                />
+            {/*이미지 확대 버튼 누르면 이미지 캐러셀이 모달에서 보이게 함 */}
+            {isImageCarouselModalOpen &&
+                ReactDom.createPortal(
+                <div className={styles.modalOverlay}
+                     onClick={(e) => {
+                         e.stopPropagation();
+                         setIsImageCarouselModalOpen(false);
+                     }}
+                >
+                    <div
+                        className={styles.modalContent}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsImageCarouselModalOpen(false);
+                        }} // 모달 컨텐츠 클릭 시 이벤트 전파 중단
+                    >
+                        {/* 모달 내용 */}
+                        <button
+                            className={styles.closeButton}
+                            onClick={() => setIsImageCarouselModalOpen(false)}
+                        >
+                            X
+                        </button>
+                        <ImageCarouselWithThumbNail
+                            imagesObject={postData.images}
+                            width="80%"
+                            height="80%"
+                            initialIndex={currentImageIndex || 0}
+                            isOpenModal={isImageCarouselModalOpen}
+                            setIsOpenModal={setIsImageCarouselModalOpen}
+                        />
+                    </div>
+                </div>,
+                document.body // 정확히 DOM 요소를 지정
+                )
             }
-        </div>
 
 
+        </>
     );
 };
 
