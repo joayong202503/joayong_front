@@ -19,6 +19,7 @@ import { useCategoryState } from '../hooks/exchangeEditPageHooks/useCategoryStat
 import { useAutoFocus } from '../hooks/exchangeEditPageHooks/useAutoFocus.js';
 import { useValidation } from '../hooks/exchangeEditPageHooks/useValidation.js';
 import {useQueryClient} from "@tanstack/react-query";
+import AdvancedImageCarousel from "../components/common/imagesAndFiles/AdvancedImageCarousel.jsx";
 
 const ExchangeEditPage = () => {
 
@@ -34,6 +35,8 @@ const ExchangeEditPage = () => {
 
     // 서버에서 가져온 데이터
     const [originalPost, setOriginalPost] = useState(null);
+
+    console.log('원래 서버에서 fetch해 준 내용', originalPost);
 
     // Ref
     const refs = {
@@ -123,6 +126,7 @@ const ExchangeEditPage = () => {
             updatePostData('talent-g-id', data['talent-g-id']);
             updatePostData('talent-t-id', data['talent-t-id']);
             updatePostData('post-id', data['post-id']);
+            updatePostData('images', data.images);
 
             // 필터링용 카테고리 초기화
             initializeCategories(data);
@@ -184,8 +188,15 @@ const ExchangeEditPage = () => {
                 //   :  이미지의 경우,  formData.append(fetch 할 때의 key 이름, file)
                 //   :  json의 경우, formData.append(fetch 할 때 보낼 key 이름, new Blob([JSON.stringify(data)], {data type} )'
                 const formData = new FormData();
+
+                // postData.images는 서버에 보낼 용도가 아니라 image carousel 용이므로, 삐고 formData 생성
+                const newPostData = {...postData};
+                delete newPostData.images;
+
+                console.log('최종 보낼 내용', newPostData);
+
                 formData.append('post',
-                    new Blob([JSON.stringify(postData)],
+                    new Blob([JSON.stringify(newPostData)],
                         { type: 'application/json' }));
 
                 return formData;
@@ -225,8 +236,33 @@ const ExchangeEditPage = () => {
         }
     };
 
+    // 기존 첨부사진 삭제 요청 시 로직
+    const handleFileDelete = () => {
+        // 사진은 전체 삭제만 가능하다고 경고
+        showConfirmModal({
+            title: '게시물의 일관성을 위해 사진은 개별 삭제가 아닌 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?',
+            onConfirm: () => () => {
+                setIsConfirmModalOpen(false);
+                // 서버에 전달할 값을 관리하는 usePostData훅에서, 사진 변경 여부를 아려주는 'update-image'에 true값으로 변경시켜주기
+                updatePostData('update-image', true);
+                updatePostData('images', null);
+            },
+            onCancel: () => () => setIsConfirmModalOpen(false)
+        })}
+
     return (
         <div className={styles.postEditPage}>
+
+            {/* 사진 */}
+            <div className={styles.imageSection}>
+                <AdvancedImageCarousel
+                    images={postData?.images || []}
+                    maxLength={5}
+                    description={['게시물의 일관성을 위해, 사진은 전체 변경 또는 유지만 가능해요.', '사진에 마우스를 올려 확대/취소 할 수 있어요.']}
+                    onFileDelete={handleFileDelete}
+                />
+            </div>
+
             <TitleInputSection
                 label="제목"
                 placeholder="제목을 입력하세요"

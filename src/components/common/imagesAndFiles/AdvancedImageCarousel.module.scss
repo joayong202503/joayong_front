@@ -1,21 +1,20 @@
 .carouselContainer {
   display: flex;
-  //gap: 10px;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  border: 2px solid red;
 }
 
 //  ============ 이미지
 .imageContainerList {
   display: flex;
   gap: 10px;
+  margin-top: 10px;
 }
 
 .imageContainer {
-  width: 130px;
-  height: 130px;
+  width: 200px;
+  height: 200px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #ddd;
@@ -28,33 +27,25 @@ img {
   object-fit: cover;
 }
 
-.featuredImageBadge {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  background-color: #3b82f6;
-  color: white;
-  //opacity: 0.7;
-  padding: 5px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-
 // 문구
-.carouselPlaceholder {
-  font-size: 0.7rem;
+.carouselDescription{
+  width: 100%;
+  font-size: 0.9rem;
   height: fit-content;
 
   &.gray {
-    background: #f4f4f580;
+    //background: #f4f4f580;
     border-radius: 10px;
   }
 
   & p {
-    color: #64748b;
     margin: 0;
+    color: #64748b;
+  }
+
+  & p.count {
+    width: 100%;
+    text-align: end;
   }
 }
 
