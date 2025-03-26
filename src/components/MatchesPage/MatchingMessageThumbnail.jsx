@@ -39,7 +39,9 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     const showSuccessMiniModal = () => {
         setMiniModalMessage('성공적으로 처리되었습니다.');
         setShowMiniModal(true);
-        setTimeout(() => setShowMiniModal(false), 1500);
+        setTimeout(() => {
+            setShowMiniModal(false);
+        }, 1500);
     };
 
     // 미니 오달 에러 묘시 함수
@@ -268,6 +270,10 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                 <MiniAlert
                     message={miniModalMessage}
                     isNegative={isNegativeMiniModalMessage}
+                    onClose={() => {
+                        setShowMiniModal(false);
+                        setShowConfirmModal(false);
+                    }}
                 />
             )}
 

@@ -311,14 +311,16 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
       (
         <div className={styles.videoContainer}>
           <h3>{title}</h3>
-          <ToggleVideoButton
-            isVideoMuted={isVideoMuted}
-            onClick={toggleVideoHandler}
-          />
-          <ToggleAudioButton
-            isAudioMuted={isAudioMuted}
-            onClick={toggleAudioHandler}
-          />
+          <div className={styles.mediaContainer}>
+            <ToggleVideoButton
+              isVideoMuted={isVideoMuted}
+              onClick={toggleVideoHandler}
+            />
+            <ToggleAudioButton
+              isAudioMuted={isAudioMuted}
+              onClick={toggleAudioHandler}
+            />
+          </div>
           <VideoView
             ref={mainVideoRef}
             videoType="main"
@@ -341,6 +343,7 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
               onClick={() => videoClick(remoteVideoRef)}
             />
           </div>
+          <p>작은화면을 누르면 큰 화면에 크게 보실 수 있어요.</p>
         </div>
       )}
     </div>
