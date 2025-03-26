@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ProfileExchanges.module.scss';
 import Card from "../common/Card.jsx";
-import { fetchUserPosts } from "../../services/profileApi.js";
+import {fetchUserPosts, fetchUserProfile} from "../../services/profileApi.js";
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import profileImage from '../../assets/images/profile.png';
+
+const API_URL = 'http://localhost:8999';
 
 const ProfileExchanges = () => {
   const navigate = useNavigate();
@@ -65,6 +67,7 @@ const ProfileExchanges = () => {
       const talentGive = post['talent-g-id'] ? getTalentName(post['talent-g-id']) : "정보없음";
       const talentTake = post['talent-t-id'] ? getTalentName(post['talent-t-id']) : "정보없음";
       const lessonLocation = post['region-id'] ? getRegionName(post['region-id']) : "정보없음";
+      const profileImageUrl = post['profile-url'];
 
       return {
         id: post["post-id"],
@@ -74,11 +77,11 @@ const ProfileExchanges = () => {
         lessonLocation: lessonLocation,
         // 이미지 URL 구성
         lessonImageSrc: post.images && post.images.length > 0
-          ? `http://localhost:8999${post.images[0].imageUrl}`
+          ? `${API_URL}${post.images[0].imageUrl}`
           : undefined,
         profile: {
           name: post.name || "이름 없음",
-          imageSrc: post['profile-url'] || profileImage,
+          imageSrc: `${API_URL}${profileImageUrl}`,
           size: 'xs'
         },
         content: post.content,
