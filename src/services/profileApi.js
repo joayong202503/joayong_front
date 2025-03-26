@@ -30,11 +30,24 @@ export const fetchUserPosts = async (username) => {
   try {
     const response = await fetchWithAuth(`${API_URL}${AUTH_REQUIRED}/post/user/${username}`);
 
+    // 404 응답의 경우 게시물이 없다고 간주하고 빈 배열 반환
+    if (response.status === 404) {
+      console.log('사용자의 게시물이 없습니다.');
+      return [];
+    }
+
+    // 다른 오류 응답 처리
     if (!response.ok) {
       throw new Error('API 호출 실패: ' + response.status);
     }
 
     const data = await response.json();
+
+    // data가 null이거나 빈 배열인 경우에도 빈 배열 반환
+    if (!data || (Array.isArray(data) && data.length === 0)) {
+      return [];
+    }
+
     return data;
   } catch (error) {
     console.error('사용자의 게시물을 가져오는데 실패했습니다:', error);
