@@ -11,6 +11,7 @@ export const usePostData = () => {
         'region-id': '',
         'talent-g-id': '',
         'talent-t-id': '',
+        'update-image': false,
     });
 
     // 제목, 내용, 지역id, 재능id를 서버에 보낼 값만 관리하는 postData useState에 업데이트하는 함수
