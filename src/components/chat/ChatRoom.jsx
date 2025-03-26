@@ -3,8 +3,10 @@ import { connectWebSocket, sendMessage } from "./websocket";
 import fetchWithAuth from "../../services/fetchWithAuth.js";
 import { useSelector } from "react-redux";
 import styles from "./ChatRoom.module.scss"; // SCSS 모듈 임포트
+import { API_URL } from "../../services/api.js";
+import profilePlaceholder from "../../assets/images/profile.png";
 
-const ChatRoom = ({ otherUserName = "조아용2" }) => {
+const ChatRoom = ({user1, user2}) => {
   const [roomId, setRoomId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -12,16 +14,22 @@ const ChatRoom = ({ otherUserName = "조아용2" }) => {
 
   const currentUserProfile = useSelector((state) => state.auth.user);
   const currentUserName = currentUserProfile.name;
+  let otherUserName;  
+  if(user1===currentUserName){
+    otherUserName=user2;
+  }else{
+    otherUserName=user1;
+  }
 
-  console.log(currentUserProfile)
   useEffect(() => {
     const initializeChatRoom = async () => {
+      
       const sendData = {
         user1Name: currentUserName,
         user2Name: otherUserName,
       };
       try {
-        const roomResponse = await fetchWithAuth("http://localhost:8999/api/joayong/chat/chatroom", {
+        const roomResponse = await fetchWithAuth(`${API_URL}/api/joayong/chat/chatroom`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(sendData),
@@ -32,24 +40,24 @@ const ChatRoom = ({ otherUserName = "조아용2" }) => {
         console.log("생성된 방번호: " + id);
 
         const profileResponse = await fetchWithAuth(
-          `http://localhost:8999/api/joayong/user/profile/${otherUserName}`
+          `${API_URL}/api/joayong/user/profile/${otherUserName}`
         );
         if (!profileResponse.ok) throw new Error("Failed to load other user profile");
         const otherUserProfile = await profileResponse.json();
-
+        console.log("Fetched otherUserProfile:", JSON.stringify(otherUserProfile, null, 2));
+        console.log("currentUserProfile:", JSON.stringify(currentUserProfile, null, 2));
         setUserProfiles({
           [currentUserProfile.id]: {
             username: currentUserProfile.name,
-            profileImageUrl: 'http://localhost:8999'+currentUserProfile.profileImageUrl,
+            profileImageUrl: currentUserProfile.profileImageUrl? API_URL+currentUserProfile.profileImageUrl:"",
           },
           [otherUserProfile.id]: {
             username: otherUserProfile.name,
-            profileImageUrl: 'http://localhost:8999'+otherUserProfile.profileImageUrl,
+            profileImageUrl: otherUserProfile.profileImageUrl? API_URL+otherUserProfile.profileImageUrl:"",
           },
         });
-
         const historyResponse = await fetchWithAuth(
-          `http://localhost:8999/api/joayong/chat/chatroom/${id}/history`
+          `${API_URL}/api/joayong/chat/chatroom/${id}/history`
         );
         if (!historyResponse.ok) throw new Error("Failed to load chat history");
         const historyData = await historyResponse.json();
@@ -64,13 +72,16 @@ const ChatRoom = ({ otherUserName = "조아용2" }) => {
     };
 
     initializeChatRoom();
-  }, [currentUserName, otherUserName, currentUserProfile]);
+  }, [roomId, currentUserProfile, otherUserName]);
 
   const handleSend = () => {
     const message = { senderId: currentUserProfile.id, content: input };
     sendMessage(roomId, message);
     setInput("");
   };
+  useEffect(() => {
+    console.log("Updated userProfiles:", JSON.stringify(userProfiles, null, 2));
+  }, [userProfiles]);
 
   return (
     <div className={styles.chatContainer}>
@@ -87,7 +98,7 @@ const ChatRoom = ({ otherUserName = "조아용2" }) => {
               className={`${styles.message} ${isCurrentUser ? styles.sent : styles.received}`}
             >
               <img
-                src={sender.profileImageUrl || "src/assets/images/profile.png"}
+                src={sender.profileImageUrl || profilePlaceholder}
                 alt="profile"
                 className={styles.profileImage}
               />
@@ -103,6 +114,9 @@ const ChatRoom = ({ otherUserName = "조아용2" }) => {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSend();
+          }}
           className={styles.input}
           placeholder="메시지를 입력하세요..."
         />

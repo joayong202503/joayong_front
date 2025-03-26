@@ -135,7 +135,13 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
 
 
     const handleRedirectToChatRoom = () => {
-        navigate(`/chat/${request.messageId}`);
+        console.log("request.senderNmae: "+request.senderName);
+        navigate(`/chat/${request.messageId}`, {
+            state: { 
+                name1: request.senderName, 
+                name2: request.receiverName
+            }
+        });
     };
 
     const handleRedirectToReviewPage = () => {

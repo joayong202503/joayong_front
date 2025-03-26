@@ -142,7 +142,7 @@ const router = createBrowserRouter([
 
       // },
       {
-        path: 'chat', // matchid -> messageId로 수정
+        path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
           <ChatPage/>
         </AuthRequired>
