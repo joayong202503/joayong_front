@@ -152,14 +152,14 @@ const ProfileExchanges = () => {
     return <div className={styles.errorState}>{error}</div>;
   }
 
-  if (userPosts.length === 0) {
-    return <div className={styles.emptyState}>작성한 게시물이 없습니다.</div>;
-  }
 
   return (
     <div className={styles.fullContainer}>
       <h2>Open Exchanges</h2>
 
+      {userPosts.length ===0?(
+        <div className={styles.emptyState}>작성한 게시물이 없습니다.</div>
+      ):(
       <div className={styles.cardContainer}>
         {currentPosts.map(post => (
           <div key={post.id} className={styles.cardItem}>
@@ -175,6 +175,7 @@ const ProfileExchanges = () => {
           </div>
         ))}
       </div>
+  )}
 
       {totalPages > 1 && (
         <div className={styles.pagination}>
