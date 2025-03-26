@@ -31,6 +31,17 @@
   font-weight: 600;
 }
 
+.logoContainer{
+  display: flex;
+  justify-content: center;  /* 가로 중앙 정렬 */
+  align-items: center;      /* 세로 중앙 정렬 */
+  height: 100%;             /* 부모 요소의 높이를 채우기 위한 설정 */
+   img{
+      width: 400px;
+      cursor: pointer;
+  }
+}
+
 .input-box {
   padding: 0.75rem 1rem;
   border: 1px solid #e0e0e0;
