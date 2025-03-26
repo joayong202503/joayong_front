@@ -1,0 +1,131 @@
+import React, { useState, useEffect } from "react";
+import { connectWebSocket, sendMessage } from "./websocket";
+import fetchWithAuth from "../../services/fetchWithAuth.js";
+import { useSelector } from "react-redux";
+import styles from "./ChatRoom.module.scss"; // SCSS 모듈 임포트
+import { API_URL } from "../../services/api.js";
+import profilePlaceholder from "../../assets/images/profile.png";
+
+const ChatRoom = ({user1, user2}) => {
+  const [roomId, setRoomId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [userProfiles, setUserProfiles] = useState({});
+
+  const currentUserProfile = useSelector((state) => state.auth.user);
+  const currentUserName = currentUserProfile.name;
+  let otherUserName;  
+  if(user1===currentUserName){
+    otherUserName=user2;
+  }else{
+    otherUserName=user1;
+  }
+
+  useEffect(() => {
+    const initializeChatRoom = async () => {
+      
+      const sendData = {
+        user1Name: currentUserName,
+        user2Name: otherUserName,
+      };
+      try {
+        const roomResponse = await fetchWithAuth(`${API_URL}/api/joayong/chat/chatroom`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sendData),
+        });
+        if (!roomResponse.ok) throw new Error("Failed to create chat room");
+        const { id, user1Id, user2Id } = await roomResponse.json();
+        setRoomId(id);
+        console.log("생성된 방번호: " + id);
+
+        const profileResponse = await fetchWithAuth(
+          `${API_URL}/api/joayong/user/profile/${otherUserName}`
+        );
+        if (!profileResponse.ok) throw new Error("Failed to load other user profile");
+        const otherUserProfile = await profileResponse.json();
+        console.log("Fetched otherUserProfile:", JSON.stringify(otherUserProfile, null, 2));
+        console.log("currentUserProfile:", JSON.stringify(currentUserProfile, null, 2));
+        setUserProfiles({
+          [currentUserProfile.id]: {
+            username: currentUserProfile.name,
+            profileImageUrl: currentUserProfile.profileImageUrl? API_URL+currentUserProfile.profileImageUrl:"",
+          },
+          [otherUserProfile.id]: {
+            username: otherUserProfile.name,
+            profileImageUrl: otherUserProfile.profileImageUrl? API_URL+otherUserProfile.profileImageUrl:"",
+          },
+        });
+        const historyResponse = await fetchWithAuth(
+          `${API_URL}/api/joayong/chat/chatroom/${id}/history`
+        );
+        if (!historyResponse.ok) throw new Error("Failed to load chat history");
+        const historyData = await historyResponse.json();
+        setMessages(historyData);
+
+        connectWebSocket(id, (msg) => {
+          setMessages((prev) => [...prev, msg]);
+        });
+      } catch (error) {
+        console.error("Failed to initialize chat room:", error);
+      }
+    };
+
+    initializeChatRoom();
+  }, [roomId, currentUserProfile, otherUserName]);
+
+  const handleSend = () => {
+    const message = { senderId: currentUserProfile.id, content: input };
+    sendMessage(roomId, message);
+    setInput("");
+  };
+  useEffect(() => {
+    console.log("Updated userProfiles:", JSON.stringify(userProfiles, null, 2));
+  }, [userProfiles]);
+
+  return (
+    <div className={styles.chatContainer}>
+      <div className={styles.messageList}>
+        {messages.map((msg, idx) => {
+          const sender = userProfiles[msg.senderId] || {
+            username: "Unknown",
+            profileImageUrl: null,
+          };
+          const isCurrentUser = msg.senderId === currentUserProfile.id;
+          return (
+            <div
+              key={idx}
+              className={`${styles.message} ${isCurrentUser ? styles.sent : styles.received}`}
+            >
+              <img
+                src={sender.profileImageUrl || profilePlaceholder}
+                alt="profile"
+                className={styles.profileImage}
+              />
+              <div className={styles.messageContent}>
+                <span className={styles.username}>{sender.username}</span>
+                <p className={styles.text}>{msg.content}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.inputContainer}>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSend();
+          }}
+          className={styles.input}
+          placeholder="메시지를 입력하세요..."
+        />
+        <button onClick={handleSend} className={styles.sendButton}>
+          전송
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ChatRoom;

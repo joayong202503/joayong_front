@@ -2,15 +2,19 @@ import React, { useEffect, useReducer, useState } from "react";
 import RtcRoom from "../components/ChatPage/RtcRoom";
 import { Provider, useSelector } from "react-redux";
 import { store } from "../store/index.js";
-import { useParams } from "react-router-dom";
+import { useParams,useLocation } from "react-router-dom";
 import { fetchRtcRoomId } from "../services/rtcApi.js";
 import styles from './ChatPage.module.scss';
+import ChatRoom from "../components/chat/ChatRoom.jsx";
 
 const ChatPage = () => {
   const user = useSelector((state) => state.auth.user);
   const { messageId } = useParams();
   const [roomId, setRoomId] = useState(null);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const user1 = location.state?.name1 || "알 수 없음";
+  const user2 = location.state?.name2 || "알 수 없음";
 
   console.log("messageId : ", messageId);
 
@@ -45,7 +49,7 @@ const ChatPage = () => {
           <div className={styles.videoContainer}>
             <RtcRoom roomCode={roomId} username={username} />
           </div>
-          <div className={styles.chatContainer}>{/* <Chat /> */}</div>
+          <div className={styles.chatContainer}><ChatRoom user1={user1} user2={user2} /></div>
         </div>
       </Provider>
     </>

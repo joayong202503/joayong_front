@@ -134,11 +134,19 @@ const router = createBrowserRouter([
 
       },
       // WRTC & 채팅 페이지
+      // {
+      //   path: 'chat/:matchId',
+      //   element: <AuthRequired>
+      //     {/*<ChatPage/>*/}
+      //   </AuthRequired>
+
+      // },
       {
         path: 'chat/:messageId', // matchid -> messageId로 수정
         element: <AuthRequired>
           <ChatPage/>
         </AuthRequired>
+        
 
       },
       // 프로필 페이지
