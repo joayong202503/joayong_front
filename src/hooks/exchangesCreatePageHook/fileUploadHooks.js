@@ -28,15 +28,6 @@ export const useFileUpload = () => {
     // 파일을 첨부했을 때의 로직
     const handleFileSelect = (e) => {
 
-        console.log(11111111);
-        console.log(11111111);
-
-        console.log(11111111);
-        console.log(e.target.files);
-        console.log(e.target.files);
-        console.log(e.target.files);
-        console.log(e.target.files);
-
         setFileUploadErrorMessage(null); // 에러 메시지 초기화
 
         // 파일 최대 개수를 구하려면, 검증 함수 호출 전 일단 기존 파일 + 이전 파일을 합쳐서 검증을 해야 함

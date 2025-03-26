@@ -15,13 +15,13 @@ const AdvancedImageUpload = ({
     onFileSelect,
 }) => {
 
+    // 컨펌 모달
+    const [showConfirmModalOpen, setShowConfirmModalOpen] = useState(false);
     const [confirmModalOnConfirm, setConfirmModalOnConfirm] = useState(() => () => {});
 
-    console.log('image carousel에 전송된 이미지 객체', images);
+    const [isFirstAttempt, setIsFirstAttempt] = useState(true); // 파일 전체 변경만 가능한 경우, 컨펌 모달 띄운 적이 있는지 여부
 
     const fileInputRef = useRef();
-
-    const [showConfirmModalOpen, setShowConfirmModalOpen] = useState(false);
 
     // image 태그에서 보여줄 src 경로를, 백엔드에서 기존 파일의 url 을 받아왔느냐 or 사용자가 지금 로컬에서 첨부한 File 객체냐에 따라 다르게 처리
     const getImageObjectWithTransformImageSrc = (imageObject) => {
@@ -29,28 +29,26 @@ const AdvancedImageUpload = ({
         // 로컬에서 첨부한 단일 File 객체인 경우
         if (imageObject instanceof File) {
 
-            console.log('파일 단일임');
-            console.log('파일 단일임');
+            console.log('단일 파일 src 변환');
             console.log(URL.createObjectURL(imageObject));
             return URL.createObjectURL(imageObject);
 
 
             // 백엔드에서 기존 파일의 url 을 받아왔으면
         } else if (Array.isArray(imageObject)) {
-            console.log('파일 배열임');
-            console.log('파일 배열임');
             return imageObject.map(file => {
                 if (file instanceof File) {
+                    console.log('파일 배열 src 변환');
                     return URL.createObjectURL(file);
+                } else {
+                    console.log('백엔드에서 전달 받은 파일 src 변환');
+                    return getCompleteImagePath(file);
                 }
-                throw new Error("Invalid file object in the array");
             });
         }
-            console.log('파일 아님');
-            console.log('파일 아님');
-            console.log('파일 아님');
-            return getCompleteImagePath(imageObject);
     }
+
+    const transformedImages = getImageObjectWithTransformImageSrc(images);
 
     // 이미지 경로에서 파일 이름만 가져오기
     const extractFileName = (imageUrl) => {
@@ -73,13 +71,20 @@ const AdvancedImageUpload = ({
         }
         // 사진 전체 변경만 가능할 때
         if (isAllOrNone) {
-            setConfirmModalOnConfirm(() => () => {
+            // 만약 모달을 띄운 적이 없다면, 전체 변경만 가능하다고 모달 띄우기(위에 상태값 추가해줘야 함)
+            if (isFirstAttempt) {
+                setConfirmModalOnConfirm(() => () => {
+                    clickFileInput();
+                    setTimeout(() => {
+                        setShowConfirmModalOpen(false);
+                    }, 500);
+                })
+                setShowConfirmModalOpen(true);
+                setIsFirstAttempt(false);
+            } else {
+                // 컨펌 모달 띄운 적 있다면, 바로 파일 선택창 띄우기
                 clickFileInput();
-                setTimeout(() => {
-                    setShowConfirmModalOpen(false);
-                }, 500);
-            })
-            setShowConfirmModalOpen(true);
+            }
         } else {
             clickFileInput();
         }
@@ -90,23 +95,41 @@ const AdvancedImageUpload = ({
 
         e.preventDefault();  // 기본 동작 방지 (페이지가 새로고침 되지 않도록)
 
-        const handleImageDrop = (e) => {
-            // 드롭된 파일 가져오기
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                // onFileSelect 호출하여 파일 전달(원래 파일 체인지가 일어나면 event가 발생하고, 이 떄 event.target이 parameter로 전달됨. 이를 모방하여 함수 호출
-                onFileSelect({ target: { files } });
+        const handleImageDrop = (eventOrFiles) => {
+            if (eventOrFiles.dataTransfer) {
+                // 이벤트 객체에서 파일 가져오기 (이전 방식)
+                const files = eventOrFiles.dataTransfer.files;
+                console.log('handleImageDrop으로 전달된 e', files);
+                if (files.length > 0) {
+                    onFileSelect({ target: { files } }); // 모방한 이벤트 객체로 전달
+                }
+            } else {
+                // 파일 리스트만 직접 전달된 경우 (새로운 방식)
+                const files = eventOrFiles.files || eventOrFiles;
+                console.log('handleImageDrop으로 전달된 files', files);
+                if (files.length > 0) {
+                    onFileSelect({ target: { files } }); // 모방한 이벤트 객체로 전달
+                }
             }
-        }
+        };
 
         if (isAllOrNone) {
-            setConfirmModalOnConfirm(() => () => {
+            if (isFirstAttempt) {
+                // 비동기 내(setconfirmModalOnComfirm) 내에서 e소실로 인해 파일 데이터만 따로 저장
+                const files = e.dataTransfer.files;
+
+                setConfirmModalOnConfirm(() => () => {
+                    handleImageDrop({ dataTransfer: { files } });
+                    setTimeout(() => {
+                        setShowConfirmModalOpen(false);
+                    }, 500);
+                })
+                setShowConfirmModalOpen(true);
+                setIsFirstAttempt(false);
+            } else {
+                console.log('두번째 시도일 때 e', e.dataTransfer.files);
                 handleImageDrop(e);
-                setTimeout(() => {
-                    setShowConfirmModalOpen(false);
-                }, 500);
-            })
-            setShowConfirmModalOpen(true);
+            }
         } else {
             handleImageDrop(e);
         }
@@ -129,12 +152,12 @@ const AdvancedImageUpload = ({
 
                 <div className={styles.imageContainerList}>
                     {/* 각 이미지 박스 */}
-                    {images.length > 0 && (
-                        images.map((imageObject) => (
+                    {transformedImages.length > 0 && (
+                        transformedImages.map((imageObject, index) => (
                             <div key={imageObject.id} className={styles.imageContainer}>
                                 {/* 이미지 */}
                                 <img
-                                    src={imageObject instanceof File ? getImageObjectWithTransformImageSrc(imageObject) : getImageObjectWithTransformImageSrc(imageObject).imageUrl}
+                                    src={typeof imageObject === 'string' ? imageObject : imageObject.imageUrl}
                                     alt={extractFileName(imageObject.imageUrl)}
                                 />
 
@@ -143,7 +166,7 @@ const AdvancedImageUpload = ({
                                     <button
                                         className={styles.controlButton}
                                         title="파일 삭제"
-                                        onClick={onFileDelete}
+                                        onClick={() => onFileDelete(index)}
                                     >
                                         <X size={15}/>
                                     </button>
@@ -183,7 +206,7 @@ const AdvancedImageUpload = ({
                 </div>
 
                 <div className={styles.carouselDescription}>
-                    <p className={styles.count}>{images?.length} / {maxLength}</p>
+                    <p className={styles.count}>{transformedImages?.length} / {maxLength}</p>
                 </div>
             </div>
 

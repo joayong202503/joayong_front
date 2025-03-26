@@ -26,20 +26,21 @@ import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js
 
 const ExchangeEditPage = () => {
 
-    const queryClient = useQueryClient();
-
+    // 페이지 처음 진입 시 최상단으로 스크롤 이동
     useEffect(() => {
-        window.scrollTo(0, 0); // 페이지의 최상단으로 이동
+        window.scrollTo(0, 0);
     }, []);
 
+    const queryClient = useQueryClient();
     const { exchangeId: postId } = useParams();
     const navigate = useNavigate();
     const myUsername = useSelector((state) => state.auth.user?.name);
+    const regionCategories = useSelector((state) => state.regionCategory.regionCategories);
+    const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
+    const sortedTalentCategories = useMemo(() => getSortedTalentCategories(talentCategories), [talentCategories]);
 
     // 서버에서 가져온 데이터
     const [originalPost, setOriginalPost] = useState(null);
-
-    console.log('원래 서버에서 fetch해 준 내용', originalPost);
 
     // Ref
     const refs = {
@@ -56,8 +57,18 @@ const ExchangeEditPage = () => {
     // 서버에 제출할 데이터 관리 훅
     const { postData, updatePostData } = usePostData();
 
-    // yup 유효성 검증 조건
+    // yup 유효성 검증 훅
     const { validationSchema } = useValidation();
+
+    // 파일을 업로드 검증 훅
+    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile, setFileUploadErrorMessage } = useFileUpload();
+
+    // 파일 업로드 유효성 검사 통과 후 상태값에 추가되었을 떄 처리 로직
+    useEffect(() => {
+        // 파일 업로드 성공했으면 postData에 추가해주기
+        updatePostData('update-image', true);
+        updatePostData('images', uploadedFile);
+    }, [uploadedFile]);
 
     // 필터링용 카테고리 관리 훅
     const { categoryState, setCategoryState, handleCategoryChange: handleCategoryStateChange } = useCategoryState(updatePostData);
@@ -80,9 +91,6 @@ const ExchangeEditPage = () => {
     const [isImageCarouselModalOpen, setIsImageCarouselModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    // 파일을 업로드 검증 훅
-    const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile, setFileUploadErrorMessage } = useFileUpload();
-
     // 이미지 모달 열려 있는 동안은 스크롤 불가
     useEffect(() => {
         if (isImageCarouselModalOpen) {
@@ -94,11 +102,6 @@ const ExchangeEditPage = () => {
             document.body.style.overflow = ""; // 컴포넌트 언마운트 시 복구
         };
     }, [isImageCarouselModalOpen]);
-
-    // Selectors
-    const regionCategories = useSelector((state) => state.regionCategory.regionCategories);
-    const talentCategories = useSelector((state) => state.talentCategory.talentCategories);
-    const sortedTalentCategories = useMemo(() => getSortedTalentCategories(talentCategories), [talentCategories]);
 
     // 드롭다운 값 변경 시 카테고리 상태 업데이트 및 자동 포커스
     const handleCategoryChange = (type, level) => (selectedItem) => {
@@ -133,25 +136,18 @@ const ExchangeEditPage = () => {
         });
     }, [regionCategories, talentCategories, setCategoryState]);
 
-    console.log('업로드된 파일', uploadedFile);
-    console.log('업로드 에러 메시지', fileUploadErrorMessage);
-
     // 파일 업로드 유효성 검사 미통과 시 모달
     useEffect(() => {
         if (fileUploadErrorMessage) {
             setIsMiniModalOpen(true);
             setIsNegativeMiniModalMessage(true);
             setMiniModalMessage(fileUploadErrorMessage);
+            // 다시 isNegativeMiniModal 값 돌려놓기
+            setTimeout(() => {
+                setIsNegativeMiniModalMessage(false);
+            }, 2000);
         }
     }, [fileUploadErrorMessage]);
-
-    // 파일 업로드 유효성 검사 통과 후 상태값에 추가되었을 떄 처리 로직
-    useEffect(() => {
-        // 파일 업로드 성공했으면 postData에 추가해주기
-        updatePostData('update-image', true);
-        updatePostData('images', uploadedFile);
-        console.log('파일 첨부 후에!!!!', postData);
-    }, [uploadedFile]);
 
     // 게시글 상세정보 가져오기
     const fetchPostDetails = useCallback(async () => {
@@ -218,18 +214,27 @@ const ExchangeEditPage = () => {
 
     // 폼 데이터로 변환
     const transformToFormData = (postData) => {
+
         const formData = new FormData();
 
         // postData.images는 서버에 보낼 용도가 아니라 image carousel 용이므로, 삐고 formData 생성
         const newPostData = {...postData};
         delete newPostData.images;
 
-        console.log('최종 보낼 내용', newPostData);
-
         formData.append('post',
             new Blob([JSON.stringify(newPostData)],
                 { type: 'application/json' }));
 
+        console.log('최종 보낼 내용', newPostData);
+//
+        // postData.images가 null이 아닌 경우, 사진을 새로 보내는 것이므로
+        // 서버에 보낼 update-image 값을 true로 갱신하고 파일을 append
+        if (postData.images && Array.isArray(postData.images)) {
+            newPostData['update-image'] = true;
+            postData.images.forEach(image => {
+                formData.append('images', image);
+            });
+        }
         return formData;
     };
 
@@ -243,6 +248,13 @@ const ExchangeEditPage = () => {
             const formData = transformToFormData(postData);
 
             await updatePost(formData);  // updatePost에서 이미 에러 처리함
+
+            console.log('!!!!!!!!!!11');
+            console.log(formData.get('images'));
+            console.log(formData.get('images'));
+            console.log(formData.get('images'));
+            console.log(formData.get('images'));
+            console.log(formData.get('images'));
 
             // 캐시데이터 무효화
             queryClient.invalidateQueries(['postDetail', postId]);
@@ -275,20 +287,26 @@ const ExchangeEditPage = () => {
     };
 
     // 기존 첨부사진 삭제 요청 시 로직
-    const handleFileDelete = () => {
-        // 사진은 전체 삭제만 가능하다고 경고
-        showConfirmModal({
-            title: '게시물의 일관성을 위해 사진은 개별 삭제가 아닌 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?',
-            onConfirm: () => () => {
-                setIsConfirmModalOpen(false);
-                // 서버에 전달할 값을 관리하는 usePostData훅에서, 사진 변경 여부를 아려주는 'update-image'에 true값으로 변경시켜주기
-                updatePostData('update-image', true);
-                updatePostData('images', null);
-            },
-            onCancel: () => () => setIsConfirmModalOpen(false)
-        })}
-
-    console.log(postData.images, 22222222222222);
+    const handleFileDelete = (selectedImageIndex) => {
+        // 만약 서버에서 가져온 사진을 삭제 요청하는 것이면, 사진 전체 삭제 만 가능하다고 경고
+        // 서버에서 가져온 사진인지는 확인하는방법 : 서버에 제출하기 위한 uploadedFile이 초기값(빈 []) 일 때
+        if (!uploadedFile || uploadedFile.length === 0) {
+            showConfirmModal({
+                title: '게시물의 일관성을 위해 사진은 개별 삭제가 아닌 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?',
+                onConfirm: () => () => {
+                    setIsConfirmModalOpen(false);
+                    // 서버에 전달할 값을 관리하는 usePostData훅에서, 사진 변경 여부를 아려주는 'update-image'에 true값으로 변경시켜주기
+                    updatePostData('update-image', true);
+                    updatePostData('images', null);
+                },
+                onCancel: () => () => setIsConfirmModalOpen(false)
+        })} else {
+            // 사용자가 이번에 로컬에서 업로드 한 사진을 삭제하는 것이면, postData.imasges에서 선택된 사진만 지워줌
+            // images에서 filter 사용해서 사진 지워주기(index말고 다른 거 참조해서 찾음)
+            updatePostData('update-image', true);
+            updatePostData('images', postData.images.filter((image, index) => index !== selectedImageIndex));
+        }
+    }
 
     return (
         <>

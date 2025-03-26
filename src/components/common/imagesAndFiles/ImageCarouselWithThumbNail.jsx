@@ -17,51 +17,29 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUpload
         // 로컬에서 첨부한 단일 File 객체인 경우
         if (imageObject instanceof File) {
 
-            console.log('파일 단일임');
-            console.log('파일 단일임');
+            console.log('단일 파일 src 변환');
             console.log(URL.createObjectURL(imageObject));
             return URL.createObjectURL(imageObject);
 
 
             // 백엔드에서 기존 파일의 url 을 받아왔으면
         } else if (Array.isArray(imageObject)) {
-            console.log('파일 배열임');
-            console.log('파일 배열임');
             return imageObject.map(file => {
                 if (file instanceof File) {
+                    console.log('파일 배열 src 변환');
                     return URL.createObjectURL(file);
+                } else {
+                    console.log('백엔드에서 전달 받은 파일 src 변환');
+                    return getCompleteImagePath(file);
                 }
-                throw new Error("Invalid file object in the array");
             });
         }
-        console.log('파일 아님');
-        console.log('파일 아님');
-        console.log('파일 아님');
-        return getCompleteImagePath(imageObject);
     }
 
     const images = !isLoading && isPostUploaded ?getImageObjectWithTransformImageSrc(imagesObject)  : [];
 
-
-
-    console.log(imagesObject);
-    console.log(imagesObject);
-    console.log(imagesObject);
-    console.log(imagesObject);
-    console.log(imagesObject);
-    console.log(2222);
-    console.log(2222);
-    console.log(2222);
-    console.log(2222);
-
-
     // 큰 이미지 담는 박스
     const bigImageRef = useRef();
-
-    // 이미지 경로를 /uploads/..... 앞에 http://localhost:8999 를 붙임 (useQuery 로딩이 끝난 후, 그 값으로 post 값이 업로드 된 후에 실행)
-    // const images = !isLoading && isPostUploaded ? getImageSrc(imagesObject)  : [];
-
-    console.log(images);
 
     // 모달 열기
     const handleOpenModal = () => {
