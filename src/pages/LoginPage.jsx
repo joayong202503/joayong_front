@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Video } from "lucide-react";
 import styles from "./LoginPage.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/slices/authSlice";
@@ -59,7 +59,7 @@ const LoginPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.logoContainer}>
-        <img src={logoImage} alt="logo사진" onClick={() => navigate('/')} />
+        <img src={logoImage} alt="logo사진" onClick={() => navigate("/")} />
       </div>
       <h2 className={styles.title}>로그인</h2>
       <form onSubmit={handleLogin} className={styles.form}>
@@ -97,7 +97,13 @@ const LoginPage = () => {
               className={styles["toggle-icon"]}
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? (
+                <>
+                  <Eye size={18} />
+                </>
+              ) : (
+                <EyeOff size={18} />
+              )}
             </button>
           </div>
         </div>
