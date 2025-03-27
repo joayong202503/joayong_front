@@ -87,6 +87,19 @@ const ExchangeListPage = () => {
 
         return "지역없음";
     };
+    // 검색창 입력 변화 핸들러
+    const handleInputChange = (e) => {
+        const value = e.target.value.trim();
+
+        // 검색어가 비어있을 경우 전체 목록 보여주기
+        if (!value) {
+            setSearchKeyword("");
+            setCurrentPage(0);
+            setError(null);
+            getRecentExchanges();
+        }
+    };
+
 
     // 검색기능
     const handleSearch = async () => {
@@ -111,7 +124,9 @@ const ExchangeListPage = () => {
                 await getRecentExchanges();
             }
         } catch (err) {
-            setError('검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            console.error('검색 중 오류가 발생했습니다:', err);
+            setRecentExchanges([]);
+            setTotalPages(0);
         }
     };
 
@@ -120,10 +135,35 @@ const ExchangeListPage = () => {
         handleSearch();
     };
 
+    // 전체 목록으로 돌아가기
+    const resetSearch = () => {
+        if (searchInputRef.current) searchInputRef.current.value = '';
+        setSearchKeyword("");
+        setCurrentPage(0);
+        setError(null);
+        getRecentExchanges();
+    };
+
+
     // 응답 데이터 처리 함수
     const processExchangeData = async (response) => {
-        if (response && response.postList && response.postList.content) {
-            // Promise.all을 사용하여 모든 프로필 이미지를 비동기적으로 가져옴
+        // 유효한 응답인지 확인
+        if (response && response.postList && Array.isArray(response.postList.content)) {
+            // 응답 데이터가 비어있는지 확인
+            if (response.postList.content.length === 0) {
+                setRecentExchanges([]);
+                setTotalPages(0);
+                // 결과가 없음을 표시
+                if (searchKeyword) {
+                    setError(`"${searchKeyword}" 검색 결과가 없습니다.`);
+                } else {
+                    setError('게시물이 없습니다.');
+                }
+                return;
+            }
+
+            // 결과가 있으면 에러 초기화
+            setError(null);
             const mappedData = await Promise.all(response.postList.content.map(async post => {
                 // 카테고리 ID를 이름으로 변환
                 const talentGive = post[`talent-g-id`] ? getTalentName(post[`talent-g-id`]) : "정보없음";
@@ -165,8 +205,14 @@ const ExchangeListPage = () => {
             }
             setTotalPages(calculatedTotalPages);
         } else {
+            // 유효하지 않은 응답 처리
             setRecentExchanges([]);
             setTotalPages(0);
+            if (searchKeyword) {
+                setError(`"${searchKeyword}" 검색 결과가 없습니다.`);
+            } else {
+                setError('데이터를 불러올 수 없습니다.');
+            }
         }
     };
 
@@ -188,7 +234,15 @@ const ExchangeListPage = () => {
             await processExchangeData(response);
         } catch (err) {
             console.error('재능 교환 목록을 가져오는데 실패했습니다:', err);
-            setError('데이터를 불러오는데 실패했습니다. 잠시후 다시 시도해주세요.');
+            // API 호출 자체가 실패한 경우 (네트워크 오류 등)
+            setRecentExchanges([]);
+            setTotalPages(0);
+
+            if (searchKeyword) {
+                setError(`검색 중 오류가 발생했습니다. 다시 시도해주세요.`);
+            } else {
+                setError('데이터를 불러오는 중 오류가 발생했습니다.');
+            }
         }
     };
 
@@ -241,10 +295,21 @@ const ExchangeListPage = () => {
                     placeHolder="검색어를 입력하세요 (제목/작성자/재능)"
                     onClick={handleSearch}
                     onHandleEnterKey={handleEnterKeySearch}
+                    onChange={handleInputChange} // 검색어 변경 핸들러 추가
                 />
 
                 {error ? (
-                    <div className={styles.error}>{error}</div>
+                  <div className={styles.noResults}>
+                      <p>{error}</p>
+                      {searchKeyword && (
+                        <button
+                          className={styles.resetButton}
+                          onClick={resetSearch}
+                        >
+                            전체 목록으로 돌아가기
+                        </button>
+                      )}
+                  </div>
                 ) : recentExchanges.length === 0 ? (
                     <div className={styles.noResults}>
                         {searchKeyword ? `"${searchKeyword}" 검색 결과가 없습니다.` : '게시물이 없습니다.'}

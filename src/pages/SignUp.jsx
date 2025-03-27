@@ -1,86 +1,179 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
-import { authApi } from '../services/api'; // API 호출을 위한 import
-import styles from './SignUp.module.scss';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { authApi } from "../services/api"; // API 호출을 위한 import
+import styles from "./SignUp.module.scss";
+import logoImage from "../assets/images/logo-big.png";
 
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [emailError, setEmailError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [emailAvailable, setEmailAvailable] = useState(true); // 이메일 사용 가능 여부 상태
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false); // 이메일 중복 확인 중 상태
+
+  const [nameAvailable, setNameAvailable] = useState(true); // 이름 사용 가능 여부 상태
+  const [isCheckingName, setIsCheckingName] = useState(false); // 이름 중복 확인 중 상태
+
   const navigate = useNavigate(); // ✅ 페이지 이동을 위한 useNavigate()
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      setEmailError('이메일을 입력해주세요.');
+      setEmailError("이메일을 입력해주세요.");
       return false;
     } else if (!emailRegex.test(email)) {
-      setEmailError('유효한 이메일 주소를 입력해주세요.');
+      setEmailError("유효한 이메일 주소를 입력해주세요.");
       return false;
     }
-    
-    setEmailError('');
+
+    setEmailError("");
     return true;
   };
 
   const validatePassword = () => {
     if (password !== confirmPassword) {
-      setPasswordError('비밀번호가 일치하지 않습니다.');
+      setPasswordError("비밀번호가 일치하지 않습니다.");
       return false;
     }
-    
+
     if (password.length < 6) {
-      setPasswordError('비밀번호는 최소 6자 이상이어야 합니다.');
+      setPasswordError("비밀번호는 최소 6자 이상이어야 합니다.");
       return false;
     }
-    
-    setPasswordError('');
+
+    setPasswordError("");
     return true;
   };
 
+  const checkEmailAvailability = async () => {
+    if (!validateEmail(email)) return;
+    setIsCheckingEmail(true);
+    try {
+      const response = await fetch(
+        `${authApi.duplicate}?type=email&value=${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("data : ", data);
+
+      if (data.available) {
+        setEmailAvailable(true);
+        setEmailError("");
+      } else {
+        setEmailAvailable(false);
+        setEmailError("이메일이 이미 사용 중입니다.");
+      }
+    } catch (error) {
+      console.error("이메일 중복 확인 오류:", error);
+      setEmailAvailable(false);
+      setEmailError("이메일 중복 확인 오류가 발생했습니다.");
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+
+  // 이메일 중복확인 디바운스로 1.2초 관리
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (email) {
+        checkEmailAvailability(); // 이메일 중복 확인
+      }
+    }, 1200); // 1.2초 뒤에 중복 확인
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [email]);
+
+  const checkNameAvailability = async () => {
+    setIsCheckingName(true);
+    try {
+      const response = await fetch(
+        `${authApi.duplicate}?type=name&value=${username}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      console.log("data : ", data);
+
+      if (data.available) {
+        setNameAvailable(true);
+        setNameError("");
+      } else {
+        setNameAvailable(false);
+        setNameError("이름이 이미 사용 중입니다.");
+      }
+    } catch (error) {
+      console.error("이름 중복 확인 오류:", error);
+      setNameAvailable(false);
+      setNameError("이름 중복 확인 오류가 발생했습니다.");
+    } finally {
+      setIsCheckingName(false);
+    }
+  };
+
+  // 이름 중복확인 디바운스로 1.2초 관리
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (username) {
+        checkNameAvailability(); // 이메일 중복 확인
+      }
+    }, 1200); // 1.2초 뒤에 중복 확인
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [username]);
+
   const handleSignUp = async (e) => {
     e.preventDefault();
-    
+
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword();
-    
-    if (!isEmailValid || !isPasswordValid || !username) {
+
+    if (!isEmailValid || !isPasswordValid || !nameAvailable || !emailAvailable) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const signupRequest = {
-            "email":email,
-            "name":username,
-            "password":password
-          }
-      const rs = await fetch(authApi.signup,{
+        email: email,
+        name: username,
+        password: password,
+      };
+      const rs = await fetch(authApi.signup, {
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
-        body:JSON.stringify(signupRequest)
-      })
+        body: JSON.stringify(signupRequest),
+      });
       const response = await rs.json();
-      console.log('회원가입 성공:', response);
+      console.log("회원가입 성공:", response);
 
       // ✅ 회원가입 성공 메시지 표시
-    alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+      alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
 
-      
       // 회원가입 성공 시 로그인 페이지로 이동
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error("Signup error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -88,6 +181,9 @@ const SignUp = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.logoContainer}>
+        <img src={logoImage} alt="logo사진" onClick={() => navigate("/")} />
+      </div>
       <h2 className={styles.title}>회원가입</h2>
       <form onSubmit={handleSignUp} className={styles.form}>
         <div>
@@ -97,14 +193,14 @@ const SignUp = () => {
             type="text"
             value={email}
             onChange={(e) => {
-              setEmail(e.target.value);
-              if (emailError) validateEmail(e.target.value);
+              setEmail(e.target.value); // 이메일 변경 시 상태 업데이트
             }}
-            className={styles['input-box']}
+            className={styles["input-box"]}
             placeholder="이메일 주소를 입력하세요"
             required
           />
-          {emailError && <p className={styles['error-text']}>{emailError}</p>}
+          {emailError && <p className={styles["error-text"]}>{emailError}</p>}
+          {isCheckingEmail && <p>이메일 중복 확인 중...</p>}
         </div>
 
         <div>
@@ -114,70 +210,82 @@ const SignUp = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className={styles['input-box']}
+            className={styles["input-box"]}
             placeholder="사용자 이름을 입력하세요"
             required
           />
+          {nameError && <p className={styles["error-text"]}>{nameError}</p>}
+          {isCheckingName && <p>이름 중복 확인 중...</p>}
         </div>
 
         <div>
           <label htmlFor="password">비밀번호</label>
-          <div className={styles['password-container']}>
+          <div className={styles["password-container"]}>
             <input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (passwordError) validatePassword();
               }}
-              className={styles['input-box']}
+              className={styles["input-box"]}
               placeholder="비밀번호를 입력하세요"
               required
             />
             <button
               type="button"
-              className={styles['toggle-icon']}
+              className={styles["toggle-icon"]}
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
             </button>
           </div>
         </div>
 
         <div>
           <label htmlFor="confirmPassword">비밀번호 확인</label>
-          <div className={styles['password-container']}>
+          <div className={styles["password-container"]}>
             <input
               id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
+              type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
                 if (passwordError) validatePassword();
               }}
-              className={styles['input-box']}
+              className={styles["input-box"]}
               placeholder="비밀번호를 다시 입력하세요"
               required
             />
             <button
               type="button"
-              className={styles['toggle-icon']}
+              className={styles["toggle-icon"]}
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          {passwordError && <p className={styles['error-text']}>{passwordError}</p>}
+          {passwordError && (
+            <p className={styles["error-text"]}>{passwordError}</p>
+          )}
         </div>
 
-        <button type="submit" disabled={isSubmitting} className={styles['btn-primary']}>
-          {isSubmitting ? '가입 중...' : '회원가입'}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className={styles["btn-primary"]}
+        >
+          {isSubmitting ? "가입 중..." : "회원가입"}
         </button>
 
-        <div className={styles['text-center']}>
+        <div className={styles["text-center"]}>
           <p>이미 계정이 있으신가요?</p>
-          <button type="button" className={styles.link} onClick={() => navigate('/login')}>
+          <button
+            type="button"
+            className={styles.link}
+            onClick={() => navigate("/login")}
+          >
             로그인
           </button>
         </div>
