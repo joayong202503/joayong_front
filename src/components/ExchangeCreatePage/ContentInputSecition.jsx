@@ -12,6 +12,14 @@ const ContentInputSection
         setCharCount(charLength);
     }
 
+    const handleKeyDown = (e) => {
+        // 부모로부터 전달받은 onKeyDown이 있다면 실행하되,
+        // 엔터키의 경우는 기본 동작 유지
+        if (onKeyDown && e.key !== 'Enter') {
+            onKeyDown(e);
+        }
+    }
+
     return (
         <div className={`${styles.inputWrapper} ${isTitleNecessary ? '' : styles.noTitle }`}>
             <label htmlFor={'content'}>
@@ -27,7 +35,7 @@ const ContentInputSection
                     if (onChange) onChange(e);
                     handleCharCountChange(e);
                 }}
-                onKeyDown={onKeyDown}
+                onKeyDown={handleKeyDown}
                 defaultValue={defaultValue ? defaultValue : ''}
             >
             </textarea>
