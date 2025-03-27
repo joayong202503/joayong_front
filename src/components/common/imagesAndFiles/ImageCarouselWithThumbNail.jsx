@@ -5,17 +5,41 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Feather 아�
 
 // isLoading : useQuery에서 fetch 완료 여부
 // isPostUploaded : 로딩 완료 후 post 까지 업데이트 되었는지
-const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, width, height,
+const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUploaded=true, width, height,
                                     initialIndex=0, setCurrentIndex,
                                     isOpenModal, setIsOpenModal}) => {
 
     const [currentIndex, setCurrentIndexLocal] = useState(initialIndex);
 
+    // image 태그에서 보여줄 src 경로를, 백엔드에서 기존 파일의 url 을 받아왔느냐 or 사용자가 지금 로컬에서 첨부한 File 객체냐에 따라 다르게 처리
+    const getImageObjectWithTransformImageSrc = (imageObject) => {
+
+        // 로컬에서 첨부한 단일 File 객체인 경우
+        if (imageObject instanceof File) {
+
+            console.log('단일 파일 src 변환');
+            console.log(URL.createObjectURL(imageObject));
+            return URL.createObjectURL(imageObject);
+
+
+            // 백엔드에서 기존 파일의 url 을 받아왔으면
+        } else if (Array.isArray(imageObject)) {
+            return imageObject.map(file => {
+                if (file instanceof File) {
+                    console.log('파일 배열 src 변환');
+                    return URL.createObjectURL(file);
+                } else {
+                    console.log('백엔드에서 전달 받은 파일 src 변환');
+                    return getCompleteImagePath(file);
+                }
+            });
+        }
+    }
+
+    const images = !isLoading && isPostUploaded ?getImageObjectWithTransformImageSrc(imagesObject)  : [];
+
     // 큰 이미지 담는 박스
     const bigImageRef = useRef();
-
-    // 이미지 경로를 /uploads/..... 앞에 http://localhost:8999 를 붙임 (useQuery 로딩이 끝난 후, 그 값으로 post 값이 업로드 된 후에 실행)
-    const images = !isLoading && isPostUploaded ? getCompleteImagePath(imagesObject) : [];
 
     // 모달 열기
     const handleOpenModal = () => {
@@ -77,6 +101,7 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, wi
             <div
                 className={styles.galleryContainer}
                 style={{width: `${width}`, height: `${height}`}}
+                onClick={(e) => e.stopPropagation()}
             >
 
                 {/* 모달이 열리면 전달된 인덱스와 이미지로 갤러리 표시 */}
@@ -102,25 +127,27 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, wi
                     <>
                         <div className={styles.mainImageContainer}>
                             {/* 좌측 슬라이드 버튼 */}
-                            {(images.length > 1 && currentIndex > 0) ? (
+                            {(images.length > 1 && currentIndex > 0) && (
                                 <button
                                     className={`${styles.slideButton} ${styles.slideButtonLeft}`}
                                     onClick={handlePrevClick}
                                 >
                                     <FiChevronLeft size={25} style={{color: "#ffffff"}} />
                                 </button>
-                            ) : null}
-
+                            )}
 
                             <img
-                                src={images[currentIndex].imageUrl}
-                                alt={`게시글 이미지 ${1}`}
+                                src={typeof images[currentIndex] === 'string'
+                                    ? images[currentIndex]
+                                    : images[currentIndex].imageUrl}
+                                alt={`게시글 이미지 ${currentIndex + 1}`}
                                 className={styles.mainImage}
                                 ref={bigImageRef}
                                 onClick={handleClickBigImage}
                             />
+
                             {/* 우측 슬라이드 버튼 */}
-                            {images.length > 1 && currentIndex < images.length - 1 && images.length !== 0 && (
+                            {images.length > 1 && currentIndex < images.length - 1 && (
                                 <button
                                     className={`${styles.slideButton} ${styles.slideButtonRight}`}
                                     onClick={handleNextClick}
@@ -133,12 +160,10 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading, isPostUploaded, wi
                             {images.map((image, index) => (
                                 <img
                                     key={index}
-                                    src={image.imageUrl}
-                                    alt={`thumbnail ${index}`}
+                                    src={typeof image === 'string' ? image : image.imageUrl}
+                                    alt={`thumbnail ${index + 1}`}
                                     className={`${styles.thumbnail}`}
-                                    onClick={() => {
-                                        handleThumbNailImageClick(index)
-                                    }}
+                                    onClick={() => handleThumbNailImageClick(index)}
                                 />
                             ))}
                         </div>

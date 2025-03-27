@@ -12,7 +12,6 @@ const ContentInputSection
         setCharCount(charLength);
     }
 
-
     return (
         <div className={`${styles.inputWrapper} ${isTitleNecessary ? '' : styles.noTitle }`}>
             <label htmlFor={'content'}>
