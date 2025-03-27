@@ -62,7 +62,7 @@ const ExchangeEditPage = () => {
     // yup 유효성 검증 훅
     const { validationSchema } = useValidation();
 
-    // 파일을 업로드 검증 훅
+    // 파일을 업로드 검증
     const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile, setFileUploadErrorMessage } = useFileUpload();
 
     // 이미지 삭제 관련 훅
@@ -74,15 +74,19 @@ const ExchangeEditPage = () => {
     // 이전 사진 삭제인 경우 전체 삭제, 아니면 선택 사진만 삭제
     const handleImageDelete = (selectedImageIndex) => {
         if (!(postData.images[selectedImageIndex] instanceof File)) {
-            showConfirmModal({
-                title: '게시물의 일관성을 위해 게시글 기존 사진은 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?',
-                onConfirm: () => {
-                    handleFileDelete(selectedImageIndex);
-                    setIsConfirmModalOpen(false);
-                }
+            setIsConfirmModalOpen(true);  // 직접 모달 상태 설정
+            setConfirmModalTitle('게시물의 일관성을 위해 게시글 기존 사진은 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?');
+            setConfirmModalOnConfirm(() => () => {
+                handleFileDelete(selectedImageIndex);
+                setUploadedFile(postData.images.filter((_, index) => index !== selectedImageIndex)); // ! uploadedFile 에서 지워주기
+                setIsConfirmModalOpen(false);
+            });
+            setConfirmModalOnCancel(() => () => {
+                setIsConfirmModalOpen(false);
             });
         } else {
             handleFileDelete(selectedImageIndex);
+            setUploadedFile(postData.images.filter((_, index) => index !== selectedImageIndex)); // ! uploadedFile 에서 지워주기
         }
     };
 
@@ -115,6 +119,9 @@ const ExchangeEditPage = () => {
     const [isImageCarouselModalOpen, setIsImageCarouselModalOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+    // 첫 번째 카테고리 변경 이벤트인지 추적(첫번째면 마지막 드롭다운박스까지 연쇄 자동 focus 작용 생김)
+    const [isFirstCategoryChange, setIsFirstCategoryChange] = useState(true);
+
     // 이미지 모달 열려 있는 동안은 스크롤 불가
     useEffect(() => {
         if (isImageCarouselModalOpen) {
@@ -131,6 +138,15 @@ const ExchangeEditPage = () => {
     const handleCategoryChange = (type, level) => (selectedItem) => {
         if (!selectedItem) return;
 
+        // 첫 번째 카테고리 변경이면
+        if (isFirstCategoryChange) {
+            handleCategoryStateChange(type, level)(selectedItem);
+            setIsFirstCategoryChange(false);  // 다음부터는 일반 로직 타도록
+            refs.title.current?.focus();  // title로 바로 이동
+            return;
+        }
+
+        // 첫 번째가 아니면 기존 로직대로
         handleCategoryStateChange(type, level)(selectedItem);
         handleAutoFocus(type, level);
     };
@@ -169,7 +185,7 @@ const ExchangeEditPage = () => {
             // 다시 isNegativeMiniModal 값 돌려놓기
             setTimeout(() => {
                 setIsNegativeMiniModalMessage(false);
-            }, 2000);
+            }, 2500);
         }
     }, [fileUploadErrorMessage]);
 
@@ -272,7 +288,7 @@ const ExchangeEditPage = () => {
                 setTimeout(() => {
                     setIsNegativeMiniModalMessage(false);
                     setMiniModalMessage("정상적으로 처리되었습니다.");
-                }, 2010);
+                }, 2500);
             }
         }, 2000);
     };
@@ -445,10 +461,12 @@ const ExchangeEditPage = () => {
                         fontSize={'small'}
                         onClick={() => showConfirmModal({
                             title: '게시글 수정을 취소하시겠습니까?',
-                            onConfirm: () => () => {
+                            onConfirm: () => {
                                 // minmodal 2초 지속. 미니 모달 닫힌 후 이전 페이지로 이동(미니 모달 사용자가 닫아도 마찬가지)
                                 setIsConfirmModalOpen(false);
-                                navigate(-1);
+                                setTimeout(() => {
+                                    navigate(-1);
+                                }, 300);
                             },
                             onCancel: () => () => setIsConfirmModalOpen(false)
                         })}
@@ -458,7 +476,7 @@ const ExchangeEditPage = () => {
                         fontSize={'small'}
                         onClick={() => showConfirmModal({
                             title: '게시글을 수정하시겠습니까?',
-                            onConfirm: () => handlePostModification,
+                            onConfirm: handlePostModification,
                             onCancel: () => () => {
                                 setIsConfirmModalOpen(false)
                             }

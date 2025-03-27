@@ -113,18 +113,19 @@ const AdvancedImageUpload = ({
         };
 
         if (isAllOrNone) {
+            // 처음으로 이미지 드롭하는 케이스거나(isFirstAttempt), 이미 삭제 버튼에서 이미지 전체 삭제 동의했을 때는 기존 이미지 전체 삭제 경고 날림
             if (isFirstAttempt) {
                 // 비동기 내(setconfirmModalOnComfirm) 내에서 e소실로 인해 파일 데이터만 따로 저장
                 const files = e.dataTransfer.files;
 
                 setConfirmModalOnConfirm(() => () => {
+                    setIsFirstAttempt(false);
                     handleImageDrop({ dataTransfer: { files } });
                     setTimeout(() => {
                         setShowConfirmModalOpen(false);
                     }, 500);
                 })
                 setShowConfirmModalOpen(true);
-                setIsFirstAttempt(false);
             } else {
                 console.log('두번째 시도일 때 e', e.dataTransfer.files);
                 handleImageDrop(e);
