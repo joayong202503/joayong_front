@@ -1,5 +1,5 @@
 .fullContainer{
-  margin-top: 30px;
+  margin-top: 60px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,9 +8,10 @@
 }
 .topContainer{
   display: flex;
-  width: 80%;
-  padding: 100px 50px;
+  width: 1300px;
+  padding: 100px 0;
   justify-content: center;
+  border-radius: 10px;
 
 }
 .profileContainer{
@@ -95,10 +96,6 @@
 }
 .ratingContainer h2{
   font-size: 40px;
-}
-.ratingContainer span{
-  font-size: 18px;
-  margin-left: 5px;
 }
 .myExchangesContainer{
   width: 1200px;
