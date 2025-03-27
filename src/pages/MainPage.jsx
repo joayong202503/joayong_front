@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import {fetchUserProfile} from "../services/profileApi.js";
-import {Users,MessageCircle,Video,Star} from "lucide-react";
+import {Users,MessageCircle,Video,Star,ArrowRight} from "lucide-react";
 
 const API_URL = 'http://localhost:8999';
 
@@ -159,9 +159,13 @@ const MainPage = () => {
               <img className={styles.mainImage} src={mainPhoto}/>
               <div className={styles.contentContainer}>
                 <h1>재능을 교환하고, 같이 성장합니다.</h1>
-                <p> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
+                <span> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
                   함께 만들어가는 재능교환 플랫폼 입니다.
-                </p>
+                </span>
+                <div className={styles.mainButtonContainer}>
+                  <button className={styles.startButton}>시작하기<ArrowRight size={16} color="#ffffff" /></button>
+                  <button className={styles.exploreButton}>재능 찾아보기</button>
+                </div>
               </div>
             </div>
           </section>
