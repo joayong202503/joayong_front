@@ -1,3 +1,4 @@
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -23,6 +24,7 @@ import AdvancedImageUpload from "../components/common/imagesAndFiles/AdvancedIma
 import ImageCarouselWithThumbNail from "../components/common/imagesAndFiles/ImageCarouselWithThumbNail.jsx";
 import * as ReactDom from "react-dom";
 import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js";
+import {useImageHandling} from "../hooks/exchangeEditPageHooks/useImageHandling.js";
 
 const ExchangeEditPage = () => {
 
@@ -63,11 +65,33 @@ const ExchangeEditPage = () => {
     // 파일을 업로드 검증 훅
     const { fileUploadErrorMessage, uploadedFile, handleFileSelect, setUploadedFile, setFileUploadErrorMessage } = useFileUpload();
 
-    // 파일 업로드 유효성 검사 통과 후 상태값에 추가되었을 떄 처리 로직
+    // 이미지 삭제 관련 훅
+    const { handleFileDelete } = useImageHandling(
+        updatePostData,
+        postData
+    );
+
+    // 이전 사진 삭제인 경우 전체 삭제, 아니면 선택 사진만 삭제
+    const handleImageDelete = (selectedImageIndex) => {
+        if (!(postData.images[selectedImageIndex] instanceof File)) {
+            showConfirmModal({
+                title: '게시물의 일관성을 위해 게시글 기존 사진은 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?',
+                onConfirm: () => {
+                    handleFileDelete(selectedImageIndex);
+                    setIsConfirmModalOpen(false);
+                }
+            });
+        } else {
+            handleFileDelete(selectedImageIndex);
+        }
+    };
+
+    // 파일 업로드 성공 시 postData 업데이트
     useEffect(() => {
-        // 파일 업로드 성공했으면 postData에 추가해주기
-        updatePostData('update-image', true);
-        updatePostData('images', uploadedFile);
+        if (uploadedFile) {
+            updatePostData('update-image', true);
+            updatePostData('images', uploadedFile);
+        }
     }, [uploadedFile]);
 
     // 필터링용 카테고리 관리 훅
@@ -208,7 +232,7 @@ const ExchangeEditPage = () => {
     const showConfirmModal = ({ title, message, onConfirm, onCancel }) => {
         setIsConfirmModalOpen(true);
         setConfirmModalTitle(title);
-        setConfirmModalOnConfirm(onConfirm);
+        setConfirmModalOnConfirm(() => onConfirm);
         setConfirmModalOnCancel(onCancel);
     };
 
@@ -225,8 +249,6 @@ const ExchangeEditPage = () => {
             new Blob([JSON.stringify(newPostData)],
                 { type: 'application/json' }));
 
-        console.log('최종 보낼 내용', newPostData);
-//
         // postData.images가 null이 아닌 경우, 사진을 새로 보내는 것이므로
         // 서버에 보낼 update-image 값을 true로 갱신하고 파일을 append
         if (postData.images && Array.isArray(postData.images)) {
@@ -238,75 +260,51 @@ const ExchangeEditPage = () => {
         return formData;
     };
 
-    // 게시글 수정
-    const handlePostModification = async () => {
-        try {
-            // 유효성 검증
-            console.log('보낼 내용(이미지 분리 전)', postData);
-            await validationSchema.validate(postData, { abortEarly: true });
+    // 미니 모달 표시 헬퍼 함수
+    const showMiniModalWithTimeout = (message, isNegative = false) => {
+        setIsMiniModalOpen(true);
+        setMiniModalMessage(message);
+        setIsNegativeMiniModalMessage(isNegative);
 
-            const formData = transformToFormData(postData);
-
-            await updatePost(formData);  // updatePost에서 이미 에러 처리함
-
-            console.log('!!!!!!!!!!11');
-            console.log(formData.get('images'));
-            console.log(formData.get('images'));
-            console.log(formData.get('images'));
-            console.log(formData.get('images'));
-            console.log(formData.get('images'));
-
-            // 캐시데이터 무효화
-            queryClient.invalidateQueries(['postDetail', postId]);
-
-            setIsConfirmModalOpen(false);
-            setIsMiniModalOpen(true);
-            setMiniModalMessage('게시글이 정상적으로 수정되었습니다.');
-
-            // 1초 후 상세 페이지로 이동
-            setTimeout(() => {
-                navigate(`/exchanges/${postId}`);
-            }, 1000);
-        } catch (error) {
-            setIsConfirmModalOpen(false);
-            setIsMiniModalOpen(true);
-            setIsNegativeMiniModalMessage(true);
-
-            // ApiError인 경우 message 사용, validation 에러인 경우 errors 배열 사용
-            setMiniModalMessage(error.message || error.errors[0]);
-
-            // 2초 후 미니 모달 닫기
-            setTimeout(() => {
-                setIsMiniModalOpen(false);
+        setTimeout(() => {
+            setIsMiniModalOpen(false);
+            if (isNegative) {
                 setTimeout(() => {
                     setIsNegativeMiniModalMessage(false);
                     setMiniModalMessage("정상적으로 처리되었습니다.");
                 }, 2010);
-            }, 2000);
-        }
+            }
+        }, 2000);
     };
 
-    // 기존 첨부사진 삭제 요청 시 로직
-    const handleFileDelete = (selectedImageIndex) => {
-        // 만약 서버에서 가져온 사진을 삭제 요청하는 것이면, 사진 전체 삭제 만 가능하다고 경고
-        // 서버에서 가져온 사진인지는 확인하는방법 : 서버에 제출하기 위한 uploadedFile이 초기값(빈 []) 일 때
-        if (!uploadedFile || uploadedFile.length === 0) {
-            showConfirmModal({
-                title: '게시물의 일관성을 위해 사진은 개별 삭제가 아닌 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?',
-                onConfirm: () => () => {
-                    setIsConfirmModalOpen(false);
-                    // 서버에 전달할 값을 관리하는 usePostData훅에서, 사진 변경 여부를 아려주는 'update-image'에 true값으로 변경시켜주기
-                    updatePostData('update-image', true);
-                    updatePostData('images', null);
-                },
-                onCancel: () => () => setIsConfirmModalOpen(false)
-        })} else {
-            // 사용자가 이번에 로컬에서 업로드 한 사진을 삭제하는 것이면, postData.imasges에서 선택된 사진만 지워줌
-            // images에서 filter 사용해서 사진 지워주기(index말고 다른 거 참조해서 찾음)
-            updatePostData('update-image', true);
-            updatePostData('images', postData.images.filter((image, index) => index !== selectedImageIndex));
+    // 수정 성공 시 처리
+    const handleModificationSuccess = () => {
+        setIsConfirmModalOpen(false);
+        showMiniModalWithTimeout('게시글이 정상적으로 수정되었습니다.');
+
+        setTimeout(() => {
+            navigate(`/exchanges/${postId}`);
+        }, 1000);
+    };
+
+    // 수정 실패 시 처리
+    const handleModificationError = (error) => {
+        setIsConfirmModalOpen(false);
+        showMiniModalWithTimeout(error.message || error.errors[0], true);
+    };
+
+    // 게시글 수정
+    const handlePostModification = async () => {
+        try {
+            await validationSchema.validate(postData, { abortEarly: true });
+            const formData = transformToFormData(postData);
+            await updatePost(formData);
+            queryClient.invalidateQueries(['postDetail', postId]);
+            handleModificationSuccess();
+        } catch (error) {
+            handleModificationError(error);
         }
-    }
+    };
 
     return (
         <>
@@ -319,8 +317,11 @@ const ExchangeEditPage = () => {
                             images={postData?.images || []}
                             maxLength={5}
                             description={['게시물의 일관성을 위해, 사진은 전체 변경 또는 유지만 가능해요.', '사진에 마우스를 올려 확대/취소 할 수 있어요.']}
-                            onFileDelete={handleFileDelete}
-                            onEnlargePhoto={() => setIsImageCarouselModalOpen(true)}
+                            onFileDelete={handleImageDelete}
+                            onEnlargePhoto={(index) => {  // index 받아서 처리
+                                setCurrentImageIndex(index);
+                                setIsImageCarouselModalOpen(true);
+                            }}
                             isAllOrNone={true} // 사진 전체 수정만 가능
                             onFileSelect={handleFileSelect}
                         />

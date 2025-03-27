@@ -20,32 +20,49 @@
   position: relative;
   flex: 8;
   cursor: pointer;
-  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
 .slideButton {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.2);
-  color: white;
+  position: relative;
+  background: rgba(255, 255, 255, 0.9);
   border: none;
-  padding: 3px;
-  cursor: pointer;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
   z-index: 10;
+  color: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    background: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .slideButtonLeft {
-  left: 20px;
+  left: auto;
 }
 
 .slideButtonRight {
-  right: 20px;
+  right: auto;
 }
 
 .mainImage {
-  width: 100%;
+  width: calc(100% - 120px); /* 양쪽 버튼 공간 확보 */
   height: 100%;
   object-fit: contain;
 }
@@ -94,8 +111,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3); /* 어두운 배경 */
-  z-index: 9999; /* 모달이 화면 위에 오도록 */
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -107,22 +124,58 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 /* 모달 닫기 버튼 */
 .closeButton {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: transparent;
+  top: 5px;
+  right: 5px;
   border: none;
-  font-size: 20px;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  color: #333;
-  padding: 5px;
-  z-index: 10; /* 닫기 버튼이 다른 요소 위에 오도록 */
+  transition: all 0.2s ease;
+  z-index: 20;
+  color: #1a1a1a;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .closeButton {
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+  }
 
+  .slideButton {
+    width: 40px;
+    height: 40px;
+  }
 
+  .slideButtonLeft {
+    left: 12px;
+  }
 
+  .slideButtonRight {
+    right: 12px;
+  }
+
+  .modalContent {
+    width: 95%;
+    height: 95%;
+  }
+}
