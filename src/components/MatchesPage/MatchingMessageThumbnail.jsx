@@ -67,6 +67,9 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
             // 3. 성공 피드백 표시
             showSuccessMiniModal();
             setShowConfirmModal(false);
+            setTimeout(() => {
+                setShowRequestDetail(false);
+            }, 1000);
         } catch (error) {
             console.error("매칭 요청 수락 중 오류 발생:", error);
             showErrorMiniModal(error.message);
@@ -85,6 +88,9 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
             // 3. 성공했다는 모달 띄우기
             showSuccessMiniModal();
             setShowConfirmModal(false);
+            setTimeout(() => {
+                setShowRequestDetail(false);
+            }, 1000);
         } catch (error) {
             console.error("매칭 요청 거절 중 오류 발생:", error);
             showErrorMiniModal(error.message);
@@ -279,6 +285,9 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                     onClose={() => {
                         setShowMiniModal(false);
                         setShowConfirmModal(false);
+                        setTimeout(() => {
+                            setShowRequestDetail(false);
+                        }, 1000);
                     }}
                 />
             )}

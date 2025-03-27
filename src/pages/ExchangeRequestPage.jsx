@@ -346,7 +346,7 @@ const ExchangeRequestPage = () => {
                     <MiniAlert
                         message={miniModalMessage}
                         onClose={() => {
-                            navigate(-1);
+                            navigate(`/exchanges/${postId}`);
                         }}
                     />
                 }
