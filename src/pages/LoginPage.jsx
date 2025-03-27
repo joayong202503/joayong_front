@@ -5,6 +5,7 @@ import styles from "./LoginPage.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/slices/authSlice";
 import logoImage from "../assets/images/logo-big.png";
+import { Loader } from "lucide-react";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { status, error } = useSelector((state) => state.auth); // ✅ 로그인 상태 가져오기
+  const [loginError, setLoginError] = useState(""); // 로그인 백엔드 검증
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
@@ -25,12 +27,17 @@ const LoginPage = () => {
   }, []);
 
   const validateEmail = (email) => {
+    setLoginError("");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
+      setAnimateError(false);
       setEmailError("이메일을 입력해주세요.");
+      setAnimateError(true);
       return false;
     } else if (!emailRegex.test(email)) {
+      setAnimateError(false);
       setEmailError("유효한 이메일 주소를 입력해주세요.");
+      setAnimateError(true);
       return false;
     }
     setEmailError("");
@@ -38,6 +45,7 @@ const LoginPage = () => {
   };
 
   const handleLogin = async (e) => {
+
     e.preventDefault();
     if (!validateEmail(email) || !password) return;
 
@@ -52,57 +60,79 @@ const LoginPage = () => {
         navigate("/"); // 로그인 성공 후 홈으로 이동
       })
       .catch((err) => {
-        console.error(err); // 오류 처리
+        console.log(err);
+        setLoginError(err);
       });
   };
+
+  const [animateError, setAnimateError] = useState(false);
+
+  useEffect(() => {
+    if (loginError || emailError) {
+      setAnimateError(true);  // 에러가 있으면 애니메이션 시작
+      const timer = setTimeout(() => {
+        setAnimateError(false);  // 0.3초 후 애니메이션을 종료 상태로 리셋
+      }, 300);
+      return () => clearTimeout(timer);  // 컴포넌트 언마운트 시 타이머 해제
+    }
+  }, [loginError, emailError]);  // loginError와 emailError가 변경되면 애니메이션 실행
 
   return (
     <div className={styles.container}>
       <div className={styles.logoContainer}>
         <img src={logoImage} alt="logo사진" onClick={() => navigate("/")} />
       </div>
-      <h2 className={styles.title}>로그인</h2>
       <form onSubmit={handleLogin} className={styles.form}>
         <div>
-          <label htmlFor="email">아이디</label>
+          <h2 className={styles.title}>로그인</h2>
+          <label htmlFor="email">이메일</label>
           <input
-            id="email"
-            type="text"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (emailError) validateEmail(e.target.value);
-            }}
-            className={styles["input-box"]}
-            placeholder="이메일 주소를 입력하세요"
-            required
+              id="email"
+              type="text"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              className={styles["input-box"]}
+              placeholder="이메일 주소를 입력하세요"
+              required
           />
-          {emailError && <p className={styles["error-text"]}>{emailError}</p>}
+          <p className={`${styles["error-text"]} ${animateError ? styles.shake : ""}`}>
+            {(emailError) ? emailError : ""}
+          </p>
+          <p className={`${styles["error-text"]} ${animateError ? styles.shake : ""}`}>
+            {(loginError && loginError === "존재하지 않는 회원입니다.") ? loginError : ""}
+          </p>
         </div>
 
-        <div>
+        <div className={styles.passwordSection}>
           <label htmlFor="password">비밀번호</label>
           <div className={styles["password-container"]}>
             <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={styles["input-box"]}
-              placeholder="비밀번호를 입력하세요"
-              required
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                className={styles["input-box"]}
+                placeholder="비밀번호를 입력하세요"
+                required
             />
+            <p className={`${styles["error-text"]} ${animateError ? styles.shake : ""}`}>
+              {(loginError && loginError === "잘못된 비밀번호입니다.") ? loginError : ""}
+            </p>
             <button
-              type="button"
-              className={styles["toggle-icon"]}
-              onClick={() => setShowPassword(!showPassword)}
+                type="button"
+                className={styles["toggle-icon"]}
+                onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
-                <>
-                  <Eye size={18} />
-                </>
+                  <>
+                    <Eye size={18}/>
+                  </>
               ) : (
-                <EyeOff size={18} />
+                  <EyeOff size={18}/>
               )}
             </button>
           </div>
@@ -110,29 +140,31 @@ const LoginPage = () => {
 
         <div className={styles.checkbox}>
           <input
-            type="checkbox"
-            id="remember"
-            checked={rememberMe}
-            onChange={() => setRememberMe(!rememberMe)}
+              type="checkbox"
+              id="remember"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
           />
           <label htmlFor="remember">로그인 정보 기억하기</label>
         </div>
-        <div className={styles["text-center"]}>
-          <p>계정이 없으신가요?</p>
-          <p onClick={() => navigate("/signup")} className={styles.link}>
-            회원가입
-          </p>
-        </div>
 
         <button
-          type="submit"
-          disabled={status === "loading"}
-          className={styles["btn-primary"]}
+            type="submit"
+            disabled={status === "loading"}
+            className={styles["btn-primary"]}
         >
-          {status === "loading" ? "로그인 중..." : "로그인"}
+          {status === "loading" ? (<Loader className={styles.spinnerIcon} />) : "로그인"}
         </button>
 
         {error && <p className={styles["error-text"]}>{error}</p>}
+
+        <div className={styles["text-center"]}>
+          <span>계정이 없으신가요?</span>
+          <span onClick={() => navigate("/signup")} className={styles.link}>
+            회원가입
+          </span>
+        </div>
+
       </form>
     </div>
   );
