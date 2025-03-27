@@ -119,9 +119,6 @@ const LoginPage = () => {
                 placeholder="비밀번호를 입력하세요"
                 required
             />
-            <p className={`${styles["error-text"]} ${animateError ? styles.shake : ""}`}>
-              {(loginError && loginError === "잘못된 비밀번호입니다.") ? loginError : ""}
-            </p>
             <button
                 type="button"
                 className={styles["toggle-icon"]}
@@ -136,6 +133,14 @@ const LoginPage = () => {
               )}
             </button>
           </div>
+          <p className={`${styles["error-text"]} ${styles.passwordError} ${animateError ? styles.shake : ""}`}>
+            {(loginError && loginError === "잘못된 비밀번호입니다.") ?
+                (<>
+                  <span>{loginError}</span><br/>
+                  <span>(영문,숫자 포함 최소 8자리)</span>
+                </>)
+                : ""}
+          </p>
         </div>
 
         <div className={styles.checkbox}>
