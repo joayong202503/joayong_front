@@ -18,19 +18,14 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUpload
         // 로컬에서 첨부한 단일 File 객체인 경우
         if (imageObject instanceof File) {
 
-            console.log('단일 파일 src 변환');
-            console.log(URL.createObjectURL(imageObject));
             return URL.createObjectURL(imageObject);
-
 
             // 백엔드에서 기존 파일의 url 을 받아왔으면
         } else if (Array.isArray(imageObject)) {
             return imageObject.map(file => {
                 if (file instanceof File) {
-                    console.log('파일 배열 src 변환');
                     return URL.createObjectURL(file);
                 } else {
-                    console.log('백엔드에서 전달 받은 파일 src 변환');
                     return getCompleteImagePath(file);
                 }
             });

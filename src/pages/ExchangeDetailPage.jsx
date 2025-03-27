@@ -19,13 +19,18 @@ import DeleteButton from "../components/common/icons/DeleteButton.jsx";
 import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import EditButton from "../components/common/icons/EditButton.jsx";
+import Card from "../components/common/Card.jsx";
 
 const ExchangeDetailPage = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
-
     const [shouldNavigate, setShouldNavigate] = useState(false);
     const [viewCount, setViewCount] = useState(0);
+    const navigate = useNavigate();
+    const myUsername = useSelector((state) => state.auth.user?.name); // 매칭 요청 버튼 숨기는 용
+
+    // useMutation을 통해 삭제 후 캐싱 데이터 반환한 결과를 반환
+    const { mutate, isLoading:isMutationLoading, error:deletePostError } = useDeletePost();
 
     useEffect(() => {
         if (shouldNavigate) {
@@ -33,17 +38,64 @@ const ExchangeDetailPage = () => {
         }
     }, [shouldNavigate]);
 
-    const navigate = useNavigate();
-    const myUsername = useSelector((state) => state.auth.user?.name); // 매칭 요청 버튼 숨기는 용
-    // useMutation을 통해 삭제 후 캐싱 데이터 반환한 결과를 반환
-    const { mutate, isLoading:isMutationLoading, error:deletePostError } = useDeletePost();
 
     // 페이지 진입 시 스크롤 최상단으로 이동
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
+
     // =============== useQuery를 이용한 fetch ====================== //
+    // 검색 후 mappedData를 parameter로 전달하면 Card로 반환해주는 함수
+    const renderCards = (results, searchTerm) => {
+        if (!results || results.length === 0) {
+            return (
+                <div className={styles.searchSection}>
+                    <h2>{searchTerm}</h2>
+                    <div className={styles.emptyState}>
+                        {searchTerm === "관련 게시글" ? (
+                            <>
+                                <p>해당 재능 카테고리의 다른 게시글이 없어요</p>
+                                <Button
+                                    theme="blueTheme"
+                                    onClick={() => navigate('/exchanges')}
+                                >
+                                    한 번 다른 재능들을 둘러보세요. 예상치 못한 새로운 취미를 시작할 기회가 될지도 몰라요💡
+                                </Button>
+                            </>
+                        ) : (
+                            <p>이 작성자의 다른 게시글이 없습니다.</p>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // 결과가 있을 때의 반환값 추가
+        return (
+            <div className={styles.searchSection}>
+                <h2>{searchTerm}</h2>
+                <div className={styles.cardContainer}>
+                    {results.map(result => (
+                        <div key={result.id} className={styles.cardItem}>
+                            <Card
+                                title={result.title}
+                                talentGive={result.talentGive}
+                                talentTake={result.talentTake}
+                                lessonLocation={result.lessonLocation}
+                                lessonImageSrc={result.imageSrc}
+                                profile = {{
+                                    name: result.profile?.name, imageSrc: result.profile?.imageSrc, size: 'xs'
+                                }}
+                                onDetailClick={() => handleDetailClick(result.id)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     const {exchangeId:postId} = useParams();  // postId 가져오기
 
     // useQuery를 통해 5분 간격으로 리패칭하여 fetch. useQuery반환 값 중 data(response), isLoading(useQuery 진행중 여부), isError(에러 발생여부), error(에러값) 반환
@@ -118,6 +170,12 @@ const ExchangeDetailPage = () => {
     }, [deleteConfirmFlag, postId]);
 
     // ============== fetching 끝 ============= //
+    // 상세보기 페이지로 이동
+    const handleDetailClick = (exchangeId) => {
+        navigate(`/exchanges/${exchangeId}`);
+        // 동 페이지내 이동이므로 스크롤 제일 위로 한번 올려주기
+        window.scrollTo(0, 0);
+    };
 
     // 모달 관련
     const [isOpenModal, setIsOpenModal ] = useState(false); // 매칭 요청
@@ -172,39 +230,33 @@ const ExchangeDetailPage = () => {
         confirmDeletePost();
     }
 
-
     return (
         // 전체에 대한 wrapper
         <div className={styles.talentExchangeDetail}>
-
             {isMiniAlertOpen && (
                 <MiniAlert
                     message={miniAlertMessage}
                     onClose={() => {
                         setIsMiniAlertOpen(false);
                         navigate("/");
-                    }}
-                />
+                    }}/>
             )}
 
-            { isOpenModal &&
+            {isOpenModal &&
                 <AlertModal
                     title={modalTitle}
                     message={modalMessage}
-                    onClose={() => {
-                        setIsOpenModal(false);
-                    }}
+                    onClose={() => setIsOpenModal(false)}
                 />
             }
 
-            { isOpenDeleteModal &&
+            {isOpenDeleteModal &&
                 <AlertModal
                     title={deleteModalTitle}
                     onClose={() => {
                         setIsOpenDeleteModal(false);
                         navigate("/");
-                    }}
-                />
+                    }}/>
             }
 
             {/* 상단 섹션 (이미지 갤러리 + 상세 정보) */}
@@ -281,7 +333,7 @@ const ExchangeDetailPage = () => {
 
                     {/* 액션 버튼(재능교환 신청 + 수정+지우기) */}
                     <div className={styles.actionButtons}>
-                        { (!isMyPost && !isLoading && isPostUploaded) &&
+                        {(!isMyPost && !isLoading && isPostUploaded) &&
                             <Button
                                 theme={'blueTheme'}
                                 fontSize={'medium'}
@@ -294,9 +346,11 @@ const ExchangeDetailPage = () => {
 
                         {/*{ (isMyPost && !isLoading && isPostUploaded) &&*/}
 
-                        { (isMyPost && !isLoading && isPostUploaded) && (
+                        {(isMyPost && !isLoading && isPostUploaded) && (
                             <div className={styles.actionButtons}>
-                                <EditButton onClick={()=>{navigate(`/exchanges/${postId}/edit`)}}/>
+                                <EditButton onClick={() => {
+                                    navigate(`/exchanges/${postId}/edit`)
+                                }}/>
                                 <DeleteButton onClick={() => handleDeletePostRequest(postId)}/>
                             </div>
                         )}
@@ -307,13 +361,17 @@ const ExchangeDetailPage = () => {
             </div>
 
             {/* 게시글 정말 삭제할 것인지 컨펌 받는 모달창 */}
-            { isConfirmModalOpen &&
+            {isConfirmModalOpen &&
                 <ConfirmModal
                     title={"정말 삭제하시겠습니까?"}
-                    onConfirm={() => {setDeleteConfirmFlag(true); }}
-                    onClose={() => {setIsConfirmModalOpen(false)}}
+                    onConfirm={() => {
+                        setDeleteConfirmFlag(true);
+                    }}
+                    onClose={() => {
+                        setIsConfirmModalOpen(false)
+                    }}
                     isOpenModal={isOpenModal}
-            />}
+                />}
 
             {/* 모든 컨텐츠 섹션 */}
             <div className={styles.contentSections}>
@@ -373,6 +431,12 @@ const ExchangeDetailPage = () => {
                     isPostUploaded={isPostUploaded}
                 />
             </div>
+
+            <div className={styles.container}>
+                {renderCards(relatedPosts, "관련 게시글")}
+                {renderCards(userPosts, "이 작성자의 다른 게시글")}
+            </div>
+
         </div>
     );
 };

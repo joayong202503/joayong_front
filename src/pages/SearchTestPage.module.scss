@@ -1,0 +1,67 @@
+.container {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.searchSection {
+    margin-bottom: 60px;
+
+    h2 {
+        margin-bottom: 10px;
+    }
+}
+
+.cardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: flex-start;
+}
+
+.cardItem {
+    width: 300px;
+}
+
+.emptyState {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    
+    p {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    button {
+        width: 100%;  // 버튼 너비를 100%로
+        max-width: 800px;  // 최대 너비를 800px로 증가
+        border: 1px solid #3b82f6;
+        background-color: white;
+        color: #3b82f6;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: #eff6ff;
+        }
+    }
+}
+
+.actionLink {
+    color: #3b82f6;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1.6;
+
+    &:hover {
+        color: #2563eb;
+        text-decoration: underline;
+    }
+}
