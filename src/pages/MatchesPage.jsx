@@ -137,12 +137,9 @@ const MatchesPage = () => {
                     // 기존 request 응답 받은 것에 sender의 profile image url 추가하여 반환
                     ...request,
                     profileImage: userInfo.profileImageUrl ?
-                        getCompleteImagePath(userInfo.profileImageUrl).imageUrl :
+                        getCompleteImagePath(userInfo).profileImageUrl :
                         null
                 };
-                console.log(userInfoWithProfileUrl);
-                console.log(userInfoWithProfileUrl);
-                console.log(userInfoWithProfileUrl);
                 return userInfoWithProfileUrl;
             })
 
