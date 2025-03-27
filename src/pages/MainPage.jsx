@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import {fetchUserProfile} from "../services/profileApi.js";
-import {Users,MessageCircle,Video,Star,ArrowRight} from "lucide-react";
+import {Users,MessageCircle,Video,Star,ArrowRight, ArrowDown} from "lucide-react";
 
 const API_URL = 'http://localhost:8999';
 
@@ -158,13 +158,18 @@ const MainPage = () => {
             <div className={styles.photoContainer}>
               <img className={styles.mainImage} src={mainPhoto}/>
               <div className={styles.contentContainer}>
-                <h1>재능을 교환하고, 같이 성장합니다.</h1>
-                <span> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
+                <h1 className={styles.contentTitle}>재능을 교환하고, 같이 성장합니다.</h1>
+                <span className={styles.contentSpan}> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
                   함께 만들어가는 재능교환 플랫폼 입니다.
                 </span>
                 <div className={styles.mainButtonContainer}>
                   <button className={styles.startButton}>시작하기<ArrowRight size={16} color="#ffffff" /></button>
                   <button className={styles.exploreButton}>재능 찾아보기</button>
+                </div>
+                <div className={styles.scrollContainer}>
+                  <span className={styles.scrollText}>스크롤하여 더 알아보기</span>
+
+                  <span className={styles.scrollArrow}><ArrowDown size={20} color="#ffffff" /></span>
                 </div>
               </div>
             </div>
