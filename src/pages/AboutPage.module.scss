@@ -1,0 +1,156 @@
+// Base styles
+.aboutContainer {
+  color: #2d3436;
+  line-height: 1.6;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  overflow-x: hidden;
+}
+
+// Header
+.header {
+  padding-top: 30px;
+  text-align: center;
+}
+
+.logoImage {
+  max-width: 400px;
+  height: auto;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: rgba(45, 52, 54, 0.7);
+  margin-top: 15px;
+}
+
+// Main Section
+.mainSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 80px;
+}
+.aboutImage{
+  width: 50%;
+  height: auto;
+}
+
+.imageContainer {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 40px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.mainImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.contentSection {
+  text-align: center;
+  max-width: 800px;
+}
+
+.mainText {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.descText {
+  font-size: 1.1rem;
+  font-weight: 300;
+  margin-bottom: 40px;
+  line-height: 1.8;
+  color: rgba(45, 52, 54, 0.8);
+}
+
+.ctaText {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-top: 20px;
+  color: #007AFF;
+}
+
+.brandName {
+  font-weight: 600;
+  color: #007AFF;
+}
+
+// Value Proposition Section
+.valuePropSection {
+  border-top: 1px solid #eee;
+  padding: 60px 0;
+  text-align: center;
+  border-radius: 12px;
+  margin-bottom: 60px;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 60px;
+  position: relative;
+  display: inline-block;
+  color: #2d3436;
+  display: flex;
+  justify-content: center;
+}
+.valueLogo {
+  width: 200px;
+}
+.valueProps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.valueProp {
+  flex: 1;
+  min-width: 250px;
+  max-width: 320px;
+  padding: 30px;
+  position: relative;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 15px 0;
+    color: #000000;
+  }
+
+  p {
+    color: rgba(45, 52, 54, 0.7);
+    font-size: 1rem;
+  }
+}
+
+.valueNumber {
+  display: block;
+  font-size: 4rem;
+  font-weight: 700;
+  color: rgba(85, 54, 219, 0.1);
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  z-index: 0;
+}
