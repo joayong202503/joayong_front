@@ -11,6 +11,7 @@ const ChatPage = () => {
   const user = useSelector((state) => state.auth.user);
   const { messageId } = useParams();
   const [roomId, setRoomId] = useState(null);
+  const [isNew, setIsNew] = useState(null);
   const [error, setError] = useState(null);
   const location = useLocation();
   const user1 = location.state?.name1 || "알 수 없음";
@@ -23,7 +24,8 @@ const ChatPage = () => {
       try {
         const data = await fetchRtcRoomId(messageId);
         console.log("data : ", data);
-        setRoomId(data);  // 상태에 데이터 저장
+        setRoomId(data.roomId);  // 상태에 데이터 저장
+        setIsNew(data.new);
       } catch (error) {
         console.error("Error fetching RTC room ID:", error);
         setError(error); // 에러 상태 처리
@@ -38,7 +40,7 @@ const ChatPage = () => {
   const username = parts[0] + parts[1].split(".")[0];
 
     // roomId가 로딩 중이면 로딩 화면을 표시
-    if (roomId === null) {
+    if (roomId === null && isNew === null) {
       return <div>Loading...</div>;  // roomId가 없을 때 로딩 표시
     }
 
@@ -47,7 +49,7 @@ const ChatPage = () => {
       <Provider store={store}>
         <div className={styles.wrap}>
           <div className={styles.videoContainer}>
-            <RtcRoom roomCode={roomId} username={username} />
+            <RtcRoom roomCode={roomId} username={username} isNew={isNew} />
           </div>
           <div className={styles.chatContainer}><ChatRoom user1={user1} user2={user2} /></div>
         </div>
