@@ -4,7 +4,7 @@ import Card from "../components/common/Card.jsx";
 import { GoChevronLeft } from "react-icons/go";
 import { GoChevronRight } from "react-icons/go";
 import mainPhoto from "../assets/images/mainPage.jpeg"
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import {fetchUserProfile} from "../services/profileApi.js";
@@ -163,8 +163,12 @@ const MainPage = () => {
                   함께 만들어가는 재능교환 플랫폼 입니다.
                 </span>
                 <div className={styles.mainButtonContainer}>
-                  <button className={styles.startButton}>시작하기<ArrowRight size={16} color="#ffffff" /></button>
-                  <button className={styles.exploreButton}>재능 찾아보기</button>
+                  <NavLink to="/exchanges" className={styles.navLinkNoUnderline}>
+                    <button className={styles.startButton}>재능 찾아보기<ArrowRight size={16} color="#ffffff"/></button>
+                  </NavLink>
+                  <NavLink to="/exchanges/new" className={styles.navLinkNoUnderline}>
+                    <button className={styles.exploreButton}>내 재능 등록하기</button>
+                  </NavLink>
                 </div>
                 <div className={styles.scrollContainer}>
                   <span className={styles.scrollText}>스크롤하여 더 알아보기</span>
@@ -177,6 +181,7 @@ const MainPage = () => {
           <section className={styles.middleContainer}>
             <div className={styles.titleContainer}>
               <h2> 최근 등록된 재능교환</h2>
+              <span>가장 최근에 등록된 재능 교환 게시물들을 확인해보세요</span>
             </div>
             <div className={styles.cardContainer}>
               {/*재능교환 게시물이 없을 경우에는 화살표 출력X*/}
