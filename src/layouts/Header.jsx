@@ -15,13 +15,16 @@ const Header = () => {
   // 스토어에서 유저 정보 가져오기
   const user = useSelector((state) => state.auth.user);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const location = useLocation(); // 매 페이지마다 새로 fetch 되게 하려고 useLocation 사용
+
+  // 메인페이지 여부 확인 (정확히 루트 경로인 경우만)
+  const isMainPage = location.pathname === "/";
 
   // 로그아웃 알럿 상태관리
   const [isMiniAlertOpen, setIsMiniAlertOpen] = useState(false);
   const [miniAlertMessage, setMiniAlertMessage] = useState("");
 
   // ========= 매칭관리 : 내가 수신인이고 아직 수락/거절여부 결정하지 않은 내역 있으면 빨간점으로 알림 표시  ===== //
-  const location = useLocation(); // 매 페이지마다 새로 fetch 되게 하려고 useLocation 사용
   const [hasReceivedPendingRequests, setHasReceviedPendingRequests] =
     useState(false);
 
@@ -142,7 +145,7 @@ const Header = () => {
   };
 
   return (
-    <header className={styles.headerContainer}>
+    <header className={`${styles.headerContainer} ${isMainPage ? styles.transparentHeader : ''}`}>
       {isMiniAlertOpen && (
         <MiniAlert
           message={miniAlertMessage}

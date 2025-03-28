@@ -4,11 +4,11 @@ import Card from "../components/common/Card.jsx";
 import { GoChevronLeft } from "react-icons/go";
 import { GoChevronRight } from "react-icons/go";
 import mainPhoto from "../assets/images/mainPage.jpeg"
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import {fetchUserProfile} from "../services/profileApi.js";
-import {Users,MessageCircle,Video,Star} from "lucide-react";
+import {Users,MessageCircle,Video,Star,ArrowRight, ArrowDown} from "lucide-react";
 
 const API_URL = 'http://localhost:8999';
 
@@ -151,6 +151,48 @@ const MainPage = () => {
     navigate(`/exchanges/${exchangeId}`);
   };
 
+  // bottomContainer 도달 시에 생기는 스크롤 애니메이션을 우
+  useEffect(() => {
+    // 초기 상태 설정 - 모든 박스 숨기기
+    const boxes = document.querySelectorAll(`.${styles.boxContainer}`);
+
+    // 스크롤 이벤트 핸들러
+    const handleScroll = () => {
+      // 박스들이 들어있는 섹션을 찾기
+      const boxesSection = document.querySelector(`.${styles.bottomContainer}`);
+      if (!boxesSection) return;
+
+      // 박스 섹션의 위치 계산
+      // getBoundingClientRect().top: 요소의 상단 가장자리가 브라우저 상단으로 부터 얼마나 떨어지는 지 알려줌
+      const sectionTop = boxesSection.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+
+      // 섹션이 화면에 보이는지 확인 (섹션 상단이 화면 아래쪽에 들어오면)
+      if (sectionTop < windowHeight * 0.75) {
+        // 박스들에 순차적으로 애니메이션 적용
+        boxes.forEach((box, index) => {
+          setTimeout(() => {
+            box.classList.add(styles.animate);
+          }, index * 200); // 각 박스마다 200ms 지연
+        });
+
+        // 애니메이션이 한 번 실행되면 스크롤 이벤트 제거
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', handleScroll);
+
+    // 페이지 로드 시 한 번 체크 (이미 해당 섹션이 보이는 상태라면 바로 애니메이션 실행)
+    handleScroll();
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
       <>
         <div className={styles.mainContainer}>
@@ -158,16 +200,30 @@ const MainPage = () => {
             <div className={styles.photoContainer}>
               <img className={styles.mainImage} src={mainPhoto}/>
               <div className={styles.contentContainer}>
-                <h1>재능을 교환하고, 같이 성장합니다.</h1>
-                <p> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
+                <h1 className={styles.contentTitle}>재능을 교환하고, 같이 성장합니다.</h1>
+                <span className={styles.contentSpan}> 전문지식과 기술을 나누고, 교환하며 더 나은 사회를<br/>
                   함께 만들어가는 재능교환 플랫폼 입니다.
-                </p>
+                </span>
+                <div className={styles.mainButtonContainer}>
+                  <NavLink to="/exchanges" className={styles.navLinkNoUnderline}>
+                    <button className={styles.startButton}>재능 찾아보기<ArrowRight size={16} color="#ffffff"/></button>
+                  </NavLink>
+                  <NavLink to="/exchanges/new" className={styles.navLinkNoUnderline}>
+                    <button className={styles.exploreButton}>내 재능 등록하기</button>
+                  </NavLink>
+                </div>
+                <div className={styles.scrollContainer}>
+                  <span className={styles.scrollText}>스크롤하여 더 알아보기</span>
+
+                  <span className={styles.scrollArrow}><ArrowDown size={20} color="#ffffff" /></span>
+                </div>
               </div>
             </div>
           </section>
           <section className={styles.middleContainer}>
             <div className={styles.titleContainer}>
               <h2> 최근 등록된 재능교환</h2>
+              <span>가장 최근에 등록된 재능 교환 게시물들을 확인해보세요</span>
             </div>
             <div className={styles.cardContainer}>
               {/*재능교환 게시물이 없을 경우에는 화살표 출력X*/}
