@@ -73,9 +73,12 @@ const ChatPage = () => {
     <>
       <Provider store={store}>
       {postData && (
-          <div>
+          <div className={styles.linkText}>
             <span onClick={handleClick} style={{ cursor: "pointer", color: "blue" }}>
-              {postData.writer} ({postData.talentTName}) &lt;-&gt; {postData.sender} ({postData.talentGName})
+              {postData.writer} ({postData.talentTName}) 
+              &lt;-&gt; 
+              {postData.sender} ({postData.talentGName})
+              {` 해당 게시글로 이동하기`}
             </span>
           </div>
         )}
@@ -83,7 +86,9 @@ const ChatPage = () => {
           <div className={styles.videoContainer}>
             <RtcRoom roomCode={roomId} username={username} isNew={isNew} />
           </div>
-          <div className={styles.chatContainer}><ChatRoom user1={user1} user2={user2} /></div>
+          <div className={styles.chatContainer}>
+            <ChatRoom user1={user1} user2={user2} />
+            </div>
         </div>
       </Provider>
     </>
