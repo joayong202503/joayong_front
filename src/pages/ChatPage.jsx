@@ -2,9 +2,9 @@ import React, { useEffect, useReducer, useState } from "react";
 import RtcRoom from "../components/ChatPage/RtcRoom";
 import { Provider, useSelector } from "react-redux";
 import { store } from "../store/index.js";
-import { useParams,useLocation,useNavigate } from "react-router-dom";
-import { fetchRtcRoomId,fetchPostInfo } from "../services/rtcApi.js";
-import styles from './ChatPage.module.scss';
+import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { fetchRtcRoomId, fetchPostInfo } from "../services/rtcApi.js";
+import styles from "./ChatPage.module.scss";
 import ChatRoom from "../components/chat/ChatRoom.jsx";
 
 const ChatPage = () => {
@@ -27,7 +27,7 @@ const ChatPage = () => {
       try {
         const data = await fetchRtcRoomId(messageId);
         console.log("data : ", data);
-        setRoomId(data.roomId);  // 상태에 데이터 저장
+        setRoomId(data.roomId); // 상태에 데이터 저장
         setIsNew(data.new);
       } catch (error) {
         console.error("Error fetching RTC room ID:", error);
@@ -35,8 +35,8 @@ const ChatPage = () => {
       }
     };
 
-    fetchData();  
-  }, []); 
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,42 +44,58 @@ const ChatPage = () => {
         const data = await fetchPostInfo(messageId);
         console.log("data2 : ", data);
         setPostData(data);
-
       } catch (error) {
         console.error("Error fetching RTC room ID:", error);
         setError(error); // 에러 상태 처리
       }
     };
 
-    fetchData();  
-  }, [messageId]); 
+    fetchData();
+  }, [messageId]);
 
   // rtc 서버에 접근하는 이름은 abc@aaa.com 일때 abcaaa로 (영어/숫자로만 가능해서)
   const parts = user.email.split("@");
   const username = parts[0] + parts[1].split(".")[0];
 
-    // roomId가 로딩 중이면 로딩 화면을 표시
-    if (roomId === null && isNew === null && postData === null) {
-      return <div>Loading...</div>;  // roomId가 없을 때 로딩 표시
-    }
+  // roomId가 로딩 중이면 로딩 화면을 표시
+  if (roomId === null && isNew === null && postData === null) {
+    return <div>Loading...</div>; // roomId가 없을 때 로딩 표시
+  }
 
-    const handleClick = () => {
-      if (postData && postData.postId) {
-        navigate(`/exchanges/${postData.postId}`);
-      }
-    };
+  const handleClick = () => {
+    if (postData && postData.postId) {
+      // 그냥이동
+      // navigate(`/exchanges/${postData.postId}`);
+
+      // 새창열기
+      window.open(
+        `/exchanges/${postData.postId}`,
+        "_blank",
+        "width=800,height=600,noopener,noreferrer"
+      );
+    }
+  };
 
   return (
     <>
       <Provider store={store}>
-      {postData && (
+        {postData && (
           <div className={styles.linkText}>
-            <span onClick={handleClick} style={{ cursor: "pointer", color: "blue" }}>
-              {postData.writer} ({postData.talentTName}) 
-              &lt;-&gt; 
-              {postData.sender} ({postData.talentGName})
-              {` 해당 게시글로 이동하기`}
+            {postData.writer} ({postData.talentTName}) &lt;-&gt;
+            {postData.sender} ({postData.talentGName}){` 게시글 `}
+            <span
+              onClick={handleClick}
+            >
+              {`새 창에서 열기`}
             </span>
+            {/* 이건 새탭으로 열기 */}
+            <a
+              href={`/exchanges/${postData.postId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {`새 탭으로 열기`}
+            </a>
           </div>
         )}
         <div className={styles.wrap}>
@@ -88,7 +104,7 @@ const ChatPage = () => {
           </div>
           <div className={styles.chatContainer}>
             <ChatRoom user1={user1} user2={user2} />
-            </div>
+          </div>
         </div>
       </Provider>
     </>

@@ -31,4 +31,17 @@
   margin-bottom: 20px;
   text-align: center; 
   font-weight : bold;
+  span{
+    margin-left: 40px;
+    margin-right: 20px;
+    text-decoration-line: underline;
+    cursor: pointer;
+    color: blue;
+  }
+  span:hover{
+    color: cadetblue;
+  }
+  a:hover{
+    color: cadetblue;
+  }
 }
