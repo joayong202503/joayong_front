@@ -121,7 +121,7 @@ const RequestDetailModal = ({
         <div className={styles.modalContent}>
             <div className={styles.modalHeader}>
                 <button className={styles.closeButton} onClick={onClose}>×</button>
-                <h2 onClick={handlePostClick}>관련 재능 교환 게시글 보기 → </h2>
+                <h2 className={styles.postLink} onClick={handlePostClick}>관련 재능 교환 게시글 보기 → </h2>
             </div>
 
             <div className={styles.divider}/>

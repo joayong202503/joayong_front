@@ -24,7 +24,6 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
     return (
       <div className={styles.starContainer}>
         {stars}
-        <span className={styles.ratingValue}>({rating})</span>
       </div>
     );
   };
@@ -33,15 +32,15 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
   const getIconForQuestion = (question) => {
     switch (question) {
       case '전문성':
-        // return <Award size={18} />;
+      // return <Award size={18} />;
       case '의사소통':
-        // return <MessageCircle size={18} />;
+      // return <MessageCircle size={18} />;
       case '준비성':
-        // return <CalendarCheck size={18} />;
+      // return <CalendarCheck size={18} />;
       case '친절도':
-        // return <Smile size={18} />;
+      // return <Smile size={18} />;
       case '만족도':
-        // return <ThumbsUp size={18} />;
+      // return <ThumbsUp size={18} />;
       default:
         return null;
     }
@@ -57,7 +56,7 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
 
   //프로필을 클릭했을때 해당 프로필 페이지로 이동할 수 있도록
   const handleProfileClick =() =>{
-      navigate(`/profile/${reviewerName}`)
+    navigate(`/profile/${reviewerName}`)
   }
 
   return (
@@ -67,9 +66,13 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
           <div className={styles.profileContainer}
                onClick={handleProfileClick}
                style={{cursor: 'pointer'}}>
-            <ProfileCircle size="sm" src={reviewerProfileUrl}/>
+            <ProfileCircle size="mmd" src={reviewerProfileUrl}/>
           </div>
-          <p className={styles.reviewer}>{reviewerName}</p>
+          <div className={styles.reviewerContainer}>
+            <span className={styles.reviewer}>{reviewerName}</span>
+            <span className={styles.reviewDate}>{formatDate(createAt)}</span>
+
+          </div>
 
         </div>
         <div className={styles.ratingResultContainer}>
@@ -81,6 +84,7 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
                     <div className={styles.ratingLabel}>
                       {getIconForQuestion(review.question)}
                       <span>{review.question}</span>
+                      <span className={styles.ratingValue}>{review.rating}</span>
                     </div>
                     {renderStars(review.rating)}
                   </div>
@@ -92,6 +96,7 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
                     <div className={styles.ratingLabel}>
                       {getIconForQuestion(review.question)}
                       <span>{review.question}</span>
+                      <span className={styles.ratingValue}>{review.rating}</span>
                     </div>
                     {renderStars(review.rating)}
                   </div>
@@ -100,7 +105,6 @@ const RatingBox = ({ reviewerName, reviewList, createAt, reviewerProfileUrl }) =
             </>
           )}
         </div>
-                <p className={styles.reviewDate}>리뷰작성일: {formatDate(createAt)}</p>
       </div>
     </div>
   );

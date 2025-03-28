@@ -44,6 +44,8 @@
 }
 
 .rightContainer{
+  padding-left: 130px;
+  width: 300px;
   display: flex;
 }
 .profileContainer{
@@ -61,4 +63,8 @@
   top: 18px;
   margin-right: 10px;
   z-index: 1000;
+}
+
+.logoContainer img{
+  width: 300px;
 }

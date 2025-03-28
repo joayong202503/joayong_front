@@ -1,6 +1,7 @@
 .fullContainer {
   width: 1200px;
   margin-top: 80px;
+  margin-bottom: 100px;
 
   h2 {
     font-size: 2.5rem;
@@ -26,7 +27,7 @@
   width: 100%;
   padding: 2rem;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #666;
   min-height: 200px;
   display: flex;
@@ -34,14 +35,6 @@
   justify-content: center;
 }
 
-.errorState {
-  color: #e53935;
-}
-
-.emptyState {
-  color: #757575;
-  font-size: 1.1rem;
-}
 
 .pagination {
   position: absolute;

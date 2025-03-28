@@ -108,11 +108,11 @@ const ProfilePage = () => {
             <div className={styles.fullTalentContainer}>
               <div className={styles.talentContainer}>
                 <span className={styles.talentTitle}>Teaching</span>
-                <span className={styles.talentText}>{profileData.talentTeaching || '없음'}</span>
+                <span className={styles.talentText}>{profileData.talentTeaching}</span>
               </div>
               <div className={styles.talentContainer}>
                 <span className={styles.talentTitle}>Learning</span>
-                <span className={styles.talentText}>{profileData.talentLearning || '없음'}</span>
+                <span className={styles.talentText}>{profileData.talentLearning}</span>
               </div>
             </div>
           </div>
