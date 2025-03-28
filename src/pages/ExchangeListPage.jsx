@@ -8,8 +8,8 @@ import defaultProfileImage from '../assets/images/profile.png';
 import InputBox from "../components/common/InputBox.jsx";
 import styles from "./ExchangeListPage.module.scss";
 import { fetchUserProfile } from "../services/profileApi.js";
+import {API_URL} from '../services/api.js';
 
-const API_URL = 'http://localhost:8999';
 
 const ExchangeListPage = () => {
     const navigate = useNavigate();

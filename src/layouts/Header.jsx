@@ -10,6 +10,7 @@ import { fetchMatchingRequestsWithFilters } from "../services/matchingService.js
 import { BellDot, BellIcon, BellRing, Dot } from "lucide-react";
 import { fetchUserProfile } from "../services/profileApi.js";
 import MiniAlert from "../components/common/MiniAlert.jsx";
+import {API_URL} from "../services/api.js";
 
 const Header = () => {
   // 스토어에서 유저 정보 가져오기
@@ -42,7 +43,7 @@ const Header = () => {
         // API 응답에서 프로필 이미지 URL 처리
         let imageUrl = userData.profileImageUrl;
         if (imageUrl && !imageUrl.startsWith("http")) {
-          imageUrl = `http://localhost:8999${imageUrl}`;
+          imageUrl = `${API_URL}${imageUrl}`;
         }
 
         setProfileImageUrl(imageUrl);

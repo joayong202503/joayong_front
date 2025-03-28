@@ -10,8 +10,7 @@ import InputBox from "../components/common/InputBox.jsx";
 import DropDownBasic from '../components/common/DropDownBasic';
 import { getSortedTalentCategories } from "../utils/sortAndGetCategories.js";
 import MiniAlert from "../components/common/MiniAlert.jsx";
-
-const API_URL = 'http://localhost:8999';
+import {API_URL} from '../services/api.js';
 
 const ProfileSettingPage = () => {
     const [profileData, setProfileData] = useState({});
