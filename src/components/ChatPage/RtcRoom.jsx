@@ -119,10 +119,8 @@ const JanusWebRTC = ({ roomCode, username, isNew }) => {
                 } else if (event === "event" && msg["publishers"]) {
                   let publisher = msg["publishers"][0]; // 첫 번째 사람만 받음
                   newRemoteFeed(publisher.id, publisher.display);
-                } else if (msg["leaving"]) {
-                  console.log("상대가 나감!");
+                }  else if (event === "unpublished") {
                   remoteVideoRef.current.srcObject = null; // 상대방이 나갔을 때 비디오 제거
-                  remoteVideoRef.current = null;
                 }
 
                 if (jsep) {
@@ -167,23 +165,9 @@ const JanusWebRTC = ({ roomCode, username, isNew }) => {
     });
 
     return () => {
-      const destroyJanusAndLeaveRoom = async () => {
-        if (janusRef.current) {
-          if (remoteVideoRef.current === null) {
-            // RTC 방 삭제
-            let leaveRoom = {
-              request: "destroy",
-              room: roomId,
-            };
-            console.log("leaveRoom : ", leaveRoom);
-            await storePluginRef.current.send({ message: leaveRoom });
-          }
-  
-          await janusRef.current.destroy();
-        }
-      };
-    
-      destroyJanusAndLeaveRoom();  // async 함수 호출
+      if (janusRef.current) {
+        janusRef.current.destroy();
+      }
     };
   }, [roomCode]);
 
