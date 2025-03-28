@@ -151,6 +151,48 @@ const MainPage = () => {
     navigate(`/exchanges/${exchangeId}`);
   };
 
+  // bottomContainer 도달 시에 생기는 스크롤 애니메이션을 우
+  useEffect(() => {
+    // 초기 상태 설정 - 모든 박스 숨기기
+    const boxes = document.querySelectorAll(`.${styles.boxContainer}`);
+
+    // 스크롤 이벤트 핸들러
+    const handleScroll = () => {
+      // 박스들이 들어있는 섹션을 찾기
+      const boxesSection = document.querySelector(`.${styles.bottomContainer}`);
+      if (!boxesSection) return;
+
+      // 박스 섹션의 위치 계산
+      // getBoundingClientRect().top: 요소의 상단 가장자리가 브라우저 상단으로 부터 얼마나 떨어지는 지 알려줌
+      const sectionTop = boxesSection.getBoundingClientRect().top;
+      const windowHeight = window.innerHeight;
+
+      // 섹션이 화면에 보이는지 확인 (섹션 상단이 화면 아래쪽에 들어오면)
+      if (sectionTop < windowHeight * 0.75) {
+        // 박스들에 순차적으로 애니메이션 적용
+        boxes.forEach((box, index) => {
+          setTimeout(() => {
+            box.classList.add(styles.animate);
+          }, index * 200); // 각 박스마다 200ms 지연
+        });
+
+        // 애니메이션이 한 번 실행되면 스크롤 이벤트 제거
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', handleScroll);
+
+    // 페이지 로드 시 한 번 체크 (이미 해당 섹션이 보이는 상태라면 바로 애니메이션 실행)
+    handleScroll();
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
       <>
         <div className={styles.mainContainer}>
