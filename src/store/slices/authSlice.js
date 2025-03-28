@@ -15,10 +15,14 @@ export const login = createAsyncThunk("auth/login", async (credentials, { dispat
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
       });
+
+        const data = await response.json();
   
-      if (!response.ok) throw new Error("로그인 실패. 다시 시도해주세요.");
+      if (!response.ok) {
+          console.error("로그인 실패:", data.error);
+          throw new Error(data.error);
+      }
       
-      const data = await response.json();
       localStorage.setItem("accessToken", data.accessToken); // 토큰 저장
       dispatch(fetchMe()); // 로그인 후 유저 정보 가져오기
       return data.user;

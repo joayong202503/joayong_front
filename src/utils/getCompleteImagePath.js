@@ -10,6 +10,21 @@ const GetCompleteImagePath = (imagePathServerResponse) => {
         return null;
     }
 
+    // 사용자 조회 api 에서는 이미지를 imageUrl이 아닌 profileImageUrl으로 줌
+    if (imagePathServerResponse.profileImageUrl) {
+        console.log('요놈');
+
+        if (!imagePathServerResponse.profileImageUrl) {
+            return imagePathServerResponse;
+        } else {
+            return {
+                ...imagePathServerResponse,
+                profileImageUrl: `${API_URL}${imagePathServerResponse.profileImageUrl}`,
+            };
+        }
+    }
+
+    // 나머지는 imageUrl로 줌
     return {
         ...imagePathServerResponse,
         imageUrl: `${API_URL}${imagePathServerResponse.imageUrl}`,
