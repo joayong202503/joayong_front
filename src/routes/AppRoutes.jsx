@@ -19,14 +19,9 @@ import ExchangeListPage from "../pages/ExchangeListPage.jsx";
 import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
 import ChatPage from "../pages/ChatPage.jsx";
 import ProfileSettingPage from "../pages/ProfileSettingPage.jsx";
+import SearchTestPage from "../pages/SearchTestPage.jsx";
 
 const router = createBrowserRouter([
-  // status 500 에러 페이지
-  {
-    path: '/error',
-    element: <ErrorPage />
-  }
-  ,
   // 회원가입 페이지
   {
     path: '/signup',
@@ -55,6 +50,10 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout/>,
     children: [
+      {
+        path: 'test',
+        element: <SearchTestPage/>
+      },
       // 에러 페이지
       {
         path: 'error',

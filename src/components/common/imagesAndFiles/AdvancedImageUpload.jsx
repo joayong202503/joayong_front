@@ -1,8 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styles from "./AdvancedImageUpload.module.scss";
-import { X, Maximize2 } from 'lucide-react';
+import { X, Maximize2, Plus } from 'lucide-react';
 import getCompleteImagePath from "../../../utils/getCompleteImagePath.js";
-import { Plus } from 'lucide-react';
 import ConfirmModal from "../ConfirmModal.jsx";
 
 const AdvancedImageUpload = ({
@@ -74,13 +73,13 @@ const AdvancedImageUpload = ({
             // 만약 모달을 띄운 적이 없다면, 전체 변경만 가능하다고 모달 띄우기(위에 상태값 추가해줘야 함)
             if (isFirstAttempt) {
                 setConfirmModalOnConfirm(() => () => {
+                    setIsFirstAttempt(false);
                     clickFileInput();
                     setTimeout(() => {
                         setShowConfirmModalOpen(false);
                     }, 500);
                 })
                 setShowConfirmModalOpen(true);
-                setIsFirstAttempt(false);
             } else {
                 // 컨펌 모달 띄운 적 있다면, 바로 파일 선택창 띄우기
                 clickFileInput();
@@ -114,18 +113,19 @@ const AdvancedImageUpload = ({
         };
 
         if (isAllOrNone) {
+            // 처음으로 이미지 드롭하는 케이스거나(isFirstAttempt), 이미 삭제 버튼에서 이미지 전체 삭제 동의했을 때는 기존 이미지 전체 삭제 경고 날림
             if (isFirstAttempt) {
                 // 비동기 내(setconfirmModalOnComfirm) 내에서 e소실로 인해 파일 데이터만 따로 저장
                 const files = e.dataTransfer.files;
 
                 setConfirmModalOnConfirm(() => () => {
+                    setIsFirstAttempt(false);
                     handleImageDrop({ dataTransfer: { files } });
                     setTimeout(() => {
                         setShowConfirmModalOpen(false);
                     }, 500);
                 })
                 setShowConfirmModalOpen(true);
-                setIsFirstAttempt(false);
             } else {
                 console.log('두번째 시도일 때 e', e.dataTransfer.files);
                 handleImageDrop(e);
@@ -148,6 +148,11 @@ const AdvancedImageUpload = ({
                     {description.map((text, index) => (
                         <p key={index}>💡 {text}</p>
                     ))}
+                </div>
+
+                {/* 개수 제한 */}
+                <div className={styles.carouselDescription}>
+                    <p className={styles.count}>{transformedImages?.length} / {maxLength}</p>
                 </div>
 
                 <div className={styles.imageContainerList}>
@@ -173,7 +178,7 @@ const AdvancedImageUpload = ({
                                     <button
                                         className={styles.controlButton}
                                         title="사진 확대"
-                                        onClick={onEnlargePhoto}
+                                        onClick={() => onEnlargePhoto(index)}
                                     >
                                         <Maximize2 size={15}/>
                                     </button>
@@ -204,23 +209,15 @@ const AdvancedImageUpload = ({
                         />
                     </div>
                 </div>
-
-                <div className={styles.carouselDescription}>
-                    <p className={styles.count}>{transformedImages?.length} / {maxLength}</p>
-                </div>
             </div>
 
-            {/* 모달 */}
-            { showConfirmModalOpen && (
+            {showConfirmModalOpen && (
                 <ConfirmModal
-                    message={'게시물의 일관성을 위해 사진은 개별 삭제가 아닌 전체 삭제만 가능합니다. 기존 사진을 모두 삭제하고 새로운 사진을 업로드 하시겠습니까?'}
+                    message={'게시물의 일관성을 위해, 새로운 사진을 첨부 시 게시글의 기존 사진은 모두 삭제됩니다. 동의하시나요?'}
                     onConfirm={confirmModalOnConfirm}
-                    onClose={() => {
-                        setShowConfirmModalOpen(false);
-                    }}
+                    onClose={() => setShowConfirmModalOpen(false)}
                 />
             )}
-
         </>
     );
 };

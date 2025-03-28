@@ -12,7 +12,6 @@ const GetCompleteImagePath = (imagePathServerResponse) => {
 
     // 사용자 조회 api 에서는 이미지를 imageUrl이 아닌 profileImageUrl으로 줌
     if (imagePathServerResponse.profileImageUrl) {
-        console.log('요놈');
 
         if (!imagePathServerResponse.profileImageUrl) {
             return imagePathServerResponse;
@@ -24,11 +23,17 @@ const GetCompleteImagePath = (imagePathServerResponse) => {
         }
     }
 
+    // Card용 데이터
+    if (typeof imagePathServerResponse === 'string') {
+        return `${API_URL}${imagePathServerResponse}`
+    }
+
     // 나머지는 imageUrl로 줌
-    return {
+    const data = {
         ...imagePathServerResponse,
         imageUrl: `${API_URL}${imagePathServerResponse.imageUrl}`,
     };
+    return data;
 };
 
 export default GetCompleteImagePath;

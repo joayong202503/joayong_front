@@ -1,7 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import styles from "./ImageCarouselWithThumbNail.module.scss";
 import getCompleteImagePath from "../../../utils/getCompleteImagePath.js";
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Feather 아이콘 임포트
+import { IoClose } from 'react-icons/io5';
+import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 
 // isLoading : useQuery에서 fetch 완료 여부
 // isPostUploaded : 로딩 완료 후 post 까지 업데이트 되었는지
@@ -9,7 +10,7 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUpload
                                     initialIndex=0, setCurrentIndex,
                                     isOpenModal, setIsOpenModal}) => {
 
-    const [currentIndex, setCurrentIndexLocal] = useState(initialIndex);
+    const [currentIndexLocal, setCurrentIndexLocal] = useState(initialIndex);
 
     // image 태그에서 보여줄 src 경로를, 백엔드에서 기존 파일의 url 을 받아왔느냐 or 사용자가 지금 로컬에서 첨부한 File 객체냐에 따라 다르게 처리
     const getImageObjectWithTransformImageSrc = (imageObject) => {
@@ -17,19 +18,14 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUpload
         // 로컬에서 첨부한 단일 File 객체인 경우
         if (imageObject instanceof File) {
 
-            console.log('단일 파일 src 변환');
-            console.log(URL.createObjectURL(imageObject));
             return URL.createObjectURL(imageObject);
-
 
             // 백엔드에서 기존 파일의 url 을 받아왔으면
         } else if (Array.isArray(imageObject)) {
             return imageObject.map(file => {
                 if (file instanceof File) {
-                    console.log('파일 배열 src 변환');
                     return URL.createObjectURL(file);
                 } else {
-                    console.log('백엔드에서 전달 받은 파일 src 변환');
                     return getCompleteImagePath(file);
                 }
             });
@@ -109,13 +105,13 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUpload
                     <div className={styles.modalOverlay} onClick={handleCloseModal}>
                         <div className={styles.modalContent} onClick={handleModalClick}>
                             <button className={styles.closeButton} onClick={handleCloseModal}>
-                                X
+                                <IoClose size={50} />
                             </button>
                             <ImageCarouselWithThumbNail
                                 imagesObject={imagesObject}
                                 isLoading={isLoading}
                                 isPostUploaded={isPostUploaded}
-                                initialIndex={currentIndex} // 초기 인덱스 전달
+                                initialIndex={currentIndexLocal} // 초기 인덱스 전달
                                 width={'100%'}
                                 height={'100%'}
                             />
@@ -126,35 +122,49 @@ const ImageCarouselWithThumbNail = ({imagesObject, isLoading=false, isPostUpload
                 {images && images.length > 0 ? (
                     <>
                         <div className={styles.mainImageContainer}>
-                            {/* 좌측 슬라이드 버튼 */}
-                            {(images.length > 1 && currentIndex > 0) && (
+                            {/* 닫기 버튼 */}
+                            {isOpenModal && (
                                 <button
-                                    className={`${styles.slideButton} ${styles.slideButtonLeft}`}
-                                    onClick={handlePrevClick}
+                                    className={styles.closeButton}
+                                    onClick={handleCloseModal}
+                                    aria-label="Close modal"
                                 >
-                                    <FiChevronLeft size={25} style={{color: "#ffffff"}} />
+                                    <IoClose size={28} />
                                 </button>
                             )}
 
-                            <img
-                                src={typeof images[currentIndex] === 'string'
-                                    ? images[currentIndex]
-                                    : images[currentIndex].imageUrl}
-                                alt={`게시글 이미지 ${currentIndex + 1}`}
-                                className={styles.mainImage}
-                                ref={bigImageRef}
-                                onClick={handleClickBigImage}
-                            />
+                            {/* 좌우 네비게이션 버튼 */}
+                                <>
+                                    <button
+                                        className={`${styles.navigationButton} ${styles.prevButton}`}
+                                        onClick={handlePrevClick}
+                                        aria-label="Previous image"
+                                        disabled={currentIndexLocal === 0}
+                                        style={{ opacity: currentIndexLocal === 0 ? 0 : 1 }}
+                                    >
+                                        <IoIosArrowBack size={28} />
+                                    </button>
 
-                            {/* 우측 슬라이드 버튼 */}
-                            {images.length > 1 && currentIndex < images.length - 1 && (
-                                <button
-                                    className={`${styles.slideButton} ${styles.slideButtonRight}`}
-                                    onClick={handleNextClick}
-                                >
-                                    <FiChevronRight size={25} style={{color: "#ffffff"}} />
-                                </button>
-                            )}
+                                    <img
+                                        src={typeof images[currentIndexLocal] === 'string'
+                                            ? images[currentIndexLocal]
+                                            : images[currentIndexLocal].imageUrl}
+                                        alt={`게시글 이미지 ${currentIndexLocal + 1}`}
+                                        className={styles.mainImage}
+                                        ref={bigImageRef}
+                                        onClick={handleClickBigImage}
+                                    />
+
+                                    <button
+                                        className={`${styles.navigationButton} ${styles.nextButton}`}
+                                        onClick={handleNextClick}
+                                        disabled={currentIndexLocal === images.length - 1}
+                                        style={{ opacity: currentIndexLocal === images.length - 1 ? 0 : 1 }}
+                                    >
+                                        <IoIosArrowForward size={28}/>
+                                    </button>
+                                </>
+
                         </div>
                         <div className={styles.thumbnailsContainer}>
                             {images.map((image, index) => (

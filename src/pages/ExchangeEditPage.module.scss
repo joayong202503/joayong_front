@@ -10,9 +10,12 @@
 }
 
 .imageSection {
+    width: 100%;
     margin: 30px auto 0 auto;
     display: flex;
+    justify-content: center;
     gap: 2rem;
+    flex-wrap: wrap;
 }
 
 
