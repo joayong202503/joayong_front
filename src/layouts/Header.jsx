@@ -22,11 +22,35 @@ const Header = () => {
   // 메인페이지 여부 확인 (정확히 루트 경로인 경우만)
   const isMainPage = location.pathname === "/";
 
+  // 스크롤 여부 상태관리
+  const [isScrolled,setIsScrolled] = useState(false);
+
   // 로그아웃 알럿 상태관리
   const [isMiniAlertOpen, setIsMiniAlertOpen] = useState(false);
   const [miniAlertMessage, setMiniAlertMessage] = useState("");
 
   // ========= 매칭관리 : 내가 수신인이고 아직 수락/거절여부 결정하지 않은 내역 있으면 빨간점으로 알림 표시  ===== //
+
+
+  // 스크롤 이벤트 감지 추가
+  useEffect(() => {
+    const handleScroll = () => {
+      // 스크롤이 내려가면 isScrolled를 true로 설정
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', handleScroll);
+
+    // 컴포넌트 언마운트시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // 현재 로그인한 사용자의 프로필 이미지 가져오기
   useEffect(() => {
@@ -144,7 +168,9 @@ const Header = () => {
   };
 
   return (
-    <header className={`${styles.headerContainer} ${isMainPage ? styles.transparentHeader : ''}`}>
+    <header className={`${styles.headerContainer} 
+      ${isMainPage && !isScrolled ? styles.transparentHeader : ''} 
+      ${isScrolled ? styles.scrolledHeader : ''}`}>
       {isMiniAlertOpen && (
         <MiniAlert
           message={miniAlertMessage}
@@ -156,13 +182,13 @@ const Header = () => {
       )}
       <div className={styles.logoContainer}>
         <NavLink to="/">
-          <img src={logoImage} alt="logo사진" />
+          <img src={logoImage} alt="logo사진"/>
         </NavLink>
       </div>
       <div>
         <ul className={styles.menuContainer}>
           <li className={styles.menuItem}>
-            <NavLink to="/exchanges" end className={getLinkClassName} >
+            <NavLink to="/exchanges" end className={getLinkClassName}>
               재능 찾아보기
             </NavLink>
           </li>
@@ -182,7 +208,7 @@ const Header = () => {
                   size={14}
                   color={"blue"}
                   strokeWidth={1.5}
-                  style={{ fill: "white" }}
+                  style={{fill: "white"}}
                 />
               )}
             </div>
@@ -198,9 +224,9 @@ const Header = () => {
         <div
           className={styles.profileContainer}
           onClick={handleProfileClick}
-          style={{ cursor: "pointer" }}
+          style={{cursor: "pointer"}}
         >
-          <ProfileCircle size="sm" src={profileImageUrl} />
+          <ProfileCircle size="sm" src={profileImageUrl}/>
         </div>
         <div className={styles.buttonContainer}>
           <Button theme="blueTheme" onClick={handleAuthAction}>
