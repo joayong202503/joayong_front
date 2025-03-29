@@ -59,10 +59,54 @@
         color: #475569;
     }
     
+    .messageType {
+        font-size: 0.75rem;
+        color: #94a3b8;
+    }
+    
     .sentDate {
         font-size: 0.7rem;
         color: #94a3b8;
     }
+}
+
+.newBadge {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(45deg, #FF6B6B, #FF8787);
+    padding: 1px 5px;
+    border-radius: 10px;
+    
+    .dot {
+        width: 2.5px;
+        height: 2.5px;
+        background: white;
+        border-radius: 50%;
+        animation: blink 2s infinite;
+    }
+    
+    .text {
+        color: white;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: -0.2px;
+        
+        &.blink {
+            animation: textBlink 2s infinite;
+        }
+    }
+}
+
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+@keyframes textBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 .requestSummary {

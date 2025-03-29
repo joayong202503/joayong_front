@@ -268,7 +268,7 @@ const ExchangeCreatePage = () => {
     return (
         <div className={styles.wrapper}>
             <div className={styles.subWrapper}>
-                {/* 게시글 등록 실패할 경우, 모달 띄우기*/}
+                {/* 게시글 등록 실패할 경우 */}
                 {showAlertModal && (
                     <MiniAlert
                         message={alertMessage}
@@ -278,12 +278,13 @@ const ExchangeCreatePage = () => {
                     />
                 )}
 
-                {/* 게시글 등록 성공할 경우, 모달 띄우기*/}
+                {/* 게시글 등록 성공할 경우 */}
                 {showSuccessModal && (
-                    <AlertModal
-                        title={"게시글이 등록되었습니다."}
-                        message={"재능 찾기 페이지로 이동합니다."}
-                        onClose={handleNavigation}  // 통합된 네비게이션 함수 사용
+                    <MiniAlert
+                        message="게시글이 등록되었습니다."
+                        isNegative={false}
+                        duration={1500}
+                        onClose={handleNavigation}
                     />
                 )}
 

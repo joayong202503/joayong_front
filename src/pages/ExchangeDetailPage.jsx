@@ -243,7 +243,7 @@ const ExchangeDetailPage = () => {
         const {available:isMatchingRequestValid} = await checkMatchingRequestValidity(postId);
 
         if (!isMatchingRequestValid) {
-            setModalTitle("이미 대기 중이거나 수락된 매칭이 있습니다.");
+            setModalMessage("이미 대기 중이거나 수락된 매칭이 있습니다.");
             setIsOpenModal(true);
             setTimeout(() => setIsOpenModal(false), 3000); // 자동 닫힘 처리
             return;
@@ -277,7 +277,7 @@ const ExchangeDetailPage = () => {
 
             {isOpenModal &&
                 <AlertModal
-                    title={modalTitle}
+                    title={''}
                     message={modalMessage}
                     onClose={() => setIsOpenModal(false)}
                 />
@@ -285,7 +285,8 @@ const ExchangeDetailPage = () => {
 
             {isOpenDeleteModal &&
                 <AlertModal
-                    title={deleteModalTitle}
+                    title={''}
+                    message={deleteModalTitle}
                     onClose={() => {
                         setIsOpenDeleteModal(false);
                         navigate("/");
