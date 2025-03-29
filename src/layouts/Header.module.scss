@@ -18,6 +18,13 @@
   border-bottom: none;
 }
 
+/*스크롤*/
+.scrolledHeader {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(211, 211, 211, 0.5);
+}
+
 .menuContainer{
   display: flex;
 };
@@ -27,7 +34,7 @@
 }
 
 .aItem{
-  color: black;
+  color: #000000;
   text-decoration: none;
   margin-right: 40px;
   font-size: 18px;
