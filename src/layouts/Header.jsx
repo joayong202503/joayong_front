@@ -52,6 +52,27 @@ const Header = () => {
     };
   }, []);
 
+
+  // 스크롤 이벤트 감지 추가
+  useEffect(() => {
+    const handleScroll = () => {
+      // 스크롤이 내려가면 isScrolled를 true로 설정
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', handleScroll);
+
+    // 컴포넌트 언마운트시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   // 현재 로그인한 사용자의 프로필 이미지 가져오기
   useEffect(() => {
     const loadUserProfileImage = async () => {
