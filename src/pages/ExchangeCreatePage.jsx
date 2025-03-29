@@ -17,6 +17,7 @@ import {postApi} from "../services/api.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
 import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
+import MiniAlert from "../components/common/MiniAlert.jsx";
 
 const ExchangeCreatePage = () => {
 
@@ -39,7 +40,7 @@ const ExchangeCreatePage = () => {
 
     // 모달 상태관리
     const [showAlertModal, setShowAlertModal] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({ title: '', message: '' });
+    const [alertMessage, setAlertMessage] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const timeoutRef = useRef(null); // 타이머 ID 저장
 
@@ -103,18 +104,18 @@ const ExchangeCreatePage = () => {
         // 기존 타이머가 실행 중이라면 취소
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
-            timeoutRef.current = null; // 초기화
+            timeoutRef.current = null;
         }
 
         // 모달 열기 및 메시지 설정
-        setAlertMessage({message: '', title: message});
+        setAlertMessage(message);
         setShowAlertModal(true);
 
-        // 2초 후 모달 자동 닫기
+        // 1.5초 후 모달 자동 닫기
         timeoutRef.current = setTimeout(() => {
             setShowAlertModal(false);
             timeoutRef.current = null; // 타이머 초기화
-        }, 2000);
+        }, 1500);
     };
 
     // 엔터키로 폼 제출되는 것을 막음
@@ -278,13 +279,11 @@ const ExchangeCreatePage = () => {
             <div className={styles.subWrapper}>
                 {/* 게시글 등록 실패할 경우, 모달 띄우기*/}
                 {showAlertModal && (
-                    <AlertModal
-                        title={alertMessage.title}
-                        message={alertMessage.message}
-                        onClose={() => {
-                            setShowAlertModal(false);
-                            setAlertMessage(null);
-                        }}
+                    <MiniAlert
+                        message={alertMessage}
+                        isNegative={true}
+                        duration={1500}
+                        onClose={() => setShowAlertModal(false)}
                     />
                 )}
 
