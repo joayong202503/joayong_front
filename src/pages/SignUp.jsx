@@ -131,6 +131,10 @@ const SignUp = () => {
     const delayDebounceFn = setTimeout(() => {
       if (email) {
         checkEmailAvailability(); // 이메일 중복 확인
+      } else {
+        // 이메일이 비어있을 때 오류 메시지와 사용 가능 상태 초기화
+        setEmailError("");
+        setEmailAvailable(true);
       }
     }, 800);
 
@@ -159,17 +163,25 @@ const SignUp = () => {
     return () => clearTimeout(delayDebounceFn);  // 이전 타이머 클리어
   }, [confirmPassword, password]);  // password도 의존성에 추가
 
+
   const checkNameAvailability = async () => {
+    // 이름이 비어있으면 중복 확인을 하지 않고 에러 메시지를 지웁니다
+    if (!username) {
+      setNameAvailable(true);
+      setNameError("");
+      return;
+    }
+
     setIsCheckingName(true);
     try {
       const response = await fetch(
-        `${authApi.duplicate}?type=name&value=${username}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+          `${authApi.duplicate}?type=name&value=${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
       );
       const data = await response.json();
       console.log("data : ", data);
@@ -190,11 +202,15 @@ const SignUp = () => {
     }
   };
 
-  // 이름 중복확인 디바운스로 0.8초 관리
+// 이름 중복확인 디바운스로 0.8초 관리
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (username) {
-        checkNameAvailability(); // 이메일 중복 확인
+        checkNameAvailability(); // 이름 중복 확인
+      } else {
+        // 이름이 비어있을 때 오류 메시지와 사용 가능 상태 초기화
+        setNameError("");
+        setNameAvailable(true);
       }
     }, 800);
 
@@ -283,7 +299,13 @@ const SignUp = () => {
                     type="text"
                     value={email}
                     onChange={(e) => {
-                      setEmail(e.target.value); // 이메일 변경 시 상태 업데이트
+                      const newValue = e.target.value;
+                      setEmail(newValue);
+                      // 입력값이 비어있으면 즉시 오류 메시지 초기화
+                      if (!newValue) {
+                        setEmailError("");
+                        setEmailAvailable(true);
+                      }
                     }}
                     className={styles["input-box"]}
                     placeholder="이메일 주소를 입력하세요"
@@ -304,7 +326,15 @@ const SignUp = () => {
                   id="username"
                   type="text"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    setUsername(newValue);
+                    // 입력값이 비어있으면 즉시 오류 메시지 초기화
+                    if (!newValue) {
+                      setNameError("");
+                      setNameAvailable(true);
+                    }
+                  }}
                   className={styles["input-box"]}
                   placeholder="사용자 이름을 입력하세요"
                   required
