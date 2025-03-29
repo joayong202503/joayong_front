@@ -18,12 +18,18 @@ import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
 import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
 import MiniAlert from "../components/common/MiniAlert.jsx";
+import AdvancedImageUpload from "../components/common/imagesAndFiles/AdvancedImageUpload.jsx";
+import ImageCarouselWithThumbNail from "../components/common/imagesAndFiles/ImageCarouselWithThumbNail.jsx";
+import * as ReactDom from "react-dom";
 
 const ExchangeCreatePage = () => {
 
     // LocationContext 가져온 후, 주소를 위도+경도에서 도로명 주소로 변환해주기
     const { latitude, longitude }  = useLocation();
     const [ userAddress, setUserAddress ] = useState();
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isImageCarouselModalOpen, setIsImageCarouselModalOpen] = useState(false);
 
     useEffect(() => {
         const getAddressByApi = async () => {
@@ -76,31 +82,14 @@ const ExchangeCreatePage = () => {
 
     // 파일 업로드 오류 메시지가 변경될 때마다 모달 표시
     useEffect(() => {
-        if (fileUploadErrorMessage) {
-            // 기존 타이머가 실행 중이라면 취소
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-                timeoutRef.current = null; // 초기화
-            }
-
-            // 모달 열기 및 메시지 설정
-            setAlertMessage({ message: '', title: fileUploadErrorMessage });
-            setShowAlertModal(true);
-
-            // 2초 후 모달 자동 닫기
-            timeoutRef.current = setTimeout(() => {
-                setShowAlertModal(false);
-                timeoutRef.current = null; // 타이머 초기화
-            }, 2000);
-
-            // fileUploadErrormessage 초기화
-            setFileUploadErrorMessage('');
-
-        }
-    }, [fileUploadErrorMessage]); // fileUploadErrorMessage 값이 변경될 때마다 실행
+        if (!fileUploadErrorMessage) return;
+        handleAlertModal(fileUploadErrorMessage);
+    }, [fileUploadErrorMessage]);
 
     // 모달 띄우기
     const handleAlertModal = (message) => {
+        console.log('handleAlertModal called with message:', message);
+
         // 기존 타이머가 실행 중이라면 취소
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
@@ -160,10 +149,12 @@ const ExchangeCreatePage = () => {
     }
 
     const validateFormData = (post) => {
-
-        // 1) 타이틀 공백 체크
-        const title = post.title;
-        if (!title || !title.trim()) {
+        console.log('=== Validation Debug ===');
+        console.log('validateFormData called with:', post);
+        
+        // 기존 검증 로직
+        if (!post.title || !post.title.trim()) {
+            console.log('Title validation failed');
             handleAlertModal("제목을 입력해주세요");
             return false;
         }
@@ -299,18 +290,32 @@ const ExchangeCreatePage = () => {
                 <Form
                     method={'post'}
                     onKeyDown={handleEnterKeyDown}
-                    onSubmit={handleSubmit}>
-                    {/* 이미지 업로드 하는 부분 */}
-                    <ImageUploadSection
+                    onSubmit={handleSubmit}
+                >
+                    {/*이미지 업로드 하는 부분*/}
+                    <AdvancedImageUpload
+                        images={uploadedFile}
+                        maxLength={5}
+                        description={['능력을 한 눈에 보여줄 사진을 첨부하고, 매칭 확률을 높여보세요.', '사진은 최대 5개 업로드 가능합니다.']}
+                        onFileDelete={(index, e) => {
+                            // 버튼 클릭이 Form 태그의 submit을 일어키는 것을 방지
+                            if (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+
+                            const newFiles = uploadedFile.filter((_, i) => i !== index);
+                            setUploadedFile(newFiles);
+                        }}
+                        onEnlargePhoto={(index) => {
+                            setCurrentImageIndex(index);
+                            setIsImageCarouselModalOpen(true);
+                        }}
                         ref={fileInputRef}
+                        isAllOrNone={false}
                         onFileSelect={handleFileSelect}
                     />
-
-                    {/* 파일 이름 목록을 표시하는 컴포넌트 */}
-                    <FileListDisplay
-                        uploadedFiles={uploadedFile}
-                        setUploadedFile={setUploadedFile}
-                    />
+                    <div className={styles.gap}></div>
 
                     {/*제목 입력 */}
                     <TitleInputSection
@@ -363,6 +368,42 @@ const ExchangeCreatePage = () => {
                     />
                 </Form>
             </div>
+
+            {isImageCarouselModalOpen && ReactDom.createPortal(
+                <div className={styles.modalOverlay}
+                     onClick={(e) => {
+                         e.stopPropagation();
+                         setIsImageCarouselModalOpen(false);
+                     }}
+                >
+                    <div
+                        className={styles.modalContent}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsImageCarouselModalOpen(false);
+                        }} // 모달 컨텐츠 클릭 시 이벤트 전파 중단
+                    >
+                        {/* 모달 내용 */}
+                        <button
+                            className={styles.closeButton}
+                            onClick={() => setIsImageCarouselModalOpen(false)}
+                        >
+                            X
+                        </button>
+                        <ImageCarouselWithThumbNail
+                            imagesObject={uploadedFile}
+                            width="80%"
+                            height="80%"
+                            initialIndex={currentImageIndex || 0}
+                            isOpenModal={isImageCarouselModalOpen}
+                            setIsOpenModal={setIsImageCarouselModalOpen}
+                            setCurrentIndex={setCurrentImageIndex}
+                        />
+                    </div>
+                </div>,
+                document.body
+            )}
+
         </div>
     );
 };

@@ -152,12 +152,12 @@ const AdvancedImageUpload = ({
 
                 {/* 개수 제한 */}
                 <div className={styles.carouselDescription}>
-                    <p className={styles.count}>{transformedImages?.length} / {maxLength}</p>
+                    <p className={styles.count}>{transformedImages?.length || 0} / {maxLength}</p>
                 </div>
 
                 <div className={styles.imageContainerList}>
                     {/* 각 이미지 박스 */}
-                    {transformedImages.length > 0 && (
+                    {transformedImages?.length > 0 && (
                         transformedImages.map((imageObject, index) => (
                             <div key={imageObject.id} className={styles.imageContainer}>
                                 {/* 이미지 */}
@@ -169,13 +169,19 @@ const AdvancedImageUpload = ({
                                 {/* 액션 버튼들 */}
                                 <div className={styles.controlButtonsContainer}>
                                     <button
+                                        type="button"
                                         className={styles.controlButton}
                                         title="파일 삭제"
-                                        onClick={() => onFileDelete(index)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            onFileDelete(index);
+                                        }}
                                     >
                                         <X size={15}/>
                                     </button>
                                     <button
+                                        type="button"
                                         className={styles.controlButton}
                                         title="사진 확대"
                                         onClick={() => onEnlargePhoto(index)}
