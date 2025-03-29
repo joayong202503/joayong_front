@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.js";
-import React, { useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from "./ExchangeCreatePage.module.scss";
 import {Form, useNavigate} from "react-router-dom";
 import ImageUploadSection from "../components/common/imagesAndFiles/ImageUploadSection.jsx";
@@ -13,7 +13,7 @@ import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSe
 import SubmitButton from "../components/ExchangeCreatePage/SubmitButton.jsx";
 import {useTalentCategories} from "../hooks/exchangesCreatePageHook/talentHooks.js";
 import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js";
-import { postApi } from "../services/api.js";
+import {postApi} from "../services/api.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
 import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
@@ -201,14 +201,17 @@ const ExchangeCreatePage = () => {
     }
 
     const preparePostFormOfFormData = () => {
-        const nonFileData = {
+        const regionId = selectedRegionLastCategory && selectedRegionLastCategory.id ? selectedRegionLastCategory.id : null;
+        const talentGiveId = selectedTalentToGiveSubCategory && selectedTalentToGiveSubCategory.id ? selectedTalentToGiveSubCategory.id : null;
+        const talentReceiveId = selectedTalentToReceiveSubCategory && selectedTalentToReceiveSubCategory.id ? selectedTalentToReceiveSubCategory.id : null;
+
+        return {
             title: titleInputRef.current.value,
             content: contentInputRef.current.value,
-            "talent-g-id": selectedTalentToGiveSubCategory.id,
-            "talent-t-id": selectedTalentToReceiveSubCategory.id,
-            "region-id": selectedRegionLastCategory.id
+            "talent-g-id": talentGiveId,
+            "talent-t-id": talentReceiveId,
+            "region-id": regionId
         };
-        return nonFileData;
     }
 
 

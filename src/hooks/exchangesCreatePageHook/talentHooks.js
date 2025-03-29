@@ -28,6 +28,7 @@ export const useTalentCategories = (talentCategories) => {
         const selectedItem = sortedTalentCategories.find(category => category.name === value);
         if (selectedItem) {
             setSelectedTalentToGiveMainCategoryId(selectedItem.id);
+            setSelectedTalentToGiveSubCategory(null);
         }
     };
 
@@ -35,6 +36,7 @@ export const useTalentCategories = (talentCategories) => {
         const selectedItem = sortedTalentCategories.find(category => category.name === value);
         if (selectedItem) {
             setSelectedTalentToReceiveMainCategoryId(selectedItem.id);
+            setSelectedTalentToReceiveSubCategory(null);
         }
     };
 
