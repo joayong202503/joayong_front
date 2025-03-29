@@ -1,25 +1,17 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useRef, useState} from 'react';
 import styles from "./AdvancedImageUpload.module.scss";
 import { X, Maximize2, Plus } from 'lucide-react';
 import getCompleteImagePath from "../../../utils/getCompleteImagePath.js";
 import ConfirmModal from "../ConfirmModal.jsx";
 
-const AdvancedImageUpload = ({
+const AdvancedImageUpload = forwardRef(({
     images,
     maxLength = 5,
     description = ['사진을 첨부하세요'],
     onFileDelete,
     onEnlargePhoto,
-    isAllOrNone = false, // 기존 사진 다 삭제해야 사진 추가 가능한지 여부
     onFileSelect,
-}) => {
-
-    // 컨펌 모달
-    const [showConfirmModalOpen, setShowConfirmModalOpen] = useState(false);
-    const [confirmModalOnConfirm, setConfirmModalOnConfirm] = useState(() => () => {});
-
-    const [isFirstAttempt, setIsFirstAttempt] = useState(true); // 파일 전체 변경만 가능한 경우, 컨펌 모달 띄운 적이 있는지 여부
-
+}, ref) => {  // forwardRef의 두 번째 파라미터로 ref 받기
     const fileInputRef = useRef();
 
     // image 태그에서 보여줄 src 경로를, 백엔드에서 기존 파일의 url 을 받아왔느냐 or 사용자가 지금 로컬에서 첨부한 File 객체냐에 따라 다르게 처리
@@ -27,20 +19,14 @@ const AdvancedImageUpload = ({
 
         // 로컬에서 첨부한 단일 File 객체인 경우
         if (imageObject instanceof File) {
-
-            console.log('단일 파일 src 변환');
-            console.log(URL.createObjectURL(imageObject));
             return URL.createObjectURL(imageObject);
-
 
             // 백엔드에서 기존 파일의 url 을 받아왔으면
         } else if (Array.isArray(imageObject)) {
             return imageObject.map(file => {
                 if (file instanceof File) {
-                    console.log('파일 배열 src 변환');
                     return URL.createObjectURL(file);
                 } else {
-                    console.log('백엔드에서 전달 받은 파일 src 변환');
                     return getCompleteImagePath(file);
                 }
             });
@@ -65,73 +51,15 @@ const AdvancedImageUpload = ({
 
     // 이미지 드롭다운 박스 클릭했을 때
     const handleImageDropBoxClick = () => {
-        const clickFileInput = () => {
-            fileInputRef.current.click();
-        }
-        // 사진 전체 변경만 가능할 때
-        if (isAllOrNone) {
-            // 만약 모달을 띄운 적이 없다면, 전체 변경만 가능하다고 모달 띄우기(위에 상태값 추가해줘야 함)
-            if (isFirstAttempt) {
-                setConfirmModalOnConfirm(() => () => {
-                    setIsFirstAttempt(false);
-                    clickFileInput();
-                    setTimeout(() => {
-                        setShowConfirmModalOpen(false);
-                    }, 500);
-                })
-                setShowConfirmModalOpen(true);
-            } else {
-                // 컨펌 모달 띄운 적 있다면, 바로 파일 선택창 띄우기
-                clickFileInput();
-            }
-        } else {
-            clickFileInput();
-        }
+        fileInputRef.current.click();
     }
 
     // 파일을 드래그한 상태에서 드롭할 때 호출되는 함수
     const handleDrop = (e) => {
-
-        e.preventDefault();  // 기본 동작 방지 (페이지가 새로고침 되지 않도록)
-
-        const handleImageDrop = (eventOrFiles) => {
-            if (eventOrFiles.dataTransfer) {
-                // 이벤트 객체에서 파일 가져오기 (이전 방식)
-                const files = eventOrFiles.dataTransfer.files;
-                console.log('handleImageDrop으로 전달된 e', files);
-                if (files.length > 0) {
-                    onFileSelect({ target: { files } }); // 모방한 이벤트 객체로 전달
-                }
-            } else {
-                // 파일 리스트만 직접 전달된 경우 (새로운 방식)
-                const files = eventOrFiles.files || eventOrFiles;
-                console.log('handleImageDrop으로 전달된 files', files);
-                if (files.length > 0) {
-                    onFileSelect({ target: { files } }); // 모방한 이벤트 객체로 전달
-                }
-            }
-        };
-
-        if (isAllOrNone) {
-            // 처음으로 이미지 드롭하는 케이스거나(isFirstAttempt), 이미 삭제 버튼에서 이미지 전체 삭제 동의했을 때는 기존 이미지 전체 삭제 경고 날림
-            if (isFirstAttempt) {
-                // 비동기 내(setconfirmModalOnComfirm) 내에서 e소실로 인해 파일 데이터만 따로 저장
-                const files = e.dataTransfer.files;
-
-                setConfirmModalOnConfirm(() => () => {
-                    setIsFirstAttempt(false);
-                    handleImageDrop({ dataTransfer: { files } });
-                    setTimeout(() => {
-                        setShowConfirmModalOpen(false);
-                    }, 500);
-                })
-                setShowConfirmModalOpen(true);
-            } else {
-                console.log('두번째 시도일 때 e', e.dataTransfer.files);
-                handleImageDrop(e);
-            }
-        } else {
-            handleImageDrop(e);
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            onFileSelect({ target: { files } });
         }
     };
 
@@ -204,9 +132,12 @@ const AdvancedImageUpload = ({
                     >
                         <Plus size={60}/>
                         <input
-                            ref={fileInputRef}
+                            ref={(element) => {
+                                // 두 ref 모두에 element 설정
+                                fileInputRef.current = element;
+                                if (ref) ref.current = element;
+                            }}
                             type="file"
-                            name={name}
                             multiple={true}
                             id="fileInputBox"
                             accept="image/*"
@@ -217,15 +148,8 @@ const AdvancedImageUpload = ({
                 </div>
             </div>
 
-            {showConfirmModalOpen && (
-                <ConfirmModal
-                    message={'게시물의 일관성을 위해, 새로운 사진을 첨부 시 게시글의 기존 사진은 모두 삭제됩니다. 동의하시나요?'}
-                    onConfirm={confirmModalOnConfirm}
-                    onClose={() => setShowConfirmModalOpen(false)}
-                />
-            )}
         </>
     );
-};
+});
 
 export default AdvancedImageUpload;

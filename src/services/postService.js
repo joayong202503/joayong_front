@@ -137,8 +137,6 @@ export const fetchPostDetail = async (postId) => {
 
 export const updatePost = async (formData) => {
 
-    console.log(formData);
-
     try {
         const response = await fetchWithAuth(`${postApi.updatePost}`, {
             method: 'PUT',

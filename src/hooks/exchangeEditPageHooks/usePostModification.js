@@ -18,20 +18,32 @@ export const usePostModification = (
     const transformToFormData = (postData) => {
         const formData = new FormData();
         const newPostData = {...postData};
-        delete newPostData.images;
 
+        // 서버에 formdata로 전달할 사진 : 새 로컬 사진만(images key)
+        const newImages = newPostData.images || [];
+
+        // displayImages는 서버에서 받은 이미지와 새로 추가된 이미지를 모두 포함
+        // delete-image-ids에 포함되지 않은 기존 이미지는 유지되어야 함
+        const displayImages = newPostData.displayImages || [];
+
+        // 서버에 post key로 전송할 데이터에서 제외할 필드들
+        delete newPostData.images;
+        delete newPostData.displayImages;
+
+        // post 데이터를 JSON으로 변환하여 추가
         formData.append('post',
             new Blob([JSON.stringify(newPostData)],
                 { type: 'application/json' }));
 
-        // postData.images가 null이 아닌 경우, 사진을 새로 보내는 것이므로
-        // 서버에 보낼 update-image 값을 true로 갱신하고 파일을 append
-        if (postData.images && Array.isArray(postData.images)) {
-            newPostData['update-image'] = true;
-            postData.images.forEach(image => {
-                formData.append('images', image);
+        // 새로운 이미지만 formData에 추가
+        if (newImages && Array.isArray(newImages)) {
+            newImages.forEach(image => {
+                if (image instanceof File) {
+                    formData.append('images', image);
+                }
             });
         }
+
         return formData;
     };
 

@@ -6,9 +6,6 @@ import {getRegionDetailsBySubRegionId, getTalentDetailsBySubTalentId} from "../.
 import nullProfileImage from "../../assets/images/profile.png";
 import getCompleteImagePath from "../../utils/getCompleteImagePath.js";
 import searchExchanges from "../../services/searchApi.js";
-import styles from "../../pages/SearchTestPage.module.scss";
-import Button from "../../components/common/Button.jsx";
-import Card from "../../components/common/Card.jsx";
 import {useNavigate} from "react-router-dom";
 
 // 페칭한 post Data 가공 및 상태값 관리

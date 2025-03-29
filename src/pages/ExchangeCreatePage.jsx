@@ -307,6 +307,11 @@ const ExchangeCreatePage = () => {
 
                             const newFiles = uploadedFile.filter((_, i) => i !== index);
                             setUploadedFile(newFiles);
+
+                            // 파일 입력 필드 초기화
+                            if (fileInputRef.current) {
+                                fileInputRef.current.value = '';
+                            }
                         }}
                         onEnlargePhoto={(index) => {
                             setCurrentImageIndex(index);
@@ -314,7 +319,7 @@ const ExchangeCreatePage = () => {
                         }}
                         ref={fileInputRef}
                         isAllOrNone={false}
-                        onFileSelect={handleFileSelect}
+                        onFileSelect={(e) => handleFileSelect(e, uploadedFile.length + e.target.files.length)}
                     />
                     <div className={styles.gap}></div>
 
