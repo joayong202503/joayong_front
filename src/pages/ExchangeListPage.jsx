@@ -20,7 +20,7 @@ const ExchangeListPage = () => {
     const [pageLoading, setPageLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState("");
-    const searchInputRef = useRef(null);
+    const [inputValue, setInputValue] = useState(""); // 입력창 값을 위한 새 상태 추가
     const [userProfiles, setUserProfiles] = useState({}); // 사용자 프로필 정보 캐싱
 
     // 한페이지에 12개씩
@@ -91,10 +91,10 @@ const ExchangeListPage = () => {
     };
     // 검색창 입력 변화 핸들러
     const handleInputChange = (e) => {
-        const value = e.target.value.trim();
+        setInputValue(e.target.value);
 
         // 검색어가 비어있을 경우 전체 목록 보여주기
-        if (!value) {
+        if (e.target.value === '') {
             setSearchKeyword("");
             setCurrentPage(0);
             setError(null);
@@ -105,11 +105,10 @@ const ExchangeListPage = () => {
 
     // 검색기능
     const handleSearch = async () => {
-        //1. 입력창이 존재하는지 확인
-        if (!searchInputRef.current) return;
+        const keyword = inputValue.trim();
+        setSearchKeyword(keyword);
+        setCurrentPage(0);
 
-        //2. 검색어 가져오기 및 공백제거
-        const keyword = searchInputRef.current.value.trim();
 
         //3. 상태업데이트: 검색어 저장, 페이지 초기화
         setSearchKeyword(keyword);
@@ -139,7 +138,7 @@ const ExchangeListPage = () => {
 
     // 전체 목록으로 돌아가기
     const resetSearch = () => {
-        if (searchInputRef.current) searchInputRef.current.value = '';
+        setInputValue(''); // 입력창 값 초기화
         setSearchKeyword("");
         setCurrentPage(0);
         setError(null);
@@ -221,8 +220,6 @@ const ExchangeListPage = () => {
             }
 
             console.log('API 응답:', response);
-            // 여기에 인위적인 지연 추가
-            await new Promise(resolve => setTimeout(resolve, 500));
             // 응답을 가공
             await processExchangeData(response);
         } catch (err) {
@@ -249,7 +246,7 @@ const ExchangeListPage = () => {
                 await getRecentExchanges();
 
                 // 추가 지연 시간
-                await new Promise(resolve => setTimeout(resolve, 800));
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
                 setPageLoading(false); // 페이지 전체 로딩 완료
             })();
@@ -295,7 +292,7 @@ const ExchangeListPage = () => {
             ) : (
                 <div className={styles.fullContainer}>
                     <InputBox
-                        ref={searchInputRef}
+                        value={inputValue} // 입력값 상태 연결
                         searchIcon="true"
                         height="30"
                         width="68%"
