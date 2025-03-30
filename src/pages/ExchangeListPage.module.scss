@@ -5,6 +5,14 @@
   align-items: center;
   padding: 0 20px;
 }
+.fullPageLoading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #f8f9fa;
+}
 .inputContainer{
   display: flex;
   width: 1270px;
