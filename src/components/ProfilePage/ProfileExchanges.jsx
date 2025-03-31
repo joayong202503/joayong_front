@@ -79,11 +79,11 @@ const ProfileExchanges = () => {
         lessonLocation: lessonLocation,
         // 이미지 URL 구성
         lessonImageSrc: post.images && post.images.length > 0
-          ? `${API_URL}${post.images[0].imageUrl}`
+          ? `${post.images[0].imageUrl}`
           : undefined,
         profile: {
           name: post.name || "이름 없음",
-          imageSrc: `${API_URL}${profileImageUrl}`,
+          imageSrc: `${profileImageUrl}`,
           size: 'xs'
         },
         content: post.content,
