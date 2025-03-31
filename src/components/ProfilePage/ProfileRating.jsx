@@ -6,7 +6,7 @@ import { fetchUserRatings } from "../../services/profileApi.js"
 import Spinner from "../common/Spinner.jsx";
 
 // API URL 상수 추가
-const API_URL = 'http://3.34.211.202:8999/';
+const API_URL = 'http://3.34.211.202:8999';
 
 const ProfileRating = () => {
   const [ratingData, setRatingData] = useState(null);
@@ -38,7 +38,8 @@ const ProfileRating = () => {
               if (rating.reviewerProfileUrl && !rating.reviewerProfileUrl.startsWith('http')) {
                 return {
                   ...rating,
-                  reviewerProfileUrl: `${API_URL}${rating.reviewerProfileUrl}`
+                  reviewerProfileUrl: `${rating.reviewerProfileUrl}`
+                  // reviewerProfileUrl: `${API_URL}${rating.reviewerProfileUrl}`
                 };
               }
               return rating;
