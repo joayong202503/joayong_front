@@ -17,6 +17,7 @@ const ChatRoom = ({ user1, user2 }) => {
   const [input, setInput] = useState("");
   const [userProfiles, setUserProfiles] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [registerProfile,setRegisterProfile] = useState({});
   const wsClientRef = useRef(null);
   const messagesEndRef = useRef(null);
   const messageListRef = useRef(null);
@@ -67,6 +68,13 @@ const ChatRoom = ({ user1, user2 }) => {
         if (!profileResponse.ok)
           throw new Error("Failed to load other user profile");
         const otherUserProfile = await profileResponse.json();
+
+        console.log("otherUserProfile : ", otherUserProfile);
+
+        setRegisterProfile({
+          username : otherUserProfile.name,
+          profileImageUrl : otherUserProfile.profileImageUrl
+        });
   
         const newUserProfiles = {
           [currentUserProfile.id]: {
@@ -142,10 +150,12 @@ const ChatRoom = ({ user1, user2 }) => {
       </div>
       <div className={styles.messageList} ref={messageListRef}>
         {messages.map((msg, idx) => {
-          const sender = userProfiles[msg.username] || {
-            username: "Unknown",
-            profileImageUrl: profilePlaceholder,
+          
+          const sender = userProfiles[msg.senderId] || {
+            username: registerProfile.username,
+            profileImageUrl: registerProfile.profileImageUrl,
           };
+          console.log("sender : ",sender);
           const isCurrentUser = msg.senderId === currentUserProfile.id;
   
           console.log("msg.type : ", msg);
