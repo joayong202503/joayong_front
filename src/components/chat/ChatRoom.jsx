@@ -80,13 +80,13 @@ const ChatRoom = ({ user1, user2 }) => {
           [currentUserProfile.id]: {
             username: currentUserProfile.name,
             profileImageUrl: currentUserProfile.profileImageUrl
-              ? `${API_URL}${currentUserProfile.profileImageUrl}`
+              ? `${currentUserProfile.profileImageUrl}`
               : profilePlaceholder,
           },
           [otherUserProfile.id]: {
             username: otherUserProfile.name,
             profileImageUrl: otherUserProfile.profileImageUrl
-              ? `${API_URL}${otherUserProfile.profileImageUrl}`
+              ? `${otherUserProfile.profileImageUrl}`
               : profilePlaceholder,
           },
         };
