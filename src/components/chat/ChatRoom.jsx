@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { connectWebSocket, sendMessage, disconnectWebSocket } from "./websocket";
+import {
+  connectWebSocket,
+  sendMessage,
+  disconnectWebSocket,
+  sendEnterMessage,
+} from "./websocket";
 import fetchWithAuth from "../../services/fetchWithAuth.js";
 import { useSelector } from "react-redux";
 import styles from "./ChatRoom.module.scss";
@@ -27,7 +32,10 @@ const ChatRoom = ({ user1, user2 }) => {
         messageListRef.current.scrollTop = 0;
         isInitialRender.current = false;
       } else if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        messagesEndRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
       }
     }
   }, [messages]);
@@ -36,23 +44,30 @@ const ChatRoom = ({ user1, user2 }) => {
     const initializeChatRoom = async () => {
       try {
         setIsLoading(true);
-
-        const sendData = { user1Name: currentUserName, user2Name: otherUserName };
-        const roomResponse = await fetchWithAuth(`${API_URL}/api/joayong/chat/chatroom`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(sendData),
-        });
+  
+        const sendData = {
+          user1Name: currentUserName,
+          user2Name: otherUserName,
+        };
+        const roomResponse = await fetchWithAuth(
+          `${API_URL}/api/joayong/chat/chatroom`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(sendData),
+          }
+        );
         if (!roomResponse.ok) throw new Error("Failed to create chat room");
         const { id } = await roomResponse.json();
-        setRoomId(id);
-
+        setRoomId(id); // setRoomId 호출 후에
+  
         const profileResponse = await fetchWithAuth(
           `${API_URL}/api/joayong/user/profile/${otherUserName}`
         );
-        if (!profileResponse.ok) throw new Error("Failed to load other user profile");
+        if (!profileResponse.ok)
+          throw new Error("Failed to load other user profile");
         const otherUserProfile = await profileResponse.json();
-
+  
         const newUserProfiles = {
           [currentUserProfile.id]: {
             username: currentUserProfile.name,
@@ -68,18 +83,28 @@ const ChatRoom = ({ user1, user2 }) => {
           },
         };
         setUserProfiles(newUserProfiles);
-
+  
         const historyResponse = await fetchWithAuth(
           `${API_URL}/api/joayong/chat/chatroom/${id}/history`
         );
         if (!historyResponse.ok) throw new Error("Failed to load chat history");
         const historyData = await historyResponse.json();
         setMessages(historyData);
-
+  
+        // ✅ WebSocket 연결 후 입장 메시지 전송
         if (!wsClientRef.current) {
           wsClientRef.current = connectWebSocket(id, (msg) => {
             setMessages((prev) => [...prev, msg]);
           });
+  
+          // ✅ setRoomId 이후에 입장 메시지 전송
+          setTimeout(()=>{
+            if (id) {
+              console.log("🚀 Sending enter message...");
+              sendEnterMessage(id, currentUserName); // id와 currentUserName 사용
+            }
+
+          },500)
         }
       } catch (error) {
         console.error("Failed to initialize chat room:", error);
@@ -87,9 +112,9 @@ const ChatRoom = ({ user1, user2 }) => {
         setIsLoading(false);
       }
     };
-
+  
     initializeChatRoom();
-
+  
     return () => {
       if (wsClientRef.current) {
         disconnectWebSocket();
@@ -97,6 +122,7 @@ const ChatRoom = ({ user1, user2 }) => {
       }
     };
   }, [currentUserName, otherUserName]);
+  
 
   const handleSend = () => {
     if (!input.trim() || !roomId) return;
@@ -121,26 +147,39 @@ const ChatRoom = ({ user1, user2 }) => {
             profileImageUrl: profilePlaceholder,
           };
           const isCurrentUser = msg.senderId === currentUserProfile.id;
+  
+          console.log("msg.type : ", msg);
+  
+          const enteredMessage = msg.type === "H"; // 입장 메시지 여부
+  
           return (
             <div
               key={idx}
-              className={`${styles.message} ${isCurrentUser ? styles.sent : styles.received}`}
+              className={`${styles.message} ${enteredMessage ? styles.enterMessage : (isCurrentUser ? styles.sent : styles.received)}`}
             >
-              <img
-                src={sender.profileImageUrl}
-                alt={`${sender.username}의 프로필 이미지`}
-                className={styles.profileImage}
-                onError={(e) => {
-                  e.target.src = profilePlaceholder;
-                }}
-              />
+              {/* 입장 메시지일 경우 프로필 이미지와 사용자명을 숨김 */}
+              {!enteredMessage && (
+                <img
+                  src={sender.profileImageUrl}
+                  alt={`${sender.username}의 프로필 이미지`}
+                  className={styles.profileImage}
+                  onError={(e) => {
+                    e.target.src = profilePlaceholder;
+                  }}
+                />
+              )}
               <div className={styles.messageContent}>
-                <span className={styles.username}>{sender.username}</span>
+                {/* 입장 메시지일 경우 사용자명도 숨김 */}
+                {!enteredMessage && (
+                  <span className={styles.username}>{sender.username}</span>
+                )}
                 <p className={styles.text}>
                   {msg.content}{" "}
-                  <span className={styles.timestamp}>
-                    {new Date(msg.sentAt).toLocaleTimeString()}
-                  </span>
+                  {!enteredMessage && (
+                    <span className={styles.timestamp}>
+                      {new Date(msg.sentAt).toLocaleTimeString()}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
