@@ -1,4 +1,5 @@
 .chatContainer {
+  margin-left: 100px;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -32,6 +33,13 @@
   margin-bottom: 15px;
   align-items: flex-start;
 }
+.enterMessage {
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 0;
+  margin: 10px 0;
+}
 
 .sent {
   justify-content: flex-end;
@@ -62,6 +70,7 @@
 }
 
 .sent .messageContent {
+  width: 550px;
   background-color: #6b48ff;
   color: white;
   border-top-right-radius: 5px;

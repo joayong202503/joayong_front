@@ -18,20 +18,20 @@ const GetCompleteImagePath = (imagePathServerResponse) => {
         } else {
             return {
                 ...imagePathServerResponse,
-                profileImageUrl: `${API_URL}${imagePathServerResponse.profileImageUrl}`,
+                profileImageUrl: `${imagePathServerResponse.profileImageUrl}`,
             };
         }
     }
 
     // Card용 데이터
     if (typeof imagePathServerResponse === 'string') {
-        return `${API_URL}${imagePathServerResponse}`
+        return `${imagePathServerResponse}`
     }
 
     // 나머지는 imageUrl로 줌
     const data = {
         ...imagePathServerResponse,
-        imageUrl: `${API_URL}${imagePathServerResponse.imageUrl}`,
+        imageUrl: `${imagePathServerResponse.imageUrl}`,
     };
     return data;
 };

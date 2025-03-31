@@ -45,6 +45,31 @@ const ExchangeDetailPage = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    // redux에서 카테고리 데이터 가져오기
+    const regionCategories = useSelector(state => state.regionCategory.regionCategories);
+
+    // (유진님 코드 그대로 사용) 지역카테고리에서 ID로 for문을 통해 대분류,중분류,소분류 배열을 순회하여 해당 ID와 일치하는 소분류를 찾고,
+    // 소분류에 해당되는 중분류와 소분류를 합쳐서 return
+    const getRegionName = (regionId) => {
+        if (!regionId) return "지역없음";
+        if (!regionCategories || regionCategories.length === 0) return "지역 로딩중";
+
+        for (const region of regionCategories) {
+            if (!region.subRegionList) continue;
+
+            for (const subRegion of region.subRegionList) {
+                if (!subRegion.detailRegionList) continue;
+
+                const detailRegion = subRegion.detailRegionList.find(detail => detail.id === regionId);
+                if (detailRegion) {
+                    return `${subRegion.name} ${detailRegion.name}`;
+                }
+            }
+        }
+
+        return "지역없음";
+    };
+
 
     // =============== useQuery를 이용한 fetch ====================== //
     // 검색 후 mappedData를 parameter로 전달하면 Card로 반환해주는 함수
@@ -118,7 +143,7 @@ const ExchangeDetailPage = () => {
                                 title={result.title}
                                 talentGive={result.talentGive}
                                 talentTake={result.talentTake}
-                                lessonLocation={result.lessonLocation}
+                                lessonLocation={getRegionName(result.lessonLocation)}
                                 lessonImageSrc={result.imageSrc}
                                 profile={result.profile}
                                 onDetailClick={() => handleDetailClick(result.id)}
