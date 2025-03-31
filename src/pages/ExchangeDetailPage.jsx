@@ -20,6 +20,7 @@ import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import EditButton from "../components/common/icons/EditButton.jsx";
 import Card from "../components/common/Card.jsx";
+import getCompleteImagePath from "../utils/getCompleteImagePath.js";
 
 const ExchangeDetailPage = () => {
 
@@ -340,7 +341,7 @@ const ExchangeDetailPage = () => {
 
                     {/* 프로필 카드 */}
                     <ProfileCard
-                        imageSrc={post.profileImage}
+                        imageSrc={getCompleteImagePath(post.profileImage)}
                         username={post.username}
                         isLoading={isLoading}
                         isPostUploaded={isPostUploaded}
