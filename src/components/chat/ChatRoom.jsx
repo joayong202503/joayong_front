@@ -142,7 +142,7 @@ const ChatRoom = ({ user1, user2 }) => {
       </div>
       <div className={styles.messageList} ref={messageListRef}>
         {messages.map((msg, idx) => {
-          const sender = userProfiles[msg.senderId] || {
+          const sender = userProfiles[msg.username] || {
             username: "Unknown",
             profileImageUrl: profilePlaceholder,
           };
