@@ -15,7 +15,7 @@ export const connectWebSocket = (roomId, onMessageReceived) => {
   }
 
   console.log("🔄 Opening WebSocket connection to http://localhost:8999/ws...");
-  const socket = new SockJS("http://localhost:8999/ws", null, {
+  const socket = new SockJS("http://3.34.211.202:8999/ws", null, {
     timeout: 10000, // 타임아웃 10초 설정
     debug: true,    // SockJS 내부 디버깅 활성화
   });

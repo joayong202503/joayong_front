@@ -1,7 +1,7 @@
 import fetchWithAuth from '../services/fetchWithAuth';
 
 // API 기본 URL 설정
-const API_URL = 'http://localhost:8999/api/joayong'
+const API_URL = 'http://3.34.211.202:8999/api/joayong'
 
 /**
  * 교환 게시물을 검색하는 API 함수
