@@ -41,7 +41,7 @@ export const postApi = {
 const getMatchingRequestUrl = (filter, status) => {
     // 선택 가능한 옵션 목록
     const VALID_FILTERS = ['ALL', 'RECEIVE', 'SEND'];
-    const VALID_STATUS = ['N', 'M', 'D', 'R', 'C'];
+    const VALID_STATUS = ['N', 'M', 'D', 'R', 'RW', 'RS', 'C'];
 
 
     // 받은 filter 값을 대문자로 변환 -> filter 값이 없거나 유효하지 않으면 기본값으로 ALL 설정
