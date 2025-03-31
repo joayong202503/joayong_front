@@ -199,7 +199,13 @@ const RequestDetailModal = ({
                 {request.status === 'N' && isSender && (
                     <span className={`${styles.messageStatus} ${styles.pending}`}>대기 중</span>
                 )}
-                {request.status === 'C' && (
+                {(request.status === 'C'
+                    // 게시글을 쓴 사람은 리뷰를 완료했는데, 내가 게시글을 쓴 사람일때(=매칭 요청 메시지를 받은 사람일때)
+                    || (request.status === 'RW' && isReceiver)
+                    // 매칭 요청 메시지를 보낸  사람은 리뷰를 완료했는데, 내가 매칭 요청 메시지를 보낸 사람일 때
+                    || (request.status === 'RS' && isSender)
+                    )
+                    && (
                     <span className={`${styles.messageStatus} ${styles.accepted}`}>완료됨</span>
                 )}
                 {request.status === 'D' && (
@@ -233,7 +239,13 @@ const RequestDetailModal = ({
                         >레슨완료</Button>
                     </>
                 )}
-                {request.status === 'R' && (
+                {(request.status === 'R'
+                    // 게시글을 쓴 사람은 리뷰를 완료했는데, 내가 게시글을 쓴 사람이 아닐일때(=매칭 요청 메시지를 받은 사람이 아닐때)
+                    || (request.status === 'RW' && !isReceiver)
+                    // 매칭 요청 메시지를 보낸  사람은 리뷰를 완료했는데, 내가 매칭 요청 메시지를 보낸 사람이 아닐 때
+                    || (request.status === 'RS' && !isSender)
+                    )
+                    && (
                     <Button
                         fontSize={'extrasmall'}
                         onClick={onReviewClick}

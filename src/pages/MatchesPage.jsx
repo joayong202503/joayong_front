@@ -30,7 +30,8 @@ const MatchesPage = () => {
         { value: 'N', label: '대기 중' },
         { value: 'M', label: '수락됨' },
         { value: 'D', label: '거절됨' },
-        { value: 'R+C', label: '완료됨' }, // 리뷰 안한 R + 리뷰 한 c,
+        // R : 양쪽 리뷰 안함   & RW : 게시글 글쓴이만 리뷰함  & RS : 게시글 본 사람만 리뷰함 & c : 전체 리뷰함,
+        { value: 'R+RW+RS+C', label: '완료됨' },
     ];
 
     // ========= 상태값 관리 ========= //
@@ -63,7 +64,7 @@ const MatchesPage = () => {
     useEffect(() => {
         // 필터링하여 값이 바뀐 경우, status가 r+c, d, m, 이거나, filter가 send인 경우는 initialrequests 업데이트 하면 안됨
         // (그러면 당연히내가 받은 status 가 n인 메시지는 0이 됨)
-        if (selectedTabMenu === 'R+C' || selectedTabMenu === 'D' || selectedTabMenu === 'M' || selectedSegmentControlMenu === '보낸 요청') {
+        if (selectedTabMenu === 'R+RW+RS+C' || selectedTabMenu === 'D' || selectedTabMenu === 'M' || selectedSegmentControlMenu === '보낸 요청') {
             return;
         }
 
@@ -100,8 +101,11 @@ const MatchesPage = () => {
                             return request.status === 'M';
                         case 'D':
                             return request.status === 'D';
-                        case 'R+C':
-                            return request.status === 'R' || request.status === 'C';
+                        case 'R+RW+RS+C':
+                            return request.status === 'R' ||
+                                request.status === 'RW' ||
+                                request.status === 'RS' ||
+                                request.status === 'C';
                         default:
                             return true;
                     }
@@ -164,6 +168,11 @@ const MatchesPage = () => {
 
             console.log('필터링 조건 : filter', filter, 'status', selectedTabMenu);
             const responseData = await fetchMatchingRequestsWithFilters(filter, selectedTabMenu);
+
+            console.log(11111, responseData);
+            console.log(11111, responseData);
+            console.log(11111, responseData);
+            console.log(11111, responseData);
 
             const requestsWithProfiles = await addProfileImagesToRequests(responseData);
 

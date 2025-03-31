@@ -40,16 +40,42 @@ const fetchSingleStatus = async (filter, status) => {
 // 메시지 조회할 때 완료된 상태(R, C)를 함께 조회하는 함수
 const fetchCompletedStatus = async (filter) => {
     try {
+        // R : 양쪽 리뷰 안함   & RW : 게시글 글쓴이만 리뷰함  & RS : 게시글 본 사람만 리뷰함 & c : 전체 리뷰함,
         const urlForStatusR = messageApi.getMatchingRequestsWithFilters(filter, 'R');
+        const urlForStatusRW = messageApi.getMatchingRequestsWithFilters(filter, 'RW');
+        const urlForStatusRS = messageApi.getMatchingRequestsWithFilters(filter, 'RS');
         const urlForStatusC = messageApi.getMatchingRequestsWithFilters(filter, 'C');
 
-        const [statusRData, statusCData] = await Promise.all([
-            fetchWithAuth(urlForStatusR).then(res => res.json()),
-            fetchWithAuth(urlForStatusC).then(res => res.json())
+        const [statusRData, statusRWData, statusRSData, statusCData] = await Promise.all([
+            fetchWithAuth(urlForStatusR).then(res => {
+                return res.json().then(data => {
+                    console.log('Status R (리뷰 안함) 응답:', data);
+                    return data;
+                });
+            }),
+            fetchWithAuth(urlForStatusRW).then(res => {
+                return res.json().then(data => {
+                    console.log('Status RW (게시글 작성자만 리뷰) 응답:', data);
+                    return data;
+                });
+            }),
+            fetchWithAuth(urlForStatusRS).then(res => {
+                return res.json().then(data => {
+                    console.log('Status RS (요청자만 리뷰) 응답:', data);
+                    return data;
+                });
+            }),
+            fetchWithAuth(urlForStatusC).then(res => {
+                return res.json().then(data => {
+                    console.log('Status C (모두 리뷰 완료) 응답:', data);
+                    return data;
+                });
+            })
         ]);
 
-        // 두 결과를 합쳐서 반환
-        return [...statusRData, ...statusCData];
+        const combinedResults = [...statusRData, ...statusCData, ...statusRWData, ...statusRSData];
+        console.log('모든 상태 합친 최종 결과:', combinedResults);
+        return combinedResults;
     } catch (error) {
         console.error("완료된 상태 조회 중 오류 발생:", error);
         throw error;
@@ -59,14 +85,15 @@ const fetchCompletedStatus = async (filter) => {
 /**
  * 매칭 요청 메시지 다양한 필터링 적용하여 가져오기
  * @param filter - ALL, RECEIVE, SEND (기본값 : ALL)
- * @param status - N(아무것도 하지 않음), M(매칭됨), D(거절됨), R(수업완료), C(리뷰까지 완료) / (기본값 : null - 모두)
+ * @param status - N(아무것도 하지 않음), M(매칭됨), D(거절됨), R(수업완료 후 리뷰 안함), RW(수업 완료 후 게시글 쓴 사람만 리뷰), RS(수업 완료 후 매칭 요청 메시지 보낸사람만 리뷰 완료), C(리뷰까지 완료) / (기본값 : null - 모두)
  */
 export const fetchMatchingRequestsWithFilters = async (filter = 'ALL', status = null) => {
     try {
-        // 사용자에게 보여 줄 때는 1) 수업완료 했지만 리뷰는 안함 2) 수업완료하고 리뷰까지 완료함 <- 을 하나로 갑쳐서 보여줄 것임
-        // -> "이 때는 parameter를 "R+C"로 받아서, 두 번 패치할 것임
+        // 사용자에게 보여 줄 때는 1) 수업완료 했지만 리뷰는 안함 2) 수업완료하고 리뷰까지 완료함 <- 을 하나로 보여줄 것임
+        // -> "이 때는 parameter를 "R+RW+RS+C"로 받아서, 여러 번 패치 후 통합
+        // R : 양쪽 리뷰 안함   & RW : 게시글 글쓴이만 리뷰함  & RS : 게시글 본 사람만 리뷰함 & c : 전체 리뷰함,
 
-        if (status === 'R+C') {
+        if (status === 'R+RW+RS+C') {
             return await fetchCompletedStatus(filter); // 이미 JSON으로 파싱된 데이터 반환
         }
 

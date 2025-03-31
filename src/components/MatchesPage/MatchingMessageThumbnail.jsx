@@ -211,11 +211,16 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
 
 
                     <div className={styles.actionButtons}>
-                        {/* 펜딩, 거절, 완료 후 리뷰까지 담겼을  시에는 옆에 태그처럼 상태 보여주기 */}
+                        {/* 펜딩, 거절, 완료 후 리뷰까지 담겼을 시에는 옆에 태그처럼 상태 보여주기 */}
                         { request.status === 'N' && isSender &&
                             <span className={`${styles.messageStatus} ${styles.pending}`}>대기 중</span>}
-                        { request.status ===
-                            'C' && <span className={`${styles.messageStatus} ${styles.accepted}`}>완료됨</span>}
+                        { (request.status === 'C'
+                            // 게시글을 쓴 사람은 리뷰를 완료했는데, 내가 게시글을 쓴 사람일때(=매칭 요청 메시지를 받은 사람일때)
+                            || (request.status === 'RW' && isReceiver)
+                            // 매칭 요청 메시지를 보낸  사람은 리뷰를 완료했는데, 내가 매칭 요청 메시지를 보낸 사람일 때
+                            || (request.status === 'RS' && isSender)
+                            )
+                            && <span className={`${styles.messageStatus} ${styles.accepted}`}>완료됨</span>}
                         { request.status ===
                             'D' && <span className={`${styles.messageStatus} ${styles.rejected}`}>거절됨</span>}
 
@@ -254,7 +259,12 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                             </>
                         )}
                         {/* 버튼 status가 r 일때만 보임*/}
-                        {request.status === 'R' && (
+                        {(request.status === 'R'
+                            // 게시글을 쓴 사람은 리뷰를 완료했는데, 내가 게시글을 쓴 사람이 아닐 때(=매칭 요청 메시지를 받은 사람일때)
+                            || (request.status === 'RW' && !isReceiver)
+                            // 매칭 요청 메시지를 보낸  사람은 리뷰를 완료했는데, 내가 매칭 요청 메시지를 보낸 사람이 아닐 때
+                            || (request.status === 'RS' && !isSender))
+                            && (
                             <Button
                                 fontSize={'extrasmall'}
                                 onClick={handleRedirectToReviewPage}
