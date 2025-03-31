@@ -6,6 +6,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { fetchRtcRoomId, fetchPostInfo } from "../services/rtcApi.js";
 import styles from "./ChatPage.module.scss";
 import ChatRoom from "../components/chat/ChatRoom.jsx";
+import { CircleArrowRight } from "lucide-react";
 
 const ChatPage = () => {
   const user = useSelector((state) => state.auth.user);
@@ -80,22 +81,22 @@ const ChatPage = () => {
     <>
       <Provider store={store}>
         {postData && (
-          <div className={styles.linkText}>
-            {postData.writer} ({postData.talentTName}) &lt;-&gt;
-            {postData.sender} ({postData.talentGName}){` 게시글 `}
-            <span
-              onClick={handleClick}
-            >
-              {`새 창에서 열기`}
-            </span>
-            {/* 이건 새탭으로 열기 */}
-            <a
-              href={`/exchanges/${postData.postId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {`새 탭으로 열기`}
-            </a>
+          <div className={styles.linkBox}>
+            <div className={styles.linkText}>
+              <div className={styles.textContainer}>
+                <div className={styles.writer}>{postData.writer} ({postData.talentTName})</div>
+                <div>🔁</div>
+                <div className={styles.sender}>{postData.sender} ({postData.talentGName})</div>
+              </div>
+                <div
+                  onClick={() =>
+                    window.open(`/exchanges/${postData.postId}`, "_blank")
+                  }
+                  className={styles.linkContainer}
+                >
+                  {`새 탭으로 열기`} <CircleArrowRight />
+              </div>
+            </div>
           </div>
         )}
         <div className={styles.wrap}>
