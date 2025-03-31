@@ -3,7 +3,7 @@
 // 백엔드 주소 설정
 export const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8999'  // 개발 환경
-    : 'http://3.34.211.202:8999/'; // 프로덕션 환경
+    : 'http://3.34.211.202:8999'; // 프로덕션 환경
 
 // 인증 필요 여부에 따른 url 앞 부분 경로
 const AUTH_NOT_REQUIRED = '/api/joayong/auth';
