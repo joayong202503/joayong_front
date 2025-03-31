@@ -19,7 +19,6 @@ import ExchangeListPage from "../pages/ExchangeListPage.jsx";
 import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
 import ChatPage from "../pages/ChatPage.jsx";
 import ProfileSettingPage from "../pages/ProfileSettingPage.jsx";
-import SearchTestPage from "../pages/SearchTestPage.jsx";
 import AboutPage from "../pages/AboutPage.jsx";
 
 const router = createBrowserRouter([
@@ -51,10 +50,6 @@ const router = createBrowserRouter([
     path: '/',
     element: <MainLayout/>,
     children: [
-      {
-        path: 'test',
-        element: <SearchTestPage/>
-      },
       // 에러 페이지
       {
         path: 'error',

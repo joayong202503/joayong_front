@@ -74,11 +74,52 @@
 
 .dotContainer{
   position: absolute;
-  top: 18px;
-  margin-right: 10px;
+  top: 16px;
+  margin-right: 5px;
   z-index: 1000;
+  transform: rotate(-10deg);
 }
 
 .logoContainer img{
   width: 300px;
+}
+
+
+.newBadge {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(45deg, #FF6B6B, #FF8787);
+  padding: 1px 5px;
+  border-radius: 10px;
+
+  .dot {
+    width: 2.5px;
+    height: 2.5px;
+    background: white;
+    border-radius: 50%;
+    animation: blink 2s infinite;
+  }
+
+  .text {
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+
+    &.blink {
+      animation: textBlink 2s infinite;
+    }
+  }
+}
+
+@keyframes blink {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes textBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }

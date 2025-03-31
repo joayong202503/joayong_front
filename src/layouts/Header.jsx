@@ -7,17 +7,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store/slices/authSlice.js";
 import { fetchMatchingRequestsWithFilters } from "../services/matchingService.js";
-import { BellDot, BellIcon, BellRing, Dot } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import styles from "./Header.module.scss";
-import logoImage from "../assets/images/logo-big.png";
-import ProfileCircle from "../components/common/ProfileCircle.jsx";
-import Button from "../components/common/Button.jsx";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../store/slices/authSlice.js";
-import { fetchMatchingRequestsWithFilters } from "../services/matchingService.js";
-import { BellDot, BellIcon, BellRing, Dot } from "lucide-react";
+import { BellDot } from "lucide-react";
 import { fetchUserProfile } from "../services/profileApi.js";
 import MiniAlert from "../components/common/MiniAlert.jsx";
 import { pendingRequestsAction } from "../store/slices/pendingRequestsSlice.js";
@@ -236,12 +226,10 @@ const Header = () => {
             {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
             <div className={styles.dotContainer}>
               {hasPendingRequests && (
-                <BellDot
-                  size={14}
-                  color={"blue"}
-                  strokeWidth={1.5}
-                  style={{fill: "white"}}
-                />
+                  <div className={styles.newBadge}>
+                    <div className={styles.dot}></div>
+                    <span className={`${styles.text} ${styles.blink}`}>NEW</span>
+                  </div>
               )}
             </div>
           </li>
@@ -254,7 +242,7 @@ const Header = () => {
       </div>
       <div className={styles.rightContainer}>
         <div
-          className={styles.profileContainer}
+            className={styles.profileContainer}
           onClick={handleProfileClick}
           style={{cursor: "pointer"}}
         >
