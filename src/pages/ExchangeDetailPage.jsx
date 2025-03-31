@@ -20,6 +20,7 @@ import ConfirmModal from "../components/common/ConfirmModal.jsx";
 import AlertModal from "../components/common/AlertModal.jsx";
 import EditButton from "../components/common/icons/EditButton.jsx";
 import Card from "../components/common/Card.jsx";
+import getCompleteImagePath from "../utils/getCompleteImagePath.js";
 
 const ExchangeDetailPage = () => {
 
@@ -95,7 +96,7 @@ const ExchangeDetailPage = () => {
                                     theme="blueTheme"
                                     onClick={() => navigate('/exchanges')}
                                 >
-                                    한 번 다른 재능들을 둘러보세요. 예상치 못한 새로운 취미를 시작할 기회가 될지도 몰라요💡
+                                    다른 재능들을 둘러보세요. 예상치 못한 새로운 취미를 시작할 기회가 될지도 몰라요💡
                                 </Button>
                             </>
                         ) : (
@@ -340,7 +341,7 @@ const ExchangeDetailPage = () => {
 
                     {/* 프로필 카드 */}
                     <ProfileCard
-                        imageSrc={post.profileImage}
+                        imageSrc={getCompleteImagePath(post.profileImage)}
                         username={post.username}
                         isLoading={isLoading}
                         isPostUploaded={isPostUploaded}
@@ -466,7 +467,7 @@ const ExchangeDetailPage = () => {
                 />
             </div>
 
-            <div className={styles.container}>
+            <div className={styles.relatedContainer}>
                 {renderCards(relatedPosts, "관련 게시글")}
                 {renderCards(userPosts, "이 작성자의 다른 게시글")}
             </div>
