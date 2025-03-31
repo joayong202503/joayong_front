@@ -7,8 +7,7 @@ import { fetchUserProfile } from "../services/profileApi.js";
 import {useNavigate, useParams} from 'react-router-dom';
 import ProfileExchanges from "../components/ProfilePage/ProfileExchanges.jsx";
 import ProfileRating from "../components/ProfilePage/ProfileRating.jsx";
-
-const API_URL = 'http://localhost:8999'; // API URL 상수 추가
+import {API_URL} from '../services/api.js';
 
 const ProfilePage = () => {
   const navigate = useNavigate();

@@ -9,8 +9,7 @@ import {useSelector} from "react-redux";
 import {fetchRecentExchanges} from "../services/exchangeApi.js";
 import {fetchUserProfile} from "../services/profileApi.js";
 import {Users,MessageCircle,Video,Star,ArrowRight, ArrowDown} from "lucide-react";
-
-const API_URL = 'http://localhost:8999';
+import {API_URL} from '../services/api.js';
 
 const MainPage = () => {
   const navigate = useNavigate();

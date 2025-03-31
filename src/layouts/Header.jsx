@@ -8,9 +8,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../store/slices/authSlice.js";
 import { fetchMatchingRequestsWithFilters } from "../services/matchingService.js";
 import { BellDot, BellIcon, BellRing, Dot } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import styles from "./Header.module.scss";
+import logoImage from "../assets/images/logo-big.png";
+import ProfileCircle from "../components/common/ProfileCircle.jsx";
+import Button from "../components/common/Button.jsx";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../store/slices/authSlice.js";
+import { fetchMatchingRequestsWithFilters } from "../services/matchingService.js";
+import { BellDot, BellIcon, BellRing, Dot } from "lucide-react";
 import { fetchUserProfile } from "../services/profileApi.js";
 import MiniAlert from "../components/common/MiniAlert.jsx";
 import { pendingRequestsAction } from "../store/slices/pendingRequestsSlice.js";
+import {API_URL} from "../services/api.js";
 
 const Header = () => {
   // 스토어에서 유저 정보 가져오기
@@ -87,7 +98,7 @@ const Header = () => {
         // API 응답에서 프로필 이미지 URL 처리
         let imageUrl = userData.profileImageUrl;
         if (imageUrl && !imageUrl.startsWith("http")) {
-          imageUrl = `http://localhost:8999${imageUrl}`;
+          imageUrl = `${API_URL}${imageUrl}`;
         }
 
         setProfileImageUrl(imageUrl);

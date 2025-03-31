@@ -5,6 +5,13 @@
   align-items: center;
   padding: 0 20px;
 }
+.fullPageLoading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
 .inputContainer{
   display: flex;
   width: 1270px;
@@ -56,8 +63,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  margin-bottom: 50px;
+  margin-top: 50px;
+  margin-bottom: 80px;
 }
 
 .pageButton {

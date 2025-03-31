@@ -1,8 +1,9 @@
-import  React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './ProfileRating.module.scss'
 import RatingBox from "../common/RatingBox.jsx";
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchUserRatings } from "../../services/profileApi.js"
+import Spinner from "../common/Spinner.jsx";
 
 // API URL 상수 추가
 const API_URL = 'http://localhost:8999';
@@ -12,11 +13,14 @@ const ProfileRating = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [pageLoading, setPageLoading] = useState(true);
   const { username } = useParams();
   const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchRatings = async () => {
+      setPageLoading(true);
+
       try {
         // 만약 name이 없으면 기본값으로 설정
         const userName = username;
@@ -53,6 +57,10 @@ const ProfileRating = () => {
       } catch (err) {
         console.error('별점 정보를 불러오는데 실패했습니다:', err);
         setError('별점 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.');
+      } finally {
+        // 추가 지연 시간
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setPageLoading(false);
       }
     };
 
@@ -79,69 +87,78 @@ const ProfileRating = () => {
   };
 
   return (
-    <div className={styles.fullContainer}>
-      <div className={styles.ratingTitle}>
-        <h2>Ratings</h2>
-        <span>⭐ {ratingData?.totalRating?.toFixed(1) || '로딩 중...'}</span>
+      <div className={styles.fullContainer}>
+        <div className={styles.ratingTitle}>
+          <h2>Ratings</h2>
+          <span>⭐ {ratingData?.totalRating?.toFixed(1) || '로딩 중...'}</span>
+        </div>
+
+        {pageLoading ? (
+            <div className={styles.fullPageLoading}>
+              <Spinner size="small" />
+            </div>
+        ) : (
+            <>
+              {error ? (
+                  <div className={styles.errorState}>{error}</div>
+              ) : (
+                  <div className={styles.ratingBoxContainer}>
+                    {ratingData?.ratingList?.length > 0 ? (
+                        ratingData.ratingList.map((ratingItem) => (
+                            <RatingBox
+                                key={ratingItem.ratingDetailId}
+                                reviewerName={ratingItem.reviewer}
+                                reviewList={ratingItem.reviewList}
+                                createAt={ratingItem.createAt}
+                                reviewerProfileUrl={ratingItem.reviewerProfileUrl}
+                            />
+                        ))
+                    ) : (
+                        <div className={styles.noRatings}>아직 별점 정보가 없습니다.</div>
+                    )}
+                  </div>
+              )}
+
+              {totalPages > 0 && (
+                  <div className={styles.pagination}>
+                    <button
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 0}
+                        className={styles.pageButton}
+                    >
+                      이전
+                    </button>
+
+                    {Array.from({length: Math.min(5, totalPages)}).map((_, index) => {
+                      const pageNumber = currentPage <= 2
+                          ? index
+                          : currentPage + index - 2;
+
+                      if (pageNumber >= totalPages) return null;
+
+                      return (
+                          <button
+                              key={pageNumber}
+                              onClick={() => handlePageChange(pageNumber)}
+                              className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
+                          >
+                            {pageNumber + 1}
+                          </button>
+                      );
+                    })}
+
+                    <button
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages - 1}
+                        className={styles.pageButton}
+                    >
+                      다음
+                    </button>
+                  </div>
+              )}
+            </>
+        )}
       </div>
-
-      {error ? (
-        <div className={styles.errorState}>{error}</div>
-      ) : (
-        <div className={styles.ratingBoxContainer}>
-          {ratingData?.ratingList?.length > 0 ? (
-            ratingData.ratingList.map((ratingItem) => (
-              <RatingBox
-                key={ratingItem.ratingDetailId}
-                reviewerName={ratingItem.reviewer}
-                reviewList={ratingItem.reviewList}
-                createAt={ratingItem.createAt}
-                reviewerProfileUrl={ratingItem.reviewerProfileUrl}
-              />
-            ))
-          ) : (
-            <div className={styles.noRatings}>아직 별점 정보가 없습니다.</div>
-          )}
-        </div>
-      )}
-      {totalPages > 0 && (
-        <div className={styles.pagination}>
-          <button
-            onClick={goToPreviousPage}
-            disabled={currentPage === 0}
-            className={styles.pageButton}
-          >
-            이전
-          </button>
-
-          {Array.from({length: Math.min(5, totalPages)}).map((_, index) => {
-            const pageNumber = currentPage <= 2
-              ? index
-              : currentPage + index - 2;
-
-            if (pageNumber >= totalPages) return null;
-
-            return (
-              <button
-                key={pageNumber}
-                onClick={() => handlePageChange(pageNumber)}
-                className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
-              >
-                {pageNumber + 1}
-              </button>
-            );
-          })}
-
-          <button
-            onClick={goToNextPage}
-            disabled={currentPage === totalPages - 1}
-            className={styles.pageButton}
-          >
-            다음
-          </button>
-        </div>
-      )}
-    </div>
   );
 };
 
