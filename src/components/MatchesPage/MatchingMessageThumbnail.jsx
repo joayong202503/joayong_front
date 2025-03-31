@@ -1,20 +1,24 @@
 import React, {useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import styles from './MatchingMessageThumbnail.module.scss';
 import ProfileCircle from "../common/ProfileCircle.jsx";
 import Button from "../common/Button.jsx";
 import {useNavigate} from "react-router-dom";
 import ConfirmModal from "../common/ConfirmModal.jsx";
 import MiniAlert from "../common/MiniAlert.jsx";
-import {acceptMatchingRequest, fetchCompleteLesson, rejectMatchingRequest} from "../../services/matchingService.js";
-import {ApiError} from "../../utils/ApiError.js";
-import {useSelector} from "react-redux";
+import {
+    acceptMatchingRequest,
+    fetchCompleteLesson,
+    fetchMatchingRequestsWithFilters,
+    rejectMatchingRequest
+} from "../../services/matchingService.js";
 import RequestDetailModal from './RequestDetailModal';
-import {Dot} from "lucide-react";
+import {pendingRequestsAction} from "../../store/slices/pendingRequestsSlice.js";
 
 const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
-
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    const { updatePendingRequestsStatus } = pendingRequestsAction;
     //  매칭 요청을 내가 보낸 사람인지 받는 사람인지를 확인
     const loggedInUser = useSelector((state) => state.auth.user.name);
     const [isSender, setIsSender] = useState(false);
@@ -36,42 +40,42 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     const [showRequestDetail, setShowRequestDetail] = useState(false); // 요청 메시지 디테일 보여주는 모달
 
     // 미니 모달 표시 관련 함수
-    const showSuccessMiniModal = () => {
+    const showSuccessMiniModal = async () => {
+        setIsNegativeMiniModalMessage(false);  // 추가
         setMiniModalMessage('성공적으로 처리되었습니다.');
         setShowMiniModal(true);
-        setTimeout(() => {
-            setShowMiniModal(false);
-        }, 1500);
+
+        return new Promise(resolve => {
+            setTimeout(() => {
+                setShowMiniModal(false);
+                resolve();
+            }, 1500);
+        });
     };
 
-    // 미니 오달 에러 묘시 함수
-    const showErrorMiniModal = (errorMessage) => {
+    const showErrorMiniModal = (message) => {
+        setMiniModalMessage(message || '처리 중 오류가 발생했습니다.');
         setIsNegativeMiniModalMessage(true);
-        setMiniModalMessage(errorMessage || '매칭 요청 처리 중 오류가 발생했습니다.');
         setShowMiniModal(true);
-        setTimeout(() => {
-            setShowMiniModal(false);
-            setIsNegativeMiniModalMessage(false);
-        }, 1500);
     };
 
     // 매칭 수락 처리 함수
     const processMatchAccept = async () => {
         try {
-            // 1. 서버에 매칭 수락 요청
             await acceptMatchingRequest(request.messageId);
 
-            // 2. 로컬 상태 업데이트
             onRequestUpdate(request.messageId, 'M');
 
-            // 3. 성공 피드백 표시
-            showSuccessMiniModal();
+            const pendingData = await fetchMatchingRequestsWithFilters("RECEIVE", "N");
+            const hasPending = pendingData.some(
+                (request) => request.receiverName === loggedInUser
+            );
+            dispatch(updatePendingRequestsStatus(hasPending));
+
             setShowConfirmModal(false);
-            setTimeout(() => {
-                setShowRequestDetail(false);
-            }, 1000);
+
+            await showSuccessMiniModal();  // 여기서 showSuccessMiniModal 사용
         } catch (error) {
-            console.error("매칭 요청 수락 중 오류 발생:", error);
             showErrorMiniModal(error.message);
         }
     };
@@ -79,20 +83,11 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
     // 매칭 거절 처리 함수
     const processMatchReject = async () => {
         try {
-            // 1. 서버에 매칭 거절 요청
             await rejectMatchingRequest(request.messageId);
-
-            // 2. 로컬 상태 업데이트(성능을 위해서 전체  데이터 다시 fetch 하지 않고 일단 local 에서 보이는 것 바꿔줌)
             onRequestUpdate(request.messageId, 'D');
-
-            // 3. 성공했다는 모달 띄우기
-            showSuccessMiniModal();
             setShowConfirmModal(false);
-            setTimeout(() => {
-                setShowRequestDetail(false);
-            }, 1000);
+            await showSuccessMiniModal();  // 여기서도 showSuccessMiniModal 사용
         } catch (error) {
-            console.error("매칭 요청 거절 중 오류 발생:", error);
             showErrorMiniModal(error.message);
         }
     };
@@ -141,7 +136,6 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
 
 
     const handleRedirectToChatRoom = () => {
-        console.log("request.senderNmae: "+request.senderName);
         navigate(`/chat/${request.messageId}`, {
             state: { 
                 name1: request.senderName, 
@@ -189,9 +183,16 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
 
                         <div className={styles.messageContent}>
                             <div className={styles.messageHeader}>
-                                {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
-                                { request.status === 'N' && !isSender && <Dot className={styles.dot} size={14} color={'#ff0000'}/>}
+                                {/* 수신인이고 N일 떄 알람 */}
+                                {request.status === 'N' && !isSender && (
+                                    <div className={styles.newBadge}>
+                                        <div className={styles.dot}></div>
+                                        <span className={`${styles.text} ${styles.blink}`}>NEW</span>
+                                        <div className={styles.dot}></div>
+                                    </div>
+                                )}
                                 <span className={styles.senderName}>{request.senderName}</span>
+                                <span className={styles.messageType}>님이 보낸 메시지</span>
                                 <span className={styles.sentDate}>
                                     {new Date(request.sentAt).toLocaleDateString()}
                                 </span>
@@ -285,10 +286,8 @@ const MatchingMessageThumbnail = ({ request, onRequestUpdate }) => {
                     onClose={() => {
                         setShowMiniModal(false);
                         setShowConfirmModal(false);
-                        setTimeout(() => {
-                            setShowRequestDetail(false);
-                        }, 1000);
                     }}
+                    isVisible={true}  // isVisible prop 추가
                 />
             )}
 

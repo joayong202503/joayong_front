@@ -9,7 +9,7 @@ export const useRegionCategories = (regionCategories) => {
     const [selectedRegionMiddleCategoryId, setSelectedRegionMiddleCategoryId] = useState(null);
 
     // 서버에 fetch하기 위하여 상태값으로 관리
-    const [selectedRegionLastCategory, setSelectedRegionLastCategory] = useState({});
+    const [selectedRegionLastCategory, setSelectedRegionLastCategory] = useState(null);
 
     // 가나다 순 정렬
     const sortedRegionCategories = getSortedRegionCategories(regionCategories);
@@ -23,14 +23,16 @@ export const useRegionCategories = (regionCategories) => {
         const selectedItem = sortedRegionCategories.find(category => category.name === value);
         if (selectedItem) {
             setSelectedRegionMainCategoryId(selectedItem.id);
+            setSelectedRegionMiddleCategoryId(null);
+            setSelectedRegionLastCategory(null);
         }
-
     };
 
     const handleRegionMiddleCategoryChange = (value) => {
         const selectedItem = regionMiddleCategories.find(category => category.name === value);
         if (selectedItem) {
             setSelectedRegionMiddleCategoryId(selectedItem.id);
+            setSelectedRegionLastCategory(null);
         }
     };
 
@@ -39,7 +41,6 @@ export const useRegionCategories = (regionCategories) => {
         if (selectedItem) {
             setSelectedRegionLastCategory(selectedItem);
         }
-        // console.log(selectedRegionLastCategory);
     };
 
     return {

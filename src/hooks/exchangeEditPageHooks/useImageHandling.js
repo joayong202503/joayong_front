@@ -1,27 +1,29 @@
 import { useState } from 'react';
 
-export const useImageHandling = (updatePostData, postData, showConfirmModal) => {
-    // 기존 첨부사진 삭제 요청 시 로직
+export const useImageHandling = (updatePostData, postData) => {
     const handleFileDelete = (selectedImageIndex) => {
+        const selectedImage = postData.displayImages[selectedImageIndex];
 
-        console.log(selectedImageIndex);
-        console.log(selectedImageIndex);
-        console.log(selectedImageIndex);
-        console.log(selectedImageIndex);
-        const a = postData.images.filter((_, index) => index !== selectedImageIndex);
-        console.log(33333, a);
-        console.log(33333, a);
-        console.log(33333, a);
-        // 서버에서 가져온 이미지인 경우 전체 삭제만 가능
-        if (!(postData.images[selectedImageIndex] instanceof File)) {
+        // 서버 이미지 삭제
+        if (!(selectedImage instanceof File)) {
+            const currentDeleteIds = Array.isArray(postData['delete-image-ids']) 
+                ? postData['delete-image-ids'] 
+                : [];
+            updatePostData('delete-image-ids', [...currentDeleteIds, selectedImage.id]);
             updatePostData('update-image', true);
-            updatePostData('images', null);
-            return;
+        } 
+        // 로컬 파일 삭제
+        else {
+            const updatedImages = postData.images.filter(file => file !== selectedImage);
+            updatePostData('images', updatedImages);
+
+            if (updatedImages.length === 0 && !postData['delete-image-ids']?.length) {
+                updatePostData('update-image', false);
+            }
         }
 
-        // 로컬에서 새로 업로드한 이미지는 개별 삭제 가능
-        updatePostData('update-image', true);
-        updatePostData('images', postData.images.filter((_, index) => index !== selectedImageIndex));
+        const updatedDisplayImages = postData.displayImages.filter((_, idx) => idx !== selectedImageIndex);
+        updatePostData('displayImages', updatedDisplayImages);
     };
 
     return { handleFileDelete };

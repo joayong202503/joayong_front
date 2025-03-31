@@ -20,6 +20,7 @@ import MatchingRatingPage from "../pages/MatchingRatingPage.jsx";
 import ChatPage from "../pages/ChatPage.jsx";
 import ProfileSettingPage from "../pages/ProfileSettingPage.jsx";
 import SearchTestPage from "../pages/SearchTestPage.jsx";
+import AboutPage from "../pages/AboutPage.jsx";
 
 const router = createBrowserRouter([
   // 회원가입 페이지
@@ -165,7 +166,7 @@ const router = createBrowserRouter([
       // 어바웃 페이지
       {
         path: 'about',
-        // element: <AboutPage/>
+        element: <AboutPage/>
       },
     ]
   },

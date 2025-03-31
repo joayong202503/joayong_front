@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {useRegionCategories} from "../hooks/exchangesCreatePageHook/regionHooks.js";
-import React, { useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styles from "./ExchangeCreatePage.module.scss";
 import {Form, useNavigate} from "react-router-dom";
 import ImageUploadSection from "../components/common/imagesAndFiles/ImageUploadSection.jsx";
@@ -13,16 +13,23 @@ import ContentInputSection from "../components/ExchangeCreatePage/ContentInputSe
 import SubmitButton from "../components/ExchangeCreatePage/SubmitButton.jsx";
 import {useTalentCategories} from "../hooks/exchangesCreatePageHook/talentHooks.js";
 import {useFileUpload} from "../hooks/exchangesCreatePageHook/fileUploadHooks.js";
-import { postApi } from "../services/api.js";
+import {postApi} from "../services/api.js";
 import fetchWithUs from "../services/fetchWithAuth.js";
 import {useLocation} from "../context/LocationContext.jsx";
 import {getAddressByCoords} from "../utils/reverseGeoCoding.js";
+import MiniAlert from "../components/common/MiniAlert.jsx";
+import AdvancedImageUpload from "../components/common/imagesAndFiles/AdvancedImageUpload.jsx";
+import ImageCarouselWithThumbNail from "../components/common/imagesAndFiles/ImageCarouselWithThumbNail.jsx";
+import * as ReactDom from "react-dom";
 
 const ExchangeCreatePage = () => {
 
     // LocationContext 가져온 후, 주소를 위도+경도에서 도로명 주소로 변환해주기
     const { latitude, longitude }  = useLocation();
     const [ userAddress, setUserAddress ] = useState();
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isImageCarouselModalOpen, setIsImageCarouselModalOpen] = useState(false);
 
     useEffect(() => {
         const getAddressByApi = async () => {
@@ -39,7 +46,7 @@ const ExchangeCreatePage = () => {
 
     // 모달 상태관리
     const [showAlertModal, setShowAlertModal] = useState(false);
-    const [alertMessage, setAlertMessage] = useState({ title: '', message: '' });
+    const [alertMessage, setAlertMessage] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const timeoutRef = useRef(null); // 타이머 ID 저장
 
@@ -75,46 +82,29 @@ const ExchangeCreatePage = () => {
 
     // 파일 업로드 오류 메시지가 변경될 때마다 모달 표시
     useEffect(() => {
-        if (fileUploadErrorMessage) {
-            // 기존 타이머가 실행 중이라면 취소
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-                timeoutRef.current = null; // 초기화
-            }
-
-            // 모달 열기 및 메시지 설정
-            setAlertMessage({ message: '', title: fileUploadErrorMessage });
-            setShowAlertModal(true);
-
-            // 2초 후 모달 자동 닫기
-            timeoutRef.current = setTimeout(() => {
-                setShowAlertModal(false);
-                timeoutRef.current = null; // 타이머 초기화
-            }, 2000);
-
-            // fileUploadErrormessage 초기화
-            setFileUploadErrorMessage('');
-
-        }
-    }, [fileUploadErrorMessage]); // fileUploadErrorMessage 값이 변경될 때마다 실행
+        if (!fileUploadErrorMessage) return;
+        handleAlertModal(fileUploadErrorMessage);
+    }, [fileUploadErrorMessage]);
 
     // 모달 띄우기
     const handleAlertModal = (message) => {
+        console.log('handleAlertModal called with message:', message);
+
         // 기존 타이머가 실행 중이라면 취소
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
-            timeoutRef.current = null; // 초기화
+            timeoutRef.current = null;
         }
 
         // 모달 열기 및 메시지 설정
-        setAlertMessage({message: '', title: message});
+        setAlertMessage(message);
         setShowAlertModal(true);
 
-        // 2초 후 모달 자동 닫기
+        // 1.5초 후 모달 자동 닫기
         timeoutRef.current = setTimeout(() => {
             setShowAlertModal(false);
             timeoutRef.current = null; // 타이머 초기화
-        }, 2000);
+        }, 1500);
     };
 
     // 엔터키로 폼 제출되는 것을 막음
@@ -159,10 +149,12 @@ const ExchangeCreatePage = () => {
     }
 
     const validateFormData = (post) => {
-
-        // 1) 타이틀 공백 체크
-        const title = post.title;
-        if (!title || !title.trim()) {
+        console.log('=== Validation Debug ===');
+        console.log('validateFormData called with:', post);
+        
+        // 기존 검증 로직
+        if (!post.title || !post.title.trim()) {
+            console.log('Title validation failed');
             handleAlertModal("제목을 입력해주세요");
             return false;
         }
@@ -201,14 +193,17 @@ const ExchangeCreatePage = () => {
     }
 
     const preparePostFormOfFormData = () => {
-        const nonFileData = {
+        const regionId = selectedRegionLastCategory && selectedRegionLastCategory.id ? selectedRegionLastCategory.id : null;
+        const talentGiveId = selectedTalentToGiveSubCategory && selectedTalentToGiveSubCategory.id ? selectedTalentToGiveSubCategory.id : null;
+        const talentReceiveId = selectedTalentToReceiveSubCategory && selectedTalentToReceiveSubCategory.id ? selectedTalentToReceiveSubCategory.id : null;
+
+        return {
             title: titleInputRef.current.value,
             content: contentInputRef.current.value,
-            "talent-g-id": selectedTalentToGiveSubCategory.id,
-            "talent-t-id": selectedTalentToReceiveSubCategory.id,
-            "region-id": selectedRegionLastCategory.id
+            "talent-g-id": talentGiveId,
+            "talent-t-id": talentReceiveId,
+            "region-id": regionId
         };
-        return nonFileData;
     }
 
 
@@ -273,42 +268,60 @@ const ExchangeCreatePage = () => {
     return (
         <div className={styles.wrapper}>
             <div className={styles.subWrapper}>
-                {/* 게시글 등록 실패할 경우, 모달 띄우기*/}
+                {/* 게시글 등록 실패할 경우 */}
                 {showAlertModal && (
-                    <AlertModal
-                        title={alertMessage.title}
-                        message={alertMessage.message}
-                        onClose={() => {
-                            setShowAlertModal(false);
-                            setAlertMessage(null);
-                        }}
+                    <MiniAlert
+                        message={alertMessage}
+                        isNegative={true}
+                        duration={1500}
+                        onClose={() => setShowAlertModal(false)}
                     />
                 )}
 
-                {/* 게시글 등록 성공할 경우, 모달 띄우기*/}
+                {/* 게시글 등록 성공할 경우 */}
                 {showSuccessModal && (
-                    <AlertModal
-                        title={"게시글이 등록되었습니다."}
-                        message={"재능 찾기 페이지로 이동합니다."}
-                        onClose={handleNavigation}  // 통합된 네비게이션 함수 사용
+                    <MiniAlert
+                        message="게시글이 등록되었습니다."
+                        isNegative={false}
+                        duration={1500}
+                        onClose={handleNavigation}
                     />
                 )}
 
                 <Form
                     method={'post'}
                     onKeyDown={handleEnterKeyDown}
-                    onSubmit={handleSubmit}>
-                    {/* 이미지 업로드 하는 부분 */}
-                    <ImageUploadSection
-                        ref={fileInputRef}
-                        onFileSelect={handleFileSelect}
-                    />
+                    onSubmit={handleSubmit}
+                >
+                    {/*이미지 업로드 하는 부분*/}
+                    <AdvancedImageUpload
+                        images={uploadedFile}
+                        maxLength={5}
+                        description={['능력을 한 눈에 보여줄 사진을 첨부하고, 매칭 확률을 높여보세요.', '사진은 최대 5개 업로드 가능합니다.']}
+                        onFileDelete={(index, e) => {
+                            // 버튼 클릭이 Form 태그의 submit을 일어키는 것을 방지
+                            if (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
 
-                    {/* 파일 이름 목록을 표시하는 컴포넌트 */}
-                    <FileListDisplay
-                        uploadedFiles={uploadedFile}
-                        setUploadedFile={setUploadedFile}
+                            const newFiles = uploadedFile.filter((_, i) => i !== index);
+                            setUploadedFile(newFiles);
+
+                            // 파일 입력 필드 초기화
+                            if (fileInputRef.current) {
+                                fileInputRef.current.value = '';
+                            }
+                        }}
+                        onEnlargePhoto={(index) => {
+                            setCurrentImageIndex(index);
+                            setIsImageCarouselModalOpen(true);
+                        }}
+                        ref={fileInputRef}
+                        isAllOrNone={false}
+                        onFileSelect={(e) => handleFileSelect(e, uploadedFile.length + e.target.files.length)}
                     />
+                    <div className={styles.gap}></div>
 
                     {/*제목 입력 */}
                     <TitleInputSection
@@ -361,6 +374,42 @@ const ExchangeCreatePage = () => {
                     />
                 </Form>
             </div>
+
+            {isImageCarouselModalOpen && ReactDom.createPortal(
+                <div className={styles.modalOverlay}
+                     onClick={(e) => {
+                         e.stopPropagation();
+                         setIsImageCarouselModalOpen(false);
+                     }}
+                >
+                    <div
+                        className={styles.modalContent}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsImageCarouselModalOpen(false);
+                        }} // 모달 컨텐츠 클릭 시 이벤트 전파 중단
+                    >
+                        {/* 모달 내용 */}
+                        <button
+                            className={styles.closeButton}
+                            onClick={() => setIsImageCarouselModalOpen(false)}
+                        >
+                            X
+                        </button>
+                        <ImageCarouselWithThumbNail
+                            imagesObject={uploadedFile}
+                            width="80%"
+                            height="80%"
+                            initialIndex={currentImageIndex || 0}
+                            isOpenModal={isImageCarouselModalOpen}
+                            setIsOpenModal={setIsImageCarouselModalOpen}
+                            setCurrentIndex={setCurrentImageIndex}
+                        />
+                    </div>
+                </div>,
+                document.body
+            )}
+
         </div>
     );
 };
