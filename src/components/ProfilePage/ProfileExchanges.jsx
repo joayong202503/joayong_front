@@ -15,6 +15,7 @@ const ProfileExchanges = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [pageLoading, setPageLoading] = useState(true);
+  const [changingPage, setChangingPage] = useState(false); // 페이지 변경 시 로딩 상태를 위한 새로운 상태
 
   // URL에서 사용자 이름 파라미터 가져오기
   const { username } = useParams();
@@ -78,8 +79,8 @@ const ProfileExchanges = () => {
         lessonLocation: lessonLocation,
         // 이미지 URL 구성
         lessonImageSrc: post.images && post.images.length > 0
-            ? `${API_URL}${post.images[0].imageUrl}`
-            : undefined,
+          ? `${API_URL}${post.images[0].imageUrl}`
+          : undefined,
         profile: {
           name: post.name || "이름 없음",
           imageSrc: `${API_URL}${profileImageUrl}`,
@@ -120,7 +121,7 @@ const ProfileExchanges = () => {
       if (talentCategories.length > 0 && regionCategories.length > 0) {
         await getUserPosts();
       } else if ((!talentCategories || talentCategories.length === 0) &&
-          (!regionCategories || regionCategories.length === 0)) {
+        (!regionCategories || regionCategories.length === 0)) {
         // 카테고리 데이터가 없는 경우(Redux 초기화 전)
         await getUserPosts(); // 일단 데이터를 가져옴 (카테고리명은 placeholder로 표시됨)
       }
@@ -139,121 +140,141 @@ const ProfileExchanges = () => {
     navigate(`/exchanges/${exchangeId}`);
   };
 
+  // 페이지 변경 시 로딩 효과 추가
+  const simulatePageLoadingDelay = async () => {
+    setChangingPage(true);
+    // 페이지 전환 시 로딩 애니메이션을 위한 지연
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setChangingPage(false);
+  };
+
   // 페이지 변경 핸들러
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = async (pageNumber) => {
+    await simulatePageLoadingDelay();
     setCurrentPage(pageNumber);
   };
 
   // 이전 페이지로 이동
-  const goToPreviousPage = () => {
+  const goToPreviousPage = async () => {
     if (currentPage > 0) {
+      await simulatePageLoadingDelay();
       setCurrentPage(currentPage - 1);
     }
   };
 
   // 다음 페이지로 이동
-  const goToNextPage = () => {
+  const goToNextPage = async () => {
     if (currentPage < totalPages - 1) {
+      await simulatePageLoadingDelay();
       setCurrentPage(currentPage + 1);
     }
   };
 
   // 현재 페이지에 표시할 게시물
   const currentPosts = userPosts.slice(
-      currentPage * itemsPerPage,
-      (currentPage + 1) * itemsPerPage
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
   );
 
   return (
-      <div className={styles.fullContainer}>
-        <h2>Open Exchanges</h2>
+    <div className={styles.fullContainer}>
+      <h2>Open Exchanges</h2>
 
-        {pageLoading ? (
-            <div className={styles.fullPageLoading}>
-              <Spinner size="small" />
-            </div>
-        ) : (
+      {pageLoading ? (
+        <div className={styles.fullPageLoading}>
+          <Spinner size="small" />
+        </div>
+      ) : (
+        <>
+          {error ? (
+            <div className={styles.errorState}>{error}</div>
+          ) : userPosts.length === 0 ? (
+            <div className={styles.emptyState}>작성한 게시물이 없습니다.</div>
+          ) : (
             <>
-              {error ? (
-                  <div className={styles.errorState}>{error}</div>
-              ) : userPosts.length === 0 ? (
-                  <div className={styles.emptyState}>작성한 게시물이 없습니다.</div>
+              {changingPage ? (
+                <div className={styles.fullPageLoading}>
+                  <Spinner size="small" />
+                </div>
               ) : (
-                  <div className={styles.cardContainer}>
-                    {currentPosts.map(post => (
-                        <div key={post.id} className={styles.cardItem}>
-                          <Card
-                              title={post.title}
-                              talentGive={post.talentGive}
-                              talentTake={post.talentTake}
-                              lessonLocation={post.lessonLocation}
-                              lessonImageSrc={post.lessonImageSrc}
-                              profile={post.profile}
-                              onDetailClick={() => handleDetailClick(post.id)}
-                          />
-                        </div>
-                    ))}
-                  </div>
-              )}
-
-              {totalPages > 1 && (
-                  <div className={styles.pagination}>
-                    <button
-                        onClick={goToPreviousPage}
-                        disabled={currentPage === 0}
-                        className={styles.pageButton}
-                    >
-                      이전
-                    </button>
-
-                    {(() => {
-                      // 항상 최대 5개의 페이지 버튼을 표시
-                      let startPage = 0;
-                      let endPage = totalPages - 1;
-
-                      // 페이지 수가 5개 이상인 경우 표시 범위 계산
-                      if (totalPages > 5) {
-                        // 현재 페이지 중심으로 앞뒤 2페이지씩 표시 (최대 5개)
-                        startPage = Math.max(0, currentPage - 2);
-                        endPage = Math.min(totalPages - 1, currentPage + 2);
-
-                        // 5개 채우기 위한 조정
-                        if (endPage - startPage < 4) {
-                          if (startPage === 0) {
-                            endPage = Math.min(4, totalPages - 1);
-                          } else if (endPage === totalPages - 1) {
-                            startPage = Math.max(0, totalPages - 5);
-                          }
-                        }
-                      }
-
-                      // 계산된 범위에 따라 페이지 버튼 생성
-                      return Array.from({ length: endPage - startPage + 1 }).map((_, index) => {
-                        const pageNumber = startPage + index;
-                        return (
-                            <button
-                                key={pageNumber}
-                                onClick={() => handlePageChange(pageNumber)}
-                                className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
-                            >
-                              {pageNumber + 1}
-                            </button>
-                        );
-                      });
-                    })()}
-
-                    <button
-                        onClick={goToNextPage}
-                        disabled={currentPage === totalPages - 1}
-                        className={styles.pageButton}
-                    >
-                      다음
-                    </button>
-                  </div>
+                <div className={styles.cardContainer}>
+                  {currentPosts.map(post => (
+                    <div key={post.id} className={styles.cardItem}>
+                      <Card
+                        title={post.title}
+                        talentGive={post.talentGive}
+                        talentTake={post.talentTake}
+                        lessonLocation={post.lessonLocation}
+                        lessonImageSrc={post.lessonImageSrc}
+                        profile={post.profile}
+                        onDetailClick={() => handleDetailClick(post.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
             </>
-        )}
-      </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                onClick={goToPreviousPage}
+                disabled={currentPage === 0 || changingPage}
+                className={styles.pageButton}
+              >
+                이전
+              </button>
+
+              {(() => {
+                // 항상 최대 5개의 페이지 버튼을 표시
+                let startPage = 0;
+                let endPage = totalPages - 1;
+
+                // 페이지 수가 5개 이상인 경우 표시 범위 계산
+                if (totalPages > 5) {
+                  // 현재 페이지 중심으로 앞뒤 2페이지씩 표시 (최대 5개)
+                  startPage = Math.max(0, currentPage - 2);
+                  endPage = Math.min(totalPages - 1, currentPage + 2);
+
+                  // 5개 채우기 위한 조정
+                  if (endPage - startPage < 4) {
+                    if (startPage === 0) {
+                      endPage = Math.min(4, totalPages - 1);
+                    } else if (endPage === totalPages - 1) {
+                      startPage = Math.max(0, totalPages - 5);
+                    }
+                  }
+                }
+
+                // 계산된 범위에 따라 페이지 버튼 생성
+                return Array.from({ length: endPage - startPage + 1 }).map((_, index) => {
+                  const pageNumber = startPage + index;
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      disabled={changingPage}
+                      className={`${styles.pageButton} ${currentPage === pageNumber ? styles.active : ''}`}
+                    >
+                      {pageNumber + 1}
+                    </button>
+                  );
+                });
+              })()}
+
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages - 1 || changingPage}
+                className={styles.pageButton}
+              >
+                다음
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
   );
 };
 
