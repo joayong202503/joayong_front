@@ -181,7 +181,7 @@ const ExchangeListPage = () => {
                     talentTake: talentTake,
                     lessonLocation: lessonLocation,
                     imageSrc: post.images && post.images.length > 0
-                        ? `${API_URL}${post.images[0].imageUrl}` : undefined,
+                        ? `${post.images[0].imageUrl}` : undefined,
                     profile: {
                         name: post.name,
                         imageSrc: profileImageUrl || defaultProfileImage,

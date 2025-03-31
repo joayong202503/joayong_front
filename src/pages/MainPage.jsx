@@ -66,7 +66,7 @@ const MainPage = () => {
       // 프로필 이미지 URL 처리
       let profileImageUrl = userData.profileImageUrl;
       if (profileImageUrl && !profileImageUrl.startsWith('http')) {
-        profileImageUrl = `${API_URL}${profileImageUrl}`;
+        profileImageUrl = `${profileImageUrl}`;
       }
 
       // 캐시에 저장
@@ -104,7 +104,7 @@ const MainPage = () => {
               talentTake: talentTake,
               lessonLocation: lessonLocation,
               imageSrc: post.images && post.images.length > 0
-                  ? `${API_URL}${post.images[0].imageUrl}`
+                  ? `${post.images[0].imageUrl}`
                   : undefined,
               profile: {
                 name: post.name,

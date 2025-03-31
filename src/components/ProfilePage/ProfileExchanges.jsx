@@ -15,6 +15,7 @@ const ProfileExchanges = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [pageLoading, setPageLoading] = useState(true);
+  const [changingPage, setChangingPage] = useState(false);
 
   // URL에서 사용자 이름 파라미터 가져오기
   const { username } = useParams();
