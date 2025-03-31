@@ -6,13 +6,16 @@ import { ToggleVideoButton } from "./ToggleVideoButton.jsx";
 import { ToggleAudioButton } from "./ToggleAudioButton.jsx";
 import VideoView from "./VideoView"; // Video 컴포넌트 import
 
-const JanusWebRTC = ({ studyId, roomCode, username }) => {
+import { fetchExitRtcRoomId } from "../../services/rtcApi.js";
+
+const JanusWebRTC = ({ roomCode, username, isNew }) => {
   const dispatch = useDispatch();
   const [isStarted, setIsStarted] = useState(false);
   // const [username, setUsername] = useState("");
   const [title, setTitle] = useState("내 화면");
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [count, setCount] = useState(false);
 
   const mainVideoRef = useRef(null);
   const localVideoRef = useRef(null);
@@ -30,7 +33,7 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
 
   useEffect(() => {
     console.log("roomId : ", roomId);
-    console.log("username : ",username);
+    console.log("username : ", username);
 
     // if (!isStarted) return;
 
@@ -50,20 +53,24 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
               opaqueId: opaqueId,
               success: function (pluginHandle) {
                 storePluginRef.current = pluginHandle;
+                console.log(isNew);
 
-                let createRoom = {
-                  request : "create",
-                  room : roomId,
-                  permanent : false,
-                  record: false,
-                  publishers: 2,
-                  bitrate : 128000,
-                  fir_freq : 10,
-                  ptype: "publisher",
-                  description: `create room : ${roomCode} , ${username}`,
-                  is_private: false
-              }
-              pluginHandle.send({ message: createRoom });
+                if (isNew) {
+                  let createRoom = {
+                    request: "create",
+                    room: roomId,
+                    permanent: false,
+                    record: false,
+                    publishers: 2,
+                    bitrate: 128000,
+                    fir_freq: 10,
+                    ptype: "publisher",
+                    description: `create room : ${roomCode} , ${username}`,
+                    is_private: false,
+                  };
+
+                  pluginHandle.send({ message: createRoom });
+                }
 
                 let register = pin
                   ? {
@@ -80,17 +87,16 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
                       display: username,
                     };
 
-                    console.log("register : ",register);
-                    
-                    
+                console.log("register : ", register);
+
                 pluginHandle.send({ message: register });
               },
               error: function (error) {
                 Janus.error("Error attaching plugin...", error);
               },
               onmessage: function (msg, jsep) {
-                console.log("msg : ",msg);
-                
+                console.log("msg : ", msg);
+
                 let event = msg["videoroom"];
                 if (event === "joined") {
                   dispatch({
@@ -102,18 +108,18 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
                       publisherPvtId: msg["private_id"],
                     },
                   });
-                  console.log("sssss");
-                  
                   publishOwnFeed(true);
 
-                  if (msg["publishers"] && msg["publishers"].length > 0) {
+                  if (msg["publishers"].length > 0) {
+                    console.log("1");
+
                     let publisher = msg["publishers"][0]; // 첫 번째 사람만 받음 (1:1이므로)
                     newRemoteFeed(publisher.id, publisher.display);
                   }
                 } else if (event === "event" && msg["publishers"]) {
                   let publisher = msg["publishers"][0]; // 첫 번째 사람만 받음
                   newRemoteFeed(publisher.id, publisher.display);
-                } else if (event === "unpublished") {
+                }  else if (event === "unpublished") {
                   remoteVideoRef.current.srcObject = null; // 상대방이 나갔을 때 비디오 제거
                 }
 
@@ -140,7 +146,19 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
             Janus.error(error);
           },
           destroyed: function () {
-            Janus.log("Janus Destroyed!");
+            // 마지막으로 나갈 때 db에 방 갱신
+            if (remoteVideoRef.current === null) {
+              const fetchData = async () => {
+                try {
+                  const data = await fetchExitRtcRoomId(roomId);
+                  console.log("data : ", data);
+                } catch (error) {
+                  console.error("Error fetching RTC room ID:", error);
+                }
+              };
+              fetchData();
+              Janus.log("Janus Destroyed!");
+            }
           },
         });
       },
@@ -152,14 +170,6 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
       }
     };
   }, [roomCode]);
-
-  // const joinRoom = () => {
-  //   if (!username) {
-  //     alert("아이디를 입력해주세요.");
-  //     return;
-  //   }
-  //   setIsStarted(true);
-  // };
 
   const publishOwnFeed = (start) => {
     if (start) {
@@ -231,6 +241,9 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
 
         remoteFeed.onremotestream = function (stream) {
           if (remoteVideoRef.current) {
+            console.log(
+              "상대방 비디오 트랙 수신 → 상대오디오/비디오 상태변경!"
+            );
             remoteVideoRef.current.srcObject = stream;
           }
         };
@@ -297,18 +310,6 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
   return (
     <div>
       {
-      // !isStarted ? (
-      //   <>
-      //     <input
-      //       type="text"
-      //       placeholder="닉네임 입력"
-      //       value={username}
-      //       onChange={(e) => setUsername(e.target.value)}
-      //     />
-      //     <button onClick={joinRoom}>방 참가</button>
-      //   </>
-      // ) : 
-      (
         <div className={styles.videoContainer}>
           <h3>{title}</h3>
           <div className={styles.mediaContainer}>
@@ -345,7 +346,7 @@ const JanusWebRTC = ({ studyId, roomCode, username }) => {
           </div>
           <p>작은화면을 누르면 큰 화면에 크게 보실 수 있어요.</p>
         </div>
-      )}
+      }
     </div>
   );
 };

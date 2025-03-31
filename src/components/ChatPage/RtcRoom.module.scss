@@ -4,12 +4,13 @@
   flex-direction: column; /* 세로 방향 배치 */
   align-items: center; /* 가운데 정렬 */
   gap: 10px; /* 비디오 간 간격 */
+  margin-left: 150px;
 }
 
 .mainVideo {
   width: 80%; /* 메인 비디오를 크게 */
-  max-width: 550px;
-  height: 400px;
+  max-width: 700px;
+  height: 500px;
   border-radius: 20px; /* 둥근 테두리 */
   border: 2px solid rgb(199, 196, 196);
 }

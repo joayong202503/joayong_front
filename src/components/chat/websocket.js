@@ -85,3 +85,21 @@ export const disconnectWebSocket = () => {
     console.log("ℹ️ No active WebSocket connection to disconnect");
   }
 };
+
+export const sendEnterMessage = (roomId, senderName) => {
+  console.log("eeeeeee");
+  
+  if (stompClient?.connected) {
+    const message = {
+      roomId: roomId,
+      senderName: senderName,
+      content: `${senderName}님이 입장하셨습니다.`,
+    };
+
+    console.log("🔹 Sending enter message:", message); // 디버깅 로그 추가
+    stompClient.publish({
+      destination: `/app/chat.enter/${roomId}`,
+      body: JSON.stringify(message),
+    });
+  }
+};
