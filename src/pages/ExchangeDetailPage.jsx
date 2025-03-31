@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import styles from './ExchangeDetailPage.module.scss';
 import {useNavigate, useParams} from "react-router-dom";
 import {usePostDetailFetchWithUseQuery, useUseQueryErrorHandler} from "../hooks/useQueryHooks.js";
@@ -47,10 +47,45 @@ const ExchangeDetailPage = () => {
 
     // =============== useQuery를 이용한 fetch ====================== //
     // 검색 후 mappedData를 parameter로 전달하면 Card로 반환해주는 함수
+    const relatedPostsRef = useRef(null);
+    const userPostsRef = useRef(null);
+
+    // 애니메이션용
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add(styles.animate);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.1 }
+        );
+
+        // 두 섹션 모두 관찰
+        if (relatedPostsRef.current) {
+            observer.observe(relatedPostsRef.current);
+        }
+        if (userPostsRef.current) {
+            observer.observe(userPostsRef.current);
+        }
+
+        return () => {
+            if (relatedPostsRef.current) {
+                observer.unobserve(relatedPostsRef.current);
+            }
+            if (userPostsRef.current) {
+                observer.unobserve(userPostsRef.current);
+            }
+        };
+    }, []);
+
     const renderCards = (results, searchTerm) => {
         if (!results || results.length === 0) {
             return (
-                <div className={styles.searchSection}>
+                <div className={styles.searchSection} ref={searchTerm === "관련 게시글" ? relatedPostsRef : userPostsRef}>
                     <h2>{searchTerm}</h2>
                     <div className={styles.emptyState}>
                         {searchTerm === "관련 게시글" ? (
@@ -73,7 +108,7 @@ const ExchangeDetailPage = () => {
 
         // 결과가 있을 때의 반환값 추가
         return (
-            <div className={styles.searchSection}>
+            <div className={styles.searchSection} ref={searchTerm === "관련 게시글" ? relatedPostsRef : userPostsRef}>
                 <h2>{searchTerm}</h2>
                 <div className={styles.cardContainer}>
                     {results.map(result => (
@@ -84,9 +119,7 @@ const ExchangeDetailPage = () => {
                                 talentTake={result.talentTake}
                                 lessonLocation={result.lessonLocation}
                                 lessonImageSrc={result.imageSrc}
-                                profile = {{
-                                    name: result.profile?.name, imageSrc: result.profile?.imageSrc, size: 'xs'
-                                }}
+                                profile={result.profile}
                                 onDetailClick={() => handleDetailClick(result.id)}
                             />
                         </div>
@@ -210,7 +243,7 @@ const ExchangeDetailPage = () => {
         const {available:isMatchingRequestValid} = await checkMatchingRequestValidity(postId);
 
         if (!isMatchingRequestValid) {
-            setModalTitle("이미 대기 중이거나 수락된 매칭이 있습니다.");
+            setModalMessage("이미 대기 중이거나 수락된 매칭이 있습니다.");
             setIsOpenModal(true);
             setTimeout(() => setIsOpenModal(false), 3000); // 자동 닫힘 처리
             return;
@@ -244,7 +277,7 @@ const ExchangeDetailPage = () => {
 
             {isOpenModal &&
                 <AlertModal
-                    title={modalTitle}
+                    title={''}
                     message={modalMessage}
                     onClose={() => setIsOpenModal(false)}
                 />
@@ -252,7 +285,8 @@ const ExchangeDetailPage = () => {
 
             {isOpenDeleteModal &&
                 <AlertModal
-                    title={deleteModalTitle}
+                    title={''}
+                    message={deleteModalTitle}
                     onClose={() => {
                         setIsOpenDeleteModal(false);
                         navigate("/");

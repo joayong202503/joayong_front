@@ -71,30 +71,46 @@ const ExchangeEditPage = () => {
         postData
     );
 
-    // 이전 사진 삭제인 경우 전체 삭제, 아니면 선택 사진만 삭제
+    // 사진 삭제 버튼 누르면 일어나는 일
     const handleImageDelete = (selectedImageIndex) => {
-        if (!(postData.images[selectedImageIndex] instanceof File)) {
-            setIsConfirmModalOpen(true);  // 직접 모달 상태 설정
-            setConfirmModalTitle('게시물의 일관성을 위해 게시글 기존 사진은 전체 삭제만 가능합니다. 모든 사진을 삭제하시겠습니까?');
-            setConfirmModalOnConfirm(() => () => {
-                handleFileDelete(selectedImageIndex);
-                setUploadedFile(postData.images.filter((_, index) => index !== selectedImageIndex)); // ! uploadedFile 에서 지워주기
-                setIsConfirmModalOpen(false);
-            });
-            setConfirmModalOnCancel(() => () => {
-                setIsConfirmModalOpen(false);
-            });
-        } else {
-            handleFileDelete(selectedImageIndex);
-            setUploadedFile(postData.images.filter((_, index) => index !== selectedImageIndex)); // ! uploadedFile 에서 지워주기
+        const selectedImage = postData.displayImages[selectedImageIndex];
+
+        // uploadedFile에서도 삭제
+        if (selectedImage instanceof File) {
+            setUploadedFile(prev => prev.filter(file => file.name !== selectedImage.name));
         }
+
+        handleFileDelete(selectedImageIndex);
     };
 
     // 파일 업로드 성공 시 postData 업데이트
     useEffect(() => {
-        if (uploadedFile) {
+        if (uploadedFile && uploadedFile.length > 0) {
+
             updatePostData('update-image', true);
-            updatePostData('images', uploadedFile);
+
+            // 현재 유효한 로컬 파일들만 필터링 (삭제된 파일 제외)
+            const currentImages = postData.images?.filter(file =>
+                uploadedFile.some(newFile => newFile.name === file.name)
+            ) || [];
+
+            // 새로운 파일만 추가
+            const newImages = uploadedFile.filter(file =>
+                !currentImages.some(existing => existing.name === file.name)
+            );
+
+            const updatedImages = [...currentImages, ...newImages];
+            updatePostData('images', updatedImages);
+
+            // displayImages 업데이트
+            const currentDisplayImages = postData.displayImages?.filter(img =>
+                img instanceof File ?
+                    uploadedFile.some(file => file.name === img.name) :
+                    true
+            ) || [];
+
+            const updatedDisplayImages = [...currentDisplayImages, ...newImages];
+            updatePostData('displayImages', updatedDisplayImages);
         }
     }, [uploadedFile]);
 
@@ -191,7 +207,6 @@ const ExchangeEditPage = () => {
 
     // 게시글 상세정보 가져오기
     const fetchPostDetails = useCallback(async () => {
-
         try {
             const response = await fetchPostDetail(postId);
             const data = await response.json();
@@ -205,7 +220,10 @@ const ExchangeEditPage = () => {
             updatePostData('talent-g-id', data['talent-g-id']);
             updatePostData('talent-t-id', data['talent-t-id']);
             updatePostData('post-id', data['post-id']);
-            updatePostData('images', data.images);
+            // 로컬에서 새로 추가한 이미지를 서버에 formData로 file 전달하는 용도
+            updatePostData('images', []);
+            // 서버에서 받은 이미지 데이터가 있으면 displayImages(프리뷰용))에 설정
+           updatePostData('displayImages', data.images);
 
             // 필터링용 카테고리 초기화
             initializeCategories(data);
@@ -256,23 +274,25 @@ const ExchangeEditPage = () => {
     const transformToFormData = (postData) => {
 
         const formData = new FormData();
-
-        // postData.images는 서버에 보낼 용도가 아니라 image carousel 용이므로, 삐고 formData 생성
         const newPostData = {...postData};
+
+        // 이미지 배열은 별도 처리를 위해 제외
+        const addedImages = newPostData.images;
         delete newPostData.images;
 
+        // post 데이터를 JSON으로 변환하여 추가
         formData.append('post',
             new Blob([JSON.stringify(newPostData)],
                 { type: 'application/json' }));
 
-        // postData.images가 null이 아닌 경우, 사진을 새로 보내는 것이므로
-        // 서버에 보낼 update-image 값을 true로 갱신하고 파일을 append
-        if (postData.images && Array.isArray(postData.images)) {
-            newPostData['update-image'] = true;
-            postData.images.forEach(image => {
+        // 새로운 이미지 파일들만 formdata에 images로 전달
+        if (addedImages && Array.isArray(addedImages)) {
+            const newImages = addedImages.filter(image => image instanceof File);
+            newImages.forEach(image => {
                 formData.append('images', image);
             });
         }
+
         return formData;
     };
 
@@ -330,16 +350,15 @@ const ExchangeEditPage = () => {
                 { postData &&
                     <div className={styles.imageSection}>
                         <AdvancedImageUpload
-                            images={postData?.images || []}
+                            images={postData?.displayImages || []}
                             maxLength={5}
-                            description={['게시물의 일관성을 위해, 사진은 전체 변경 또는 유지만 가능해요.', '사진에 마우스를 올려 확대/취소 할 수 있어요.']}
+                            description={['사진에 마우스를 올려 확대/취소 할 수 있어요.', '사진은 최대 5개까지 업로드 할 수 있어요.']}
                             onFileDelete={handleImageDelete}
-                            onEnlargePhoto={(index) => {  // index 받아서 처리
+                            onEnlargePhoto={(index) => {
                                 setCurrentImageIndex(index);
                                 setIsImageCarouselModalOpen(true);
                             }}
-                            isAllOrNone={true} // 사진 전체 수정만 가능
-                            onFileSelect={handleFileSelect}
+                            onFileSelect={(e) => handleFileSelect(e, postData.displayImages.length + e.target.files.length)}
                         />
                     </div>
                 }
@@ -532,7 +551,7 @@ const ExchangeEditPage = () => {
                             X
                         </button>
                         <ImageCarouselWithThumbNail
-                            imagesObject={postData.images}
+                            imagesObject={postData.displayImages}
                             width="80%"
                             height="80%"
                             initialIndex={currentImageIndex || 0}

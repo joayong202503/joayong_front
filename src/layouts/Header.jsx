@@ -10,10 +10,12 @@ import { fetchMatchingRequestsWithFilters } from "../services/matchingService.js
 import { BellDot, BellIcon, BellRing, Dot } from "lucide-react";
 import { fetchUserProfile } from "../services/profileApi.js";
 import MiniAlert from "../components/common/MiniAlert.jsx";
+import { pendingRequestsAction } from "../store/slices/pendingRequestsSlice.js";
 
 const Header = () => {
   // 스토어에서 유저 정보 가져오기
   const user = useSelector((state) => state.auth.user);
+  const hasPendingRequests = useSelector((state) => state.pendingRequests.hasPendingRequests);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const location = useLocation(); // 매 페이지마다 새로 fetch 되게 하려고 useLocation 사용
 
@@ -28,8 +30,27 @@ const Header = () => {
   const [miniAlertMessage, setMiniAlertMessage] = useState("");
 
   // ========= 매칭관리 : 내가 수신인이고 아직 수락/거절여부 결정하지 않은 내역 있으면 빨간점으로 알림 표시  ===== //
-  const [hasReceivedPendingRequests, setHasReceviedPendingRequests] =
-    useState(false);
+
+
+  // 스크롤 이벤트 감지 추가
+  useEffect(() => {
+    const handleScroll = () => {
+      // 스크롤이 내려가면 isScrolled를 true로 설정
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    // 스크롤 이벤트 리스너 등록
+    window.addEventListener('scroll', handleScroll);
+
+    // 컴포넌트 언마운트시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
 
   // 스크롤 이벤트 감지 추가
@@ -83,7 +104,7 @@ const Header = () => {
     const fetchPendingRequests = async () => {
       // 로그인 안했으면 return
       if (!user) {
-        setHasReceviedPendingRequests(false);
+        dispatch(pendingRequestsAction.updatePendingRequestsStatus(false));
         return;
       }
 
@@ -93,7 +114,7 @@ const Header = () => {
 
         // data가 없거나 배열이 아닌 경우 return
         if (!data || !Array.isArray(data)) {
-          setHasReceviedPendingRequests(false);
+          dispatch(pendingRequestsAction.updatePendingRequestsStatus(false));
           return;
         }
 
@@ -102,8 +123,7 @@ const Header = () => {
           (request) => request.receiverName === user.name
         );
 
-        // 있을 경우 알람 설정하기 위해 hasReceivedPendingRequests의 값을 true로 전환
-        setHasReceviedPendingRequests(hasPending);
+        dispatch(pendingRequestsAction.updatePendingRequestsStatus(hasPending));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -204,7 +224,7 @@ const Header = () => {
             </NavLink>
             {/* 내가 수신인이고 status가 N이면 빨간점으로 알람 */}
             <div className={styles.dotContainer}>
-              {hasReceivedPendingRequests && (
+              {hasPendingRequests && (
                 <BellDot
                   size={14}
                   color={"blue"}

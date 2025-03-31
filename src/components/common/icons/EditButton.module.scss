@@ -2,17 +2,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f1f5f9;
-  color: #334155;
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
+  background: #F3F4FF;
+  color: #4C6EF5;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
-}
+  transition: all 0.2s ease;
 
-.iconButton:hover {
-  background-color: #e2e8f0;
-  color: #1e40af;
+  &:hover {
+    background: #E8EBFF;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
