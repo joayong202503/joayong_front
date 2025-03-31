@@ -40,7 +40,7 @@ export const usePostData = (postId, data, isLoading, isError) => {
         }
     });
 
-    // 특정 키워드로 게시글 조회하는 함수(12개 조회해서 그 중 랜덤 3개 보여줌)
+    // 특정 키워드로 게시글 조회하는 함수(12개 조회해서 그 중 랜덤 4개 보여줌)
     const searchAndSetRelatedPosts = async (talent, username, size=12) => {
         try {
             // 재능으로 검색
@@ -49,7 +49,7 @@ export const usePostData = (postId, data, isLoading, isError) => {
                 const mappedData = talentResponse.postList.content.map(mapPostToCardData);
                 // 게시글이 있는 경우에만 랜덤 선택
                 if (mappedData.length > 0) {
-                    const randomCount = Math.min(3, mappedData.length); // 3과 실제 게시글 수 중 작은 값 선택
+                    const randomCount = Math.min(4, mappedData.length); // 4와 실제 게시글 수 중 작은 값 선택
                     const randomRelatedPosts = mappedData
                         .sort(() => Math.random() - 0.5)
                         .slice(0, randomCount);
@@ -65,7 +65,7 @@ export const usePostData = (postId, data, isLoading, isError) => {
                 const mappedUserData = userResponse.postList.content.map(mapPostToCardData);
                 // 게시글이 있는 경우에만 랜덤 선택
                 if (mappedUserData.length > 0) {
-                    const randomCount = Math.min(3, mappedUserData.length);
+                    const randomCount = Math.min(4, mappedUserData.length);
                     const randomUserPosts = mappedUserData
                         .sort(() => Math.random() - 0.5)
                         .slice(0, randomCount);

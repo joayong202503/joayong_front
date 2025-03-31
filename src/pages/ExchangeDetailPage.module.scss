@@ -15,7 +15,6 @@
 
 .flexBox {
   display: flex;
-  border: 2px solid red;
   justify-content: space-between;
   align-items: stretch; /* 안에 자식 높이 일치 */
   flex-direction: row;
@@ -221,10 +220,10 @@
 }
 
 // ============ 카드 관련 ===== //
-.container {
-  padding: 40px 40px 40px 0;
-  max-width: 1200px;
-  margin: 0 auto;
+.relatedContainer {
+  padding: 40px 0 40px 0;
+  max-width: 1800px;
+  width: 100%;
 }
 
 .searchSection {

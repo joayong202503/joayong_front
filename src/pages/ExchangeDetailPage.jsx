@@ -95,7 +95,7 @@ const ExchangeDetailPage = () => {
                                     theme="blueTheme"
                                     onClick={() => navigate('/exchanges')}
                                 >
-                                    한 번 다른 재능들을 둘러보세요. 예상치 못한 새로운 취미를 시작할 기회가 될지도 몰라요💡
+                                    다른 재능들을 둘러보세요. 예상치 못한 새로운 취미를 시작할 기회가 될지도 몰라요💡
                                 </Button>
                             </>
                         ) : (
@@ -466,7 +466,7 @@ const ExchangeDetailPage = () => {
                 />
             </div>
 
-            <div className={styles.container}>
+            <div className={styles.relatedContainer}>
                 {renderCards(relatedPosts, "관련 게시글")}
                 {renderCards(userPosts, "이 작성자의 다른 게시글")}
             </div>
