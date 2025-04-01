@@ -88,7 +88,6 @@ const ExchangeCreatePage = () => {
 
     // 모달 띄우기
     const handleAlertModal = (message) => {
-        console.log('handleAlertModal called with message:', message);
 
         // 기존 타이머가 실행 중이라면 취소
         if (timeoutRef.current) {
@@ -123,7 +122,6 @@ const ExchangeCreatePage = () => {
         if (Array.isArray(uploadedFile) && uploadedFile.length > 0) {
             uploadedFile.forEach(image => formData.append('images', image));
         } else {
-            console.log('uploadedFile is not an array or is null/undefined');
         }
     }
 
@@ -144,17 +142,14 @@ const ExchangeCreatePage = () => {
         appendUploadedFileToFormData(uploadedFile, formData);
 
         // 테스트용
-        console.log(post.content.length);
         return formData;
     }
 
     const validateFormData = (post) => {
-        console.log('=== Validation Debug ===');
-        console.log('validateFormData called with:', post);
         
         // 기존 검증 로직
         if (!post.title || !post.title.trim()) {
-            console.log('Title validation failed');
+
             handleAlertModal("제목을 입력해주세요");
             return false;
         }

@@ -21,13 +21,11 @@ const ChatPage = () => {
 
   const navigate = useNavigate();
 
-  console.log("messageId : ", messageId);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await fetchRtcRoomId(messageId);
-        console.log("data : ", data);
         setRoomId(data.roomId); // 상태에 데이터 저장
         setIsNew(data.new);
       } catch (error) {
@@ -43,7 +41,6 @@ const ChatPage = () => {
     const fetchData = async () => {
       try {
         const data = await fetchPostInfo(messageId);
-        console.log("data2 : ", data);
         setPostData(data);
       } catch (error) {
         console.error("Error fetching RTC room ID:", error);

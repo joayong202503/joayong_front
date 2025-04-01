@@ -30,10 +30,7 @@ const ReduxFetcher = ({ children }) => {
     }, [initializeTalentCategory, initializeRegionCategory, initializeUser]);
 
     if (loading) {
-        console.log('로그인 정보, 카테고리 정보 가져오는 중');
         return <div></div>;
-    } else {
-        console.log('redux fetch 정보 수령 완료');
     }
 
     return <>{children}</>;

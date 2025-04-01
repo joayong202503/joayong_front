@@ -139,7 +139,6 @@ const ProfileSettingPage = () => {
             learningCategoryId: userData.talentTId || ''
         }));
 
-        console.log('카테고리 초기화됨:', teachingDetails, learningDetails);
     };
 
     // 프로필 정보 로드
@@ -153,7 +152,6 @@ const ProfileSettingPage = () => {
 
             try {
                 const userData = await fetchUserProfile(currentUser.name);
-                console.log('받아온 사용자 데이터:', userData);
 
                 // 프로필 이미지 URL 처리
                 let profileImageUrl = userData.profileImageUrl;
@@ -266,28 +264,27 @@ const ProfileSettingPage = () => {
 
             // 프로필 이미지 업로드 (이미지가 변경된 경우)
             if (hasImageChange) {
-                const imageResult = await uploadProfileImage(formData.profileImage);
-                console.log('프로필 이미지 업로드 성공:', imageResult);
+                await uploadProfileImage(formData.profileImage);
+
             }
 
             // 사용자 이름 업데이트 (이름이 변경된 경우)
             if (hasNameChange) {
-                const nameResult = await updateUsername(formData.name);
-                console.log('사용자 이름 업데이트 성공:', nameResult);
+                await updateUsername(formData.name);
+
             }
 
             // 카테고리 업데이트 (카테고리가 변경된 경우)
             if (hasCategoryChange) {
                 try {
-                    console.log('카테고리 업데이트 요청:', formData.teachingCategoryId, formData.learningCategoryId);
 
                     const categoryData = {
                         teachingCategoryId: formData.teachingCategoryId || 0,
                         learningCategoryId: formData.learningCategoryId || 0
                     };
 
-                    const categoryResult = await updateUserCategories(categoryData);
-                    console.log('카테고리 업데이트 성공:', categoryResult);
+                    await updateUserCategories(categoryData);
+
                 } catch (err) {
                     console.error('카테고리 업데이트 실패:', err);
                     throw err;

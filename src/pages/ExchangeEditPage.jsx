@@ -260,7 +260,6 @@ const ExchangeEditPage = () => {
         }
     }, [postId]);
 
-    console.log('서버에 보낼 내용:', postData);
 
     // 컨펌 모달
     const showConfirmModal = ({ title, message, onConfirm, onCancel }) => {

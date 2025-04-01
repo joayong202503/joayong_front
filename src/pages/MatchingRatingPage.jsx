@@ -19,7 +19,6 @@ const MatchingRatingPage = () => {
 
     // 디버그를 위해 messageId 출력
     useEffect(() => {
-        console.log("Current messageId from URL:", messageId);
     }, [messageId]);
 
     // 각 항목별 별점을 관리하는 상태
@@ -37,7 +36,6 @@ const MatchingRatingPage = () => {
             ...prev,
             [category]: rating
         }));
-        console.log(`Selected Rating for ${category}:`, rating);
     };
 
     // 모달 닫기 핸들러
@@ -82,7 +80,6 @@ const MatchingRatingPage = () => {
             // reviewApi.js의 submitReview 함수 호출
             await submitReview(messageId, ratingDetailtList);
 
-            console.log('Review submitted successfully');
 
             // 성공 모달 표시 후 이동
             showErrorModal('리뷰 제출 완료', '성공적으로 리뷰가 제출되었습니다.', '/matches');

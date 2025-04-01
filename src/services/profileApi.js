@@ -32,7 +32,6 @@ export const fetchUserPosts = async (username) => {
 
     // 404 응답의 경우 게시물이 없다고 간주하고 빈 배열 반환
     if (response.status === 404) {
-      console.log('사용자의 게시물이 없습니다.');
       return [];
     }
 
@@ -50,7 +49,6 @@ export const fetchUserPosts = async (username) => {
 
     return data;
   } catch (error) {
-    console.error('사용자의 게시물을 가져오는데 실패했습니다:', error);
     throw error;
   }
 };
@@ -67,7 +65,6 @@ export const fetchUserRatings = async (username,page= 0,limit=5) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('사용자의 별점 정보를 가져오는데 실패했습니다:', error);
     throw error;
   }
 };

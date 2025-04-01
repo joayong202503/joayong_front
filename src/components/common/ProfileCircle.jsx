@@ -15,7 +15,6 @@ const ProfileCircle = ({ size = 'xs', src, username, onClick }) => {
 
     // 이미지 로드 실패 시 기본 이미지로 대체
     const handleImageError = (e) => {
-        console.log('이미지 로드 실패, 기본 이미지로 대체');
         e.target.src = defaultProfileImage;
     };
 

@@ -49,32 +49,27 @@ const fetchCompletedStatus = async (filter) => {
         const [statusRData, statusRWData, statusRSData, statusCData] = await Promise.all([
             fetchWithAuth(urlForStatusR).then(res => {
                 return res.json().then(data => {
-                    console.log('Status R (리뷰 안함) 응답:', data);
                     return data;
                 });
             }),
             fetchWithAuth(urlForStatusRW).then(res => {
                 return res.json().then(data => {
-                    console.log('Status RW (게시글 작성자만 리뷰) 응답:', data);
                     return data;
                 });
             }),
             fetchWithAuth(urlForStatusRS).then(res => {
                 return res.json().then(data => {
-                    console.log('Status RS (요청자만 리뷰) 응답:', data);
                     return data;
                 });
             }),
             fetchWithAuth(urlForStatusC).then(res => {
                 return res.json().then(data => {
-                    console.log('Status C (모두 리뷰 완료) 응답:', data);
                     return data;
                 });
             })
         ]);
 
         const combinedResults = [...statusRData, ...statusCData, ...statusRWData, ...statusRSData];
-        console.log('모든 상태 합친 최종 결과:', combinedResults);
         return combinedResults;
     } catch (error) {
         console.error("완료된 상태 조회 중 오류 발생:", error);

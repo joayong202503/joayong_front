@@ -58,8 +58,6 @@ const SignUp = () => {
 
   const validatePassword = () => {
 
-    console.log('password 입력값:', password);
-
     // 아예 입력 값 없으면 에러 메시지 안 보여주기
     if (!password) {
       setPasswordError("");
@@ -108,7 +106,6 @@ const SignUp = () => {
         }
       );
       const data = await response.json();
-      console.log("data : ", data);
 
       if (data.available) {
         setEmailAvailable(true);
@@ -184,7 +181,7 @@ const SignUp = () => {
           }
       );
       const data = await response.json();
-      console.log("data : ", data);
+
 
       if (data.available) {
         setNameAvailable(true);
@@ -255,8 +252,7 @@ const SignUp = () => {
         method: "POST",
         body: JSON.stringify(signupRequest),
       });
-      const response = await rs.json();
-      console.log("회원가입 성공:", response);
+      await rs.json();
 
       // 회원가입 성공 페이지 표시
       setShowMiniAlert(true);
@@ -378,7 +374,6 @@ const SignUp = () => {
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => {
-                      console.log('비밀번호 확인란', e.target.value);
                       setConfirmPassword(e.target.value);
                     }}
                     className={styles["input-box"]}
