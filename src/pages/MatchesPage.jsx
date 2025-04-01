@@ -153,7 +153,6 @@ const MatchesPage = () => {
         const sortedRequests = requestsWithProfiles.sort((a, b) =>
             new Date(b.sentAt) - new Date(a.sentAt)
         );
-        console.log('프로필 이미지 추가 fetch한 후 최신순으로 데이터 정렬',sortedRequests);
         return sortedRequests;
     };
 
@@ -166,13 +165,7 @@ const MatchesPage = () => {
         try {
             const filter = getMessageFilterBySender(selectedMenu);
 
-            console.log('필터링 조건 : filter', filter, 'status', selectedTabMenu);
             const responseData = await fetchMatchingRequestsWithFilters(filter, selectedTabMenu);
-
-            console.log(11111, responseData);
-            console.log(11111, responseData);
-            console.log(11111, responseData);
-            console.log(11111, responseData);
 
             const requestsWithProfiles = await addProfileImagesToRequests(responseData);
 
@@ -203,9 +196,6 @@ const MatchesPage = () => {
             const filter = getMessageFilterBySender(selectedSegmentControlMenu);
             const status = selectedStatus;
             setSelectedTabMenu(status);
-//
-            console.log('필터링 조건 : filter', filter, 'status', status);
-
             const responseData = await fetchMatchingRequestsWithFilters(filter, status);
 
             const requestsWithProfiles = await addProfileImagesToRequests(responseData);

@@ -19,7 +19,6 @@ const AlertModal = ({title,message,onClose,onPressEscapeOrEnter, preventEnterDef
             if (e.key === 'Escape' || e.key ==='Enter') {
 
                 if(preventEnterDefault) return;
-                console.log('엔터 키카 눌림');
                 onClose();
             }
         };
@@ -37,7 +36,6 @@ const AlertModal = ({title,message,onClose,onPressEscapeOrEnter, preventEnterDef
     const ref = useRef();
     useEffect(() => {
         setTimeout(() => {
-            console.log("Button ref:", ref.current); // 버튼 요소 확인
             ref.current?.focus();
         }, 0);
     }, []);

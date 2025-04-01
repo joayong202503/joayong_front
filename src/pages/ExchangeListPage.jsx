@@ -219,7 +219,6 @@ const ExchangeListPage = () => {
                 response = await fetchRecentExchanges(itemsPerPage, currentPage);
             }
 
-            console.log('API 응답:', response);
             // 응답을 가공
             await processExchangeData(response);
         } catch (err) {

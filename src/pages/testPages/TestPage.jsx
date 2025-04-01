@@ -115,7 +115,6 @@ const TestPage = () => {
 
                 <h4>onClick 이벤트 : onClick으로 props 전달 </h4>
                 <Button theme={'blueTheme'} onClick={() => {
-                    console.log('콘솔창')
                 }}> 클릭 후 콘솔창 확인</Button>
             </div>
         );

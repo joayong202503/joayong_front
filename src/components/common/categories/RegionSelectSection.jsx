@@ -13,8 +13,6 @@ const RegionSelectSection = ({
                                  userAddress=null,
                              }) => {
 
-    // console.log('default', defaultRegionId);
-
     return (
         <div className={`${styles.inputWrapper} ${styles.location}`}>
             <span className={styles.inputLabel}> 여기서 만날 수 있어요 </span>

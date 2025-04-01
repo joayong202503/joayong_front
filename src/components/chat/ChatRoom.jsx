@@ -69,8 +69,6 @@ const ChatRoom = ({ user1, user2 }) => {
           throw new Error("Failed to load other user profile");
         const otherUserProfile = await profileResponse.json();
 
-        console.log("otherUserProfile : ", otherUserProfile);
-
         setRegisterProfile({
           username : otherUserProfile.name,
           profileImageUrl : otherUserProfile.profileImageUrl
@@ -108,7 +106,6 @@ const ChatRoom = ({ user1, user2 }) => {
           // ✅ setRoomId 이후에 입장 메시지 전송
           setTimeout(()=>{
             if (id) {
-              console.log("🚀 Sending enter message...");
               sendEnterMessage(id, currentUserName); // id와 currentUserName 사용
             }
 
@@ -155,11 +152,9 @@ const ChatRoom = ({ user1, user2 }) => {
             username: registerProfile.username,
             profileImageUrl: registerProfile.profileImageUrl,
           };
-          console.log("sender : ",sender);
+
           const isCurrentUser = msg.senderId === currentUserProfile.id;
-  
-          console.log("msg.type : ", msg);
-  
+
           const enteredMessage = msg.type === "H"; // 입장 메시지 여부
   
           return (
