@@ -266,9 +266,9 @@ const ExchangeRequestPage = () => {
                     <span className={styles.title}><span className={styles.highlight}>{username}</span>님이 알려주실 재능</span>
                     <div className={styles.contentBox}>
                         <Categories
-                            mainCategory={post?.offerCategoryMain || '정보 없음'}
-                            subCategory={post?.offerCategorySub || '정보 없음'}
-                            subCategoryId={post?.offerCategorySubId || 'unknown'}
+                            mainCategory={post?.wantCategoryMain || '정보 없음'}
+                            subCategory={post?.wantCategorySub || '정보 없음'}
+                            subCategoryId={post?.wantCategorySubId || 'unknown'}
                             theme={'give'}
                             className={'column'}
                             size={'large'}
