@@ -311,7 +311,7 @@ const JanusWebRTC = ({ roomCode, username, isNew }) => {
     <div>
       {
         <div className={styles.videoContainer}>
-          <h3>{title}</h3>
+          {/*<h3>{title}</h3>*/}
           <div className={styles.mediaContainer}>
             <ToggleVideoButton
               isVideoMuted={isVideoMuted}
