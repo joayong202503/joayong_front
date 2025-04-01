@@ -1,10 +1,16 @@
-// 모든 페이지 공통 적용 css를 작성하는 파일
-* {
-  box-sizing: border-box;
-  padding: 0;
-}
+:global{
+  * {
+    box-sizing: border-box;
+    padding: 0;
+  }
+  html{
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  margin: 0;
-  padding: 0;
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
 }
