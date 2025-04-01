@@ -2,7 +2,7 @@
 import fetchWithAuth from "./fetchWithAuth";
 
 // API 기본 URL 설정
-const API_URL = "https://3.34.211.202:8999";
+const API_URL = "https://api.lesson2you.site";
 
 // 인증 필요 여부에 따른 url 앞 부분 경로
 const AUTH_REQUIRED = "/api/joayong";
