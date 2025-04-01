@@ -6,7 +6,7 @@ import { fetchUserRatings } from "../../services/profileApi.js"
 import Spinner from "../common/Spinner.jsx";
 
 // API URL 상수 추가
-const API_URL = 'http://3.34.211.202:8999';
+const API_URL = 'https://3.34.211.202:8999';
 
 const ProfileRating = () => {
   const [ratingData, setRatingData] = useState(null);
