@@ -54,13 +54,17 @@ Learning Crew는 모두 코딩을 공부하는 사람들로서 서로의 재능�
 💡 매칭 종료 후 리뷰 기능 <br/>
 
 # 🎈기능소개
+
 회원가입
+
 ![Image](https://github.com/user-attachments/assets/2bf0b199-96ee-4722-8a4b-c6fe5e62a9bd)
 
 로그인
+
 ![Image](https://github.com/user-attachments/assets/3f92a441-740a-4b92-b0c3-89f3839c7863)
 
 메인 페이지
+
 ![Image](https://github.com/user-attachments/assets/d4933cb5-d4e7-4e22-9e3a-ed83fbe9eb43)
 
 재능교환 전체 게시물 페이지
