@@ -2,11 +2,11 @@
 
 ![Image](https://github.com/user-attachments/assets/bc351b7d-92cf-4993-8257-6d8196f2a45b)
 
-# 🎶 프로젝트 소개
+## 🚀 프로젝트 소개
 당신의 숨은 재능, 누군가에겐 보물이 될 수 있어요! 
 서로의 지식을 나누고 함께 성장하는 1:1 재능교환, 새로운 배움의 즐거움을 경험해보세요.
 
-# 🧑‍🦰팀 소개
+## 🧑‍🦰팀 소개
 [팀명: Learning Crew]
 
 Learning Crew는 모두 코딩을 공부하는 사람들로서 서로의 재능을 공유하며 함께 성장한다는 의미를 담고 있습니다. <br/>
@@ -18,7 +18,7 @@ Learning Crew는 모두 코딩을 공부하는 사람들로서 서로의 재능�
 [![GitHub Badge](https://img.shields.io/badge/chchch928-181717?logo=github&logoColor=white&labelColor=181717)](https://github.com/chchch928)
 [![GitHub Badge](https://img.shields.io/badge/mjkim41-181717?logo=github&logoColor=white&labelColor=181717)](https://github.com/mjkim41)
 
-# ⚙️ Tech Stack with Tools
+## ⚙️ Tech Stack with Tools
 
 ![HTML5 Badge](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3 Badge](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
@@ -44,7 +44,7 @@ Learning Crew는 모두 코딩을 공부하는 사람들로서 서로의 재능�
 <img src="https://img.shields.io/badge/aws-232F3E?style=for-the-badge&logo=aws&logoColor=white">
 <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white"/>
 
-# 기능 소개
+## 🛠️ 기능 소개
 💡 회원가입 및 로그인 <br/>
 💡 게시글 등록 기능/ 삭제기능/ 수정기능<br/>
 💡 전체게시글 조회 및 검색 기능/ 상세게시글 조회기능 <br/>
