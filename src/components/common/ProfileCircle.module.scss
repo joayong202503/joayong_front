@@ -9,25 +9,34 @@
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
-// 5단계 크기 정의
+// 6단계 크기 정의
 .size-xs {
+  width: 20px;
+  height: 20px;
+}
+
+.size-sm {
   width: 30px;
   height: 30px;
 }
 
-.size-sm {
+.size-md {
   width: 45px;
   height: 45px;
 }
-
-.size-md {
-  width: 60px;
-  height: 60px;
+.size-mmd {
+  width: 55px;
+  height: 55px;
 }
+
 
 .size-lg {
   width: 100px;
   height: 100px;
+}
+.size-llg {
+  width: 150px;
+  height: 150px;
 }
 
 .size-xl {

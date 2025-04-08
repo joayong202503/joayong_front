@@ -13,16 +13,27 @@ button {
 
 // 눈에 보이는 부분 div
 .selectTrigger {
+
+  &:focus {
+    outline: none;
+    border: 2px solid rgb(17, 124, 233);
+  }
+
+  &:hover {
+    border: 1px solid #222;
+  }
+
   width: fit-content;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   border-radius: 8px;
-  border : 1px solid #b2b2b2;
+  border: 1px solid rgba(115, 115, 122, 0.15);
+  //border : 1px solid #b2b2b2;
   padding: 5px 13px 5px 13px;
   font-size: 13px;
   line-height: 1;
-  gap: 4px; // 드롭다운 버튼과 글자 사이 간격
+  gap: 4px;
 }
 
 // place holder글씨
@@ -44,9 +55,11 @@ button {
   border-radius: 8px; // 테두리 둥글게
   box-shadow: 0px 10px 38px -10px rgba(22, 23, 24, 0.35),
   0px 10px 20px -15px rgba(22, 23, 24, 0.2);
-  max-height: 200px; // 최대 높이
+  max-height: 300px; // 최대 높이
   padding: 5px 13px 5px 13px;
   background: #FFFFFF;
+  z-index: 1000;
+  
 }
 
 // 드롭다운 메뉴에서 스크롤 버튼 빼고

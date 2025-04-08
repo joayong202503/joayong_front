@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import styles from './Button.module.scss';
 
 /** 버튼 공동 UI
  * @param theme - 전체 테마( blueTHeme, whiteTheme, blackTheme )
- * @param fontSize - small(14px), middle(16), large)18)
+ * @param fontSize - small(14px), middle(16), large)18), + extrasmall
  * @param hidden - hidden (display가 none이 됨)
  * @param children
  * @param disabled - (*default : false)
@@ -11,6 +11,7 @@ import styles from './Button.module.scss';
  * @param className
  * @param onClick
  * @param props - 기타 props
+ * @param height - 높이 지정할 때 (default는 글자높이)
  */
 
 const Button = ({
@@ -25,6 +26,16 @@ const Button = ({
                     ...props
                 }) => {
 
+    // `styles` 객체에서 모든 유효한 클래스 이름 목록 가져오기
+    const validClassNames = Object.keys(styles);
+
+    // props.className이 유효한 클래스 이름과 일치하는지 확인
+    const customClassNames = className
+        .split(' ')
+        .filter(cls => validClassNames.includes(cls))
+        .map(cls => styles[cls])
+        .join(' ');
+
     // 클래스 이름 부여 : 클래스 이름 + .button
     const buttonClass = [
         styles.button, // 기본 버튼 스타일 적용
@@ -32,8 +43,7 @@ const Button = ({
         styles[fontSize],
         styles[hidden],
         disabled && styles['disabled'],
-        className,
-
+        customClassNames,
     ]
         .filter(Boolean)
         .join(' ');
@@ -44,6 +54,7 @@ const Button = ({
             className={buttonClass}
             disabled={disabled}
             onClick={disabled ? undefined : onClick}
+            style={fontSize === 'extrasmall' ? {padding: '3px 20px'} : {}}
             {...props}
         >
             {children}

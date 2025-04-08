@@ -1,0 +1,144 @@
+.carouselContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+//  ============ 이미지
+.imageContainerList {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.imageContainer {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  position: relative;
+}
+
+img {
+  height: 100%;
+  object-fit: cover;
+}
+
+// 문구
+.carouselDescription{
+  width: 100%;
+  font-size: 0.9rem;
+  height: fit-content;
+
+  &.gray {
+    //background: #f4f4f580;
+    border-radius: 10px;
+  }
+
+  & p {
+    margin: 0;
+    color: #64748b;
+  }
+
+  & p.count {
+    width: 100%;
+    text-align: start;
+    color: #1b399b;
+    margin-top: 10px;
+  }
+}
+
+// 컨트롤 버튼
+.controlButtonsContainer {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+
+.addImageContainer {
+  cursor: pointer;
+  background-color: rgba(173, 216, 230, 0.5);
+  border: 2px dashed #00bfff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.controlButton {
+  width: 35px;
+  flex: 0 0 auto;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 9999px;
+  color: #000;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background-color: white;
+    transform: scale(1.03);
+  }
+
+  &.active {
+    color: #3b82f6;
+    cursor: default;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+
+  /* 모달 오버레이 스타일 */
+  .modalOverlay {
+    position: fixed;
+    width: 100vh;
+    height: 100vh;
+    //top: 0;
+    //left: 0;
+    //right: 0;
+    //bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modalContent {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 모달 닫기 버튼 */
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    padding: 5px;
+    z-index: 10; /* 닫기 버튼이 다른 요소 위에 오도록 */
+  }
+}
+

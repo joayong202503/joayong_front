@@ -1,0 +1,65 @@
+
+// 원하는만 혹은 주는만 카테고리 wrapper
+.categoryGroup {
+  display: flex;
+  //align-items: stretch;
+  gap: 2px;
+
+  &.column{
+    flex-direction: column;
+  }
+}
+
+.categoryLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.labelHighlight {
+  color: #1b399b;
+}
+
+.categoryTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 6px;
+  height: 1.7rem;
+  justify-content: center;
+  text-align: center; /* 텍스트 정렬 */
+}
+
+.main.give {
+  background-color: #93c5fd; /* 더 진한 하늘색 */
+  color: #eaf2ff; /* 밝은 파랑 (거의 흰색 느낌) */
+  min-width: 3.5rem;
+}
+
+.sub.give {
+  background-color: #dbeafe;
+  color: #1b399b;
+  min-width: 3.5rem;
+}
+
+.main.want {
+  background-color: #fca5a5; /* 부드러운 핑크 (따뜻한 느낌) */
+  color: #fff1f2; /* 밝은 연핑크 (거의 흰색) */
+  min-width: 3.5rem;
+}
+
+.sub.want {
+  background-color: #fee2e2; /* 연한 핑크 */
+  color: #8c1a1a; /* 진한 적갈색 */
+  min-width: 3.5rem;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 5px;
+}

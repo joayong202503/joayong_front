@@ -1,0 +1,51 @@
+.inputWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+
+  &.noTitle {
+    margin-top: 0;
+  }
+
+
+  @media (max-width: 1540px) {
+    gap: 5px;
+  }
+}
+
+.inputLabel {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+
+textarea {
+  width: 100%;
+  height: 200px;
+  color: #000000;
+  line-height: 1.1;
+  font-size: 14px;
+  padding: 10px 8px 30px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(115, 115, 122, 0.15);
+
+  &:hover {
+    border: 1px solid #222;
+  }
+
+  &:focus {
+    outline: none;
+    border: 2px solid rgb(17, 124, 233);
+  }
+
+}
+
+.charCount {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  font-size: 12px;
+}

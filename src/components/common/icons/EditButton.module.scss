@@ -1,0 +1,22 @@
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4FF;
+  color: #4C6EF5;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #E8EBFF;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

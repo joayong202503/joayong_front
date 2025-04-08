@@ -1,0 +1,298 @@
+.mainContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: -80px;
+}
+.topContainer{
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+.photoContainer{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.photoContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(56, 56, 56, 0.4);
+  z-index: 5;
+}
+
+.contentContainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 80%;
+  height: 100vh;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  color: #dadada;
+  transform: translate(-50%,-50%);
+
+}
+.contentTitle{
+  font-size: 45px;
+  animation: slideDown 1s ease-out;
+}
+.contentSpan{
+  font-size: 20px;
+  animation: slideDown 1s ease-out;
+}
+
+.mainImage {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(3px);
+  opacity: 0.9;
+}
+.mainButtonContainer{
+  margin-top: 50px;
+  display: flex;
+  gap: 10px;
+  animation: slideDown 1s ease-out;
+
+}
+.navLinkNoUnderline {
+  text-decoration: none;
+}
+.startButton{
+  display: flex;
+  gap: 10px;
+  width: 200px;
+  background: #007AFF;
+  border-radius: 30px;
+  padding: 25px;
+  color: white;
+  font-weight: normal;
+  z-index:10;
+
+}
+.exploreButton{
+  background-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: normal;
+  z-index:10;
+}
+.scrollContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 5%;
+
+}
+.scrollText{
+  animation: basic-blink 2.5s infinite;
+}
+@keyframes basic-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.scrollArrow{
+  margin-top: 5px;
+  animation: bounce 2.5s infinite;
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.middleContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 70px;
+  height: 75vh;
+  width: 80%;
+}
+.titleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+}
+.titleContainer h2 {
+  font-size: 30px;
+}
+.titleContainer span{
+  color: #6b7280;
+}
+.cardContainer{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+.arrows{
+  font-weight: bold;
+  margin: 0 10px;
+  background: none;
+  border-radius: 20px;
+  box-shadow: 0.5px 0.5px 1px 1px #bdbdbd;
+  border: 1px solid gray;
+  height: 30px;
+}
+.emptyState{
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cardContainer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.cardsWrapper {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.cardsTrack {
+  display: flex;
+  transition: transform 0.5s ease; // 부드러운 슬라이드 애니메이션 추가
+  width: 100%;
+}
+
+.cardItem {
+  flex: 0 0 25%; // 4개의 카드가 보이도록 25% 너비 설정
+  padding: 0 5px; // 카드 사이의 간격
+  box-sizing: border-box;
+  height: 450px;
+}
+
+.arrows {
+  font-weight: bold;
+  margin: 0 10px;
+  background: none;
+  border-radius: 20px;
+  box-shadow: 0.5px 0.5px 1px 1px #bdbdbd;
+  border: 1px solid gray;
+  height: 30px;
+  z-index: 10;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.bottomContainer{
+  width: 100%;
+  background: rgb(249 250 251);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 50px;
+  margin-top: 100px;
+}
+.bottomTitleContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.titleButton{
+  width: 90px;
+  border: 1px solid cornflowerblue;
+  border-radius: 20px;
+  color: #3b82f6;
+  font-size: 15px;
+ padding: 5px;
+  text-align: center;
+}
+.title{
+  font-size: 40px;
+}
+.content{
+  color: #6b7280;
+  font-size: 20px;
+}
+.fullBoxContainer{
+  padding: 80px 0px;
+  display: flex;
+  gap: 20px;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boxContainer{
+  width: 350px;
+  border-radius: 10px;
+  background: white;
+  padding: 40px 30px 80px 30px;
+  border: 1px solid #e3e3e3;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.iconContainer{
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background: rgb(249 250 251);
+  width: 40px;
+  border-radius: 20px;
+}
+.boxContent{
+  color: #6b7280;
+  line-height: 1.5;
+
+}

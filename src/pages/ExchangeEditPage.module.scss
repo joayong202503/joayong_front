@@ -1,0 +1,98 @@
+.postEditPage {
+    width: 60%;
+    display: flex;
+    gap: 50px;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 32px;
+    background-color: #fff;
+    min-height: 100vh;
+}
+
+.imageSection {
+    width: 100%;
+    margin: 30px auto 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+
+.bothTalentsContainer {
+    display: flex;
+    gap: 2rem;
+}
+
+.half {
+    flex: 1;
+}
+
+
+.locationContainer {
+    display: flex;
+    align-items: center;
+    color: gray;
+    gap: 10px;
+}
+
+.contentBox {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    & .title {
+        font-size: 1rem;
+        font-weight: 800;
+    }
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* 모달 오버레이 스타일 */
+.modalOverlay {
+    position: fixed;
+    // 모달 열려 있는 동안 스크롤 내려가지 않음
+    overflow: hidden;
+
+
+    //width: 100vh;
+    //height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContent {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10000000;
+}
+
+/* 모달 닫기 버튼 */
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    padding: 5px;
+    z-index: 10; /* 닫기 버튼이 다른 요소 위에 오도록 */
+}

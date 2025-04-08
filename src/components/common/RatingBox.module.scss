@@ -1,0 +1,75 @@
+// RatingBox.module.scss - 스타일 수정
+.fullContainer{
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  width: 88%;
+  padding: 30px 0 40px 80px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+
+.reviewerInfo {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.reviewerContainer{
+  display: flex;
+  flex-direction: column;
+  gap:5px;
+}
+.reviewer{
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.reviewDate {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 18px;
+  margin-right: 10px;
+  color: #757575;
+}
+
+.ratingResultContainer{
+  display: flex;
+  width: auto;
+  margin-top: 30px;
+  font-size: 18px;
+  gap: 20px;
+}
+
+.leftRatingContainer, .rightRatingContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+}
+
+.ratingItem{
+  width: 430px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ratingLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.starContainer {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ratingValue {
+  margin-left: 10px;
+  font-size: 20px;
+  color: #757575;
+}

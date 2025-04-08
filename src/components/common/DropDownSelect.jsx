@@ -4,7 +4,7 @@ import {
     ChevronUpIcon,
 } from "@radix-ui/react-icons";
 import styles from "./DropDownSelect.module.scss";
-import React, {useEffect} from "react";
+import React, {forwardRef, useEffect, useState} from "react";
 
 /**
  * 공식라이브러리 주소 : https://www.radix-ui.com/primitives/docs/components/select#root
@@ -17,70 +17,66 @@ import React, {useEffect} from "react";
  * @param valueField - 각 옵션 컴포넌트에서 value 값으로 사용할 값을 정의합니다. 예를들어 items[cityName]를 각 옵션 박스의 value로 설정하려면, 'cityName'를 적어주시면 됩니다.
  * @returns {JSX.Element}
  */
-const DropDownSelect = ({placeHolder, items, keyField, valueField, width, onValueChange}) => {
+const DropDownSelect = forwardRef(({placeHolder, items, keyField, valueField, width, onValueChange, disabled}, ref) => {
 
-    // ! Select Component가 기본적으로 body에 pointEvents를 0으로 설정하게 하는 것을 방지하는 커스텀 훅!
-    useEffect(() => {
-            document.body.style.pointerEvents = 'auto'; // 스크롤 잠금 해제
-
-    }, []);
-
-    // 눈에 보이는 부분을 감싸는 wrapper
-    //  - 열어두려면 open={true}
-    //  - value 바뀔 시, onValueChange 이벤트 발생(value는 radix 에서 자동으로 상태값으로 관리)
     return (
         <Select.Root
             onValueChange={onValueChange}
-            // open={true}
-            className={styles.selectRoot}>
-
-        {/* 눈에 보이는 부분 div. place holder 글씨 색 : .SelectTrigger[data-placeholder]. width는 prop으로 받아옴 */}
-        <Select.Trigger className={styles.selectTrigger} style={{ width: `${width}px` }}>
-            <Select.Value placeholder={placeHolder} />
-            {/* 드롭다운 버튼 누르는 아이콘의 wrapper */}
-            <Select.Icon className={styles.selectIcon}>
-                {/* 드롭다운 버튼 */}
-                <ChevronDownIcon />
-            </Select.Icon>
-        </Select.Trigger>
-
-        <Select.Portal>
-            {/* 스크롤 다운, 내용 등 드롭다운 해야 보이는 부분 전체를 감싸는 wrapper*/}
-            {/*    popper : 위치 조정용*/}
-            <Select.Content
-                position="popper"
-                className={styles.selectContent}
-                style={{ width: `${width}px`}}
-            >
-                <Select.ScrollUpButton className={styles.selectScrollButton}>
-                    <ChevronUpIcon />
-                </Select.ScrollUpButton>
-                {/* 드롭다운 메뉴에서 스크롤 버튼 빼고 */}
-                <Select.Viewport className={styles.selectViewport}>
-                    {/* 항목들만 나열 : 스타일은 아래 SelectItem 컴포넌트에서 지정 */}
-                    {items.map(item => (
-                        // key는 selectItem component에서 쓸 값. keyField는 selecitem의 자식에게 전달할 값
-                        <SelectItem
-                            key={item[keyField]}
-                            items={item}
-                            keyField={keyField}
-                            value ={item[valueField]}
-                        >
-                            {item[valueField]}
-                        </SelectItem>
-                    ))}
-
-
-                </Select.Viewport>
-                <Select.ScrollDownButton className={styles.selectScrollButton}>
+            className={styles.selectRoot}
+            disabled={disabled}
+        >
+            {/* 나머지 코드는 동일 */}
+            <Select.Trigger
+                className={styles.selectTrigger}
+                ref={ref}
+                style={{ width: `${width}px` }}>
+                <Select.Value placeholder={placeHolder} />
+                {/* 드롭다운 버튼 누르는 아이콘의 wrapper */}
+                <Select.Icon className={styles.selectIcon}>
+                    {/* 드롭다운 버튼 */}
                     <ChevronDownIcon />
-                </Select.ScrollDownButton>
-            </Select.Content>
-        </Select.Portal>
-    </Select.Root>
-);
+                </Select.Icon>
+            </Select.Trigger>
 
-}
+            <Select.Portal>
+                {/* 스크롤 다운, 내용 등 드롭다운 해야 보이는 부분 전체를 감싸는 wrapper*/}
+                {/*    popper : 위치 조정용*/}
+                <Select.Content
+                    position="popper"
+                    className={styles.selectContent}
+                    style={{
+                        width: `${width}px`,
+                    }}
+                >
+                    <Select.ScrollUpButton className={styles.selectScrollButton}>
+                        <ChevronUpIcon />
+                    </Select.ScrollUpButton>
+                    {/* 드롭다운 메뉴에서 스크롤 버튼 빼고 */}
+                    <Select.Viewport className={styles.selectViewport}>
+                        {/* 항목들만 나열 : 스타일은 아래 SelectItem 컴포넌트에서 지정 */}
+                        {items.map(item => (
+                            // key는 selectItem component에서 쓸 값. keyField는 selecitem의 자식에게 전달할 값
+                            <SelectItem
+                                key={item[keyField]}
+                                items={item}
+                                keyField={keyField}
+                                value ={item[valueField]}
+                            >
+                                {item[valueField]}
+                            </SelectItem>
+                        ))}
+
+
+                    </Select.Viewport>
+                    <Select.ScrollDownButton className={styles.selectScrollButton}>
+                        <ChevronDownIcon />
+                    </Select.ScrollDownButton>
+                </Select.Content>
+            </Select.Portal>
+        </Select.Root>
+    );
+});
+
 export default DropDownSelect;
 
 const SelectItem = React.forwardRef(

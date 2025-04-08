@@ -1,0 +1,56 @@
+.bodyContainer{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 100px;
+}
+.fullContainer{
+  border: 1px solid #cbcbcb;
+  border-radius: 10px;
+  margin-top: 50px;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 50px 80px 50px;
+}
+.titleContainer{
+  font-size: 20px;
+}
+.profileContainer{
+  margin-top: 30px;
+  position: relative;
+}
+.editPhotoContainer{
+  background: white;
+  border-radius: 50%;
+  border: 1px solid #cecece;
+  position: absolute;
+  top: 65%;
+  left: 69%;
+  padding: 12px 0px;
+}
+.bottomContainer{
+  margin-top: 50px;
+  width: 50%;
+}
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+.inputContainer label{
+  color: #888888;
+}
+.buttonContainer{
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 50px;
+}
+.dropdownContainer{
+  display: flex;
+  gap: 20px;
+
+}

@@ -1,0 +1,92 @@
+.wrap {
+  display: flex;
+  height: 80vh;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  
+}
+
+.videoContainer {
+  flex: 1;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #e0e0e0;
+}
+
+.chatContainer {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-content: center;
+  margin: 0 20px 0 0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.linkBox {
+  margin-top: 15px;
+display: flex;
+justify-content: left;
+}
+
+.textContainer{
+  display: flex;
+}
+.writer{
+  margin-right: 10px;
+  font-weight: bold;
+}
+.sender{
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.linkText {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: linear-gradient(to left, #ffffff, #c8d9f3); /* 왼쪽 하얀색 ~ 오른쪽 연한 하늘색 그라데이션 */
+  position: relative;
+  margin-right: 50px; /* 오른쪽으로 50px 떨어지게 설정 */
+  border: none; /* 보더 제거 */
+}
+
+
+.linksContainer {
+  display: flex;
+  align-items: center;  /* 글자와 화살표 수평 정렬 */
+  justify-content: center;
+  gap: 10px;  /* 글자와 화살표 간의 간격 설정 */
+  margin-top: 10px;
+}
+
+.linkText span,
+.linkText a {
+  margin-left: 10px;
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.linkText a {
+  margin-top: 0; /* 추가적인 margin-top을 없앰 */
+}
+.linkContainer{
+  margin-top: 10px;
+  cursor: pointer;
+  color: #007bff;
+  font-weight: bold;
+}
+.linkContainer svg {
+  margin-left: 10px;
+  color: #007bff;
+  vertical-align: middle; /* 수직 정렬 맞추기 */
+  margin-top: 0;  /* 불필요한 margin 제거 */
+}
+
