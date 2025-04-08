@@ -55,50 +55,68 @@ Learning Crew는 모두 코딩을 공부하는 사람들로서 서로의 재능�
 
 ## 🎬 시연 영상
 
-- 회원가입
+- 회원가입<br>
+(프론트: 유안준, 백엔드: 김성윤)
 
 ![Image](https://github.com/user-attachments/assets/2bf0b199-96ee-4722-8a4b-c6fe5e62a9bd)
 
 - 로그인
+<br>(프론트: 유안준, 백엔드: 김성윤)
 
 ![Image](https://github.com/user-attachments/assets/3f92a441-740a-4b92-b0c3-89f3839c7863)
 
-- 메인 페이지
+- 메인 페이지 <br>
+(프론트엔드 : 장유진, 백엔드: 김성윤)<br>
 
-![Image](https://github.com/user-attachments/assets/d4933cb5-d4e7-4e22-9e3a-ed83fbe9eb43)
+![003 ㅔ인](https://github.com/user-attachments/assets/0a0c8421-ae32-41a8-a95b-58e63adda3f8)
+<br>
 
-- 재능교환 전체 게시물 페이지
+- 재능교환 전체 게시물 페이지 <br>
+(프론트엔드 : 장유진, 백엔드: 김성윤)<br>
+![004 상세](https://github.com/user-attachments/assets/9c5f78e3-9b11-4176-b103-f68a29d94758)
+<br>
 
-![Image](https://github.com/user-attachments/assets/74b0443d-807e-4630-9cd3-710d5b7fc1c5)
+- 재능교환 게시글 등록 페이지<br>
+(프론트엔드 : 김미정, 백엔드: 김성윤)<br>
+![005 게시글 등록](https://github.com/user-attachments/assets/8c2c9f47-7e49-4d5d-880b-03b762473e66)
+<br>
 
-- 재능교환 게시글 등록 페이지
+- 재능교환 게시글 상세보기/삭제 페이지<br>
+(프론트엔드 : 김미정, 백엔드: 김성윤)<br>
+![007  상세보기](https://github.com/user-attachments/assets/57710cc5-dd94-4355-9e91-24d22c36c415)
+<br>
 
-![Image](https://github.com/user-attachments/assets/e9fa5d4c-26d8-4354-a7a0-0c9f4a748664)
+- 재능교환 게시글 수정 페이지<br>
+(프론트엔드 : 김미정, 백엔드: 김성윤)<br>
+![008 게시글 수정](https://github.com/user-attachments/assets/b4521609-76a6-415f-9afe-6d03c8214ed2)
+<br>
 
-- 재능교환 게시글 상세보기 페이지
+- 프로필 페이지<br>
+(프론트엔드 : 장유진, 백엔드: 김성윤)<br>
+![009 내 프로필](https://github.com/user-attachments/assets/840db8dd-a153-492a-9423-ba954e6f4891)
+<br>
 
-![Image](https://github.com/user-attachments/assets/e50251bf-7858-43cb-bbbf-b371161f434f)
+- 프로필 수정 페이지 <br>
+(프론트엔드 : 장유진, 백엔드: 김성윤)<br>
+![010 프로필 수정](https://github.com/user-attachments/assets/4e2d1314-1a6d-4fb1-8758-ff670c4290bd)
+<br>
 
-- 프로필 페이지
+- 매칭 요청 페이지<br>
+(프론트엔드 : 김미정, 백엔드: 오세영)<br>
+![011 매칭 요청](https://github.com/user-attachments/assets/3ff335c3-2563-4c29-bc2f-becb458ac298)
+<br>
 
-![Image](https://github.com/user-attachments/assets/076c7ef7-bf50-49aa-8039-eb774c7b6463)
+- 매칭관리 및 메시지 보기 페이지<br>
+(프론트엔드 : 김미정, 백엔드: 오세영)<br>
+![012-ezgif com-crop](https://github.com/user-attachments/assets/01f1c0d3-0341-4c3e-8157-67ed4ec3a2b5)
+<br>
 
-- 프로필 수정 페이지
+- WRTC & 채팅 <br>
+(WRTC 풀스택 : 오세영, 채팅 풀스택 : 김성윤)<br>
+![006-ezgif com-crop](https://github.com/user-attachments/assets/8f26feef-bc16-499e-a1dc-76cf477adfdb)
+<br>
 
-![Image](https://github.com/user-attachments/assets/da3d7ef1-f6e8-4b8e-abf4-6d7d151aef21)
-
-- 매칭요청 페이지
-
-![Image](https://github.com/user-attachments/assets/3377237d-b731-4374-afd7-0354e1878481)
-
-- 매칭관리 페이지
-
-![Image](https://github.com/user-attachments/assets/8f65ce96-19d1-4889-aac6-89e15696905e)
-
-- WRTC & 체팅
-
-![Image](https://github.com/user-attachments/assets/55b13230-1a90-4d7e-8158-c8ebefd79201)
-
-- 리뷰 페이지
-
-![Image](https://github.com/user-attachments/assets/fcc4cb20-4162-4357-a728-3b5142dda34c)
+- 리뷰 페이지<br>
+(프론트엔드 : 장유진, 백엔드: 오세영)<br>
+![013 리뷰](https://github.com/user-attachments/assets/282bc723-0ea8-473f-a3aa-b31f15a2ed88)
+<br>
