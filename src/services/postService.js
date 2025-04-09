@@ -27,11 +27,8 @@ export const increasePostViewCount = async (postId) => {
     }
 };
 
-
-
 // 캐싱 데이터 업데이트 하는 부분 제외한 게시물 삭제 로직
 const deletePost = async (postId) => {
-
     try {
         const response = await fetchWithAuth(`${postApi.deletePost}${postId}`, {
             method: 'DELETE',
@@ -40,13 +37,7 @@ const deletePost = async (postId) => {
 
         if (!response.ok) {
             const data = await response.json();
-            // 서버 내부 오류일 때
-            if (response.status === 500) {
-                // 에러에 여러 값 반환하기 위해, ApiError라는 클래스를 만들어 객체로 전달
-                throw new ApiError(data.status, '서버 오류 발생', data?.message); // ApiError로 구조화된 에러 던지기
-            } else if (response.status !== 500) {
-                throw new ApiError(response.status, '기타 오류 발생', data?.message); // 다른 상태 코드 에러 처리
-            }
+            throw new ApiError(response.status, '요청 처리 실패', data?.message);
         }
 
         // 성공: 삭제 결과 반환
@@ -54,11 +45,13 @@ const deletePost = async (postId) => {
 
         // 네트워크 문제, url 오류, cors 에러 등
     } catch (error) {
-        console.error('네트워크 또는 기타 에러:', error); // 네트워크 에러나 런타임 에러 로그
-        throw new ApiError("etc", '네트워크 또는 기타 에러 발생', error.message || '알 수 없는 오류'); // 네트워크 에러 처리
+        console.error('네트워크 또는 기타 에러:', error);
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(503, '네트워크 또는 기타 에러 발생', error.message || '알 수 없는 오류');
     }
 };
-
 
 // 상세보기 페이지는 캐싱데이터로 관리하기 때문에, useMutation을 사용하여 캐싱데이터에서도 게시글 삭제 해줘야 함
 export const useDeletePost = () => {
