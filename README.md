@@ -2,6 +2,10 @@
 
 ![Image](https://github.com/user-attachments/assets/bc351b7d-92cf-4993-8257-6d8196f2a45b)
 
+## 깃허브 링크
+- 백엔드 : https://github.com/joayong202503/joayong_back
+- 프론트엔드 : https://github.com/joayong202503/joayong_front
+
 ## 🚀 프로젝트 소개
 당신의 숨은 재능, 누군가에겐 보물이 될 수 있어요! 
 서로의 지식을 나누고 함께 성장하는 1:1 재능교환, 새로운 배움의 즐거움을 경험해보세요.
